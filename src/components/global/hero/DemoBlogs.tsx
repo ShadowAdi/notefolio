@@ -8,7 +8,7 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { DemoBlogsInterfcae } from "@/types/DemoBlogs";
+import { DemoBlogsInterfcae } from "@/types/Hero/DemoBlogs";
 import Link from "next/link";
 import Image from "next/image";
 

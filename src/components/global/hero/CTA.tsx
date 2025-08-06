@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "../../ui/button";
 import Link from "next/link";
-import { CtaProps } from "@/types/CtaProps";
+import { CtaProps } from "@/types/Hero/CtaProps";
 
 const CTA = ({
   heading = "Be Part of the Conversation",

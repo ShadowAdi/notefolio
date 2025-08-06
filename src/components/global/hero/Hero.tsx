@@ -3,7 +3,7 @@ import React from "react";
 
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { HeroSectionProps } from "@/types/HeroSectionProps";
+import { HeroSectionProps } from "@/types/Hero/HeroSectionProps";
 
 export const HeroSection = ({
   heading = "Your Voice. Your Audience. Your Space.",
