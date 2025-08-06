@@ -1,6 +1,5 @@
 import {
   defaultLegalLinks,
-  defaultSections,
   defaultSocialLinks,
 } from "@/data/Hero/FooterData";
 import { FooterProps } from "@/types/Hero/FooterProps";
@@ -9,7 +8,7 @@ import React from "react";
 const Footer = ({
   logo = {
     url: "https://shadowadi.github.io/WebDev_Portfolio/",
-    title: "Portfolio",
+    title: "Notefolio",
   },
   description = "This is  a blog app created by Aditya Shukla❣️",
   socialLinks = defaultSocialLinks,
@@ -17,8 +16,8 @@ const Footer = ({
   legalLinks = defaultLegalLinks,
 }: FooterProps) => {
   return (
-    <footer className="py-32">
-      <div className="container">
+    <footer className="py-16  w-full flex items-center justify-center">
+      <div className="container w-2/3 mx-auto flex flex-row justify-between items-center">
         <div className="flex w-full flex-col justify-between gap-10 lg:flex-row lg:items-start lg:text-left">
           <div className="flex w-full flex-col justify-between gap-6 lg:items-start">
             <h2 className="text-xl font-semibold">{logo.title}</h2>
