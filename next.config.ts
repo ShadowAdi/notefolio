@@ -5,6 +5,9 @@ images:{
   remotePatterns:[
     {
       hostname:"randomuser.me"
+    },
+    {
+      hostname:"deifkwefumgah.cloudfront.net"
     }
   ]
 }
