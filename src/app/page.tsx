@@ -1,3 +1,4 @@
+import CTA from "@/components/global/CTA";
 import { DemoBlogs } from "@/components/global/DemoBlogs";
 import Features from "@/components/global/Features";
 import { HeroSection } from "@/components/global/Hero";
@@ -10,6 +11,7 @@ export default function Home() {
       <Features />
       <Testimonials />
       <DemoBlogs  />
+      <CTA/>
     </main>
   );
 }
