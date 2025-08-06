@@ -1,8 +1,8 @@
-import CTA from "@/components/global/CTA";
-import { DemoBlogs } from "@/components/global/DemoBlogs";
-import Features from "@/components/global/Features";
-import { HeroSection } from "@/components/global/Hero";
-import Testimonials from "@/components/global/Testimonials";
+import CTA from "@/components/global/hero/CTA";
+import { DemoBlogs } from "@/components/global/hero/DemoBlogs";
+import Features from "@/components/global/hero/Features";
+import { HeroSection } from "@/components/global/hero/Hero";
+import Testimonials from "@/components/global/hero/Testimonials";
 
 export default function Home() {
   return (
