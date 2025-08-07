@@ -34,7 +34,7 @@ const Navbar = () => {
             <div className="sm:flex sm:gap-4">
               <Link
                 className=" bg-slate-50 hover:bg-slate-100 px-8  py-2.5 text-sm font-medium text-black shadow-sm rounded-full transition-all duration-500"
-                href="/auth/login"
+                href="/auth/signin"
               >
                 Login
               </Link>
@@ -42,7 +42,7 @@ const Navbar = () => {
               <div className="hidden sm:flex">
                 <Link
                   className=" bg-stone-800 hover:bg-stone-900 transition-all duration-500 px-8  py-2.5 text-sm font-medium text-white shadow-sm rounded-full"
-                  href="/auth/register"
+                  href="/auth/signup"
                 >
                   Register
                 </Link>
