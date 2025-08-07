@@ -2,11 +2,6 @@ import FormBottom from "@/components/global/auth/FormBottom";
 import FormHeader from "@/components/global/auth/FormHeader";
 import RegisterForm from "@/components/global/auth/register/RegisterForm";
 import SharedSection from "@/components/global/auth/SharedSection";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import Image from "next/image";
-import Link from "next/link";
 import React from "react";
 
 const Signup = ({
@@ -26,7 +21,7 @@ const Signup = ({
           <div className="flex flex-col items-center gap-10 lg:justify-start">
             <FormHeader logo={logo} />
             <RegisterForm buttonText={buttonText} heading={heading} />
-            <FormBottom linkText={signupUrl} text={signupText} url={"Login"} />
+            <FormBottom linkText={"Signin"} text={signupText} url={signupUrl} />
           </div>
         </div>
       </section>

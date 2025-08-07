@@ -27,9 +27,9 @@ const Signin = ({
             <FormHeader logo={logo} />
             <LoginForm buttonText={buttonText} heading={heading} />
             <FormBottom
-              linkText={signupUrl}
+              linkText={"Signup"}
               text={signupText}
-              url={"Register"}
+              url={signupUrl}
             />
           </div>
         </div>
