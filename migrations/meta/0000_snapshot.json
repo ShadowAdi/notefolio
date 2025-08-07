@@ -1,5 +1,5 @@
 {
-  "id": "fe5db5b0-0a4a-4e53-8736-26133636a75f",
+  "id": "5828ece7-3cb0-4974-b4ea-34df8c634a46",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -311,7 +311,15 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
+      "compositePrimaryKeys": {
+        "followers_followerId_followingId_pk": {
+          "name": "followers_followerId_followingId_pk",
+          "columns": [
+            "followerId",
+            "followingId"
+          ]
+        }
+      },
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
@@ -396,34 +404,6 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
-        },
-        "followersCount": {
-          "name": "followersCount",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "default": 0
-        },
-        "followingsCount": {
-          "name": "followingsCount",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "default": 0
-        },
-        "followers": {
-          "name": "followers",
-          "type": "uuid[]",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'{}'"
-        },
-        "followings": {
-          "name": "followings",
-          "type": "uuid[]",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'{}'"
         },
         "createdAt": {
           "name": "createdAt",

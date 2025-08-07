@@ -30,7 +30,8 @@ CREATE TABLE "discussion" (
 --> statement-breakpoint
 CREATE TABLE "followers" (
 	"followerId" uuid NOT NULL,
-	"followingId" uuid NOT NULL
+	"followingId" uuid NOT NULL,
+	CONSTRAINT "followers_followerId_followingId_pk" PRIMARY KEY("followerId","followingId")
 );
 --> statement-breakpoint
 CREATE TABLE "blogTags" (
@@ -45,10 +46,6 @@ CREATE TABLE "User" (
 	"profileUrl" text DEFAULT '',
 	"password" varchar NOT NULL,
 	"bio" text,
-	"followersCount" integer DEFAULT 0,
-	"followingsCount" integer DEFAULT 0,
-	"followers" uuid[] DEFAULT '{}',
-	"followings" uuid[] DEFAULT '{}',
 	"createdAt" timestamp DEFAULT now(),
 	"updated_at" timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	CONSTRAINT "User_email_unique" UNIQUE("email")
