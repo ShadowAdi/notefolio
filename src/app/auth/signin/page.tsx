@@ -1,3 +1,5 @@
+import FormBottom from "@/components/global/auth/FormBottom";
+import FormHeader from "@/components/global/auth/FormHeader";
 import LoginForm from "@/components/global/auth/login/LoginForm";
 import SharedSection from "@/components/global/auth/SharedSection";
 import { Button } from "@/components/ui/button";
@@ -22,19 +24,13 @@ const Signin = ({
       <section className="h-full flex-1  ">
         <div className="flex h-full items-center justify-center">
           <div className="flex flex-col items-center gap-10 lg:justify-start">
-            <Link href={logo.url}>
-              <span className="text-xl font-bold text-black">{logo.title}</span>
-            </Link>
+            <FormHeader logo={logo} />
             <LoginForm buttonText={buttonText} heading={heading} />
-            <div className="text-muted-foreground flex justify-center gap-1 text-sm">
-              <p>{signupText}</p>
-              <Link
-                href={signupUrl}
-                className="text-primary font-medium hover:underline"
-              >
-                Register
-              </Link>
-            </div>
+            <FormBottom
+              linkText={signupUrl}
+              text={signupText}
+              url={"Register"}
+            />
           </div>
         </div>
       </section>
