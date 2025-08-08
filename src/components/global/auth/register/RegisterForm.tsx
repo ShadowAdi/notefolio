@@ -42,19 +42,23 @@ const RegisterForm = ({ heading, buttonText }: RegisterInterfaceType) => {
 
   async function onSubmit(values: z.infer<typeof registerFormSchema>) {
     try {
-      const response = await axios.post(`/api/auth/signup`, values);
+      const response = await axios.post(`/api/auth/register`, values);
       switch (response.status) {
         case 201:
+          form.reset();
           toast.success(response.data.message);
-          router.push("/login");
+          router.push("/auth/signin");
           break;
         case 500:
+          form.reset();
           toast.error(response.statusText);
           break;
         case 400:
+          form.reset();
           toast.error(response.statusText);
           break;
         case 404:
+          form.reset();
           toast.error(response.statusText);
           break;
         default:
@@ -63,11 +67,14 @@ const RegisterForm = ({ heading, buttonText }: RegisterInterfaceType) => {
           } else {
             toast.error(`Failed to create User`);
           }
-          router.push("/login");
+          form.reset();
+          router.push("/auth/signin");
           break;
       }
     } catch (error) {
+      form.reset();
       console.error(`Failed to register user `, error);
+      toast.error(`Failed to register user ` + error);
     }
   }
 

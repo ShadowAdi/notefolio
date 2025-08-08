@@ -12,9 +12,12 @@ import { Input } from "@/components/ui/input";
 import { LoginInterfaceType } from "@/types/auth/Login/LoginType";
 import { loginFomrSchema } from "@/zodSchema/LoginFormSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
 import { Eye, EyeClosed } from "lucide-react";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import z from "zod";
 
 const LoginForm = ({ heading, buttonText }: LoginInterfaceType) => {
@@ -27,9 +30,44 @@ const LoginForm = ({ heading, buttonText }: LoginInterfaceType) => {
   });
 
   const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
 
   async function onSubmit(values: z.infer<typeof loginFomrSchema>) {
-    console.log(values);
+    try {
+      const response = await axios.post(`/api/auth/login`, values);
+      switch (response.status) {
+        case 200:
+          form.reset();
+          toast.success(response.data.message);
+          router.push("/home");
+          break;
+        case 500:
+          form.reset();
+          toast.error(response.statusText);
+          break;
+        case 400:
+          form.reset();
+          toast.error(response.statusText);
+          break;
+        case 404:
+          form.reset();
+          toast.error(response.statusText);
+          break;
+        default:
+          if (response.data.success) {
+            toast.success(`User Logged In`);
+          } else {
+            toast.error(`Failed to Login User`);
+          }
+          form.reset();
+          router.push("/home");
+          break;
+      }
+    } catch (error) {
+      form.reset();
+      console.error(`Failed to login user `, error);
+      toast.error(`Failed to login user ` + error);
+    }
   }
 
   return (
