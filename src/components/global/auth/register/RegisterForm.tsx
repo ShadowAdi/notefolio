@@ -58,6 +58,12 @@ const RegisterForm = ({ heading, buttonText }: RegisterInterfaceType) => {
           toast.error(response.statusText);
           break;
         default:
+          if (response.data.success) {
+            toast.success(`User Created`);
+          } else {
+            toast.error(`Failed to create User`);
+          }
+          router.push("/login");
           break;
       }
     } catch (error) {
