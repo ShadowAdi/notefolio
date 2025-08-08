@@ -9,13 +9,13 @@ import Testimonials from "@/components/global/hero/Testimonials";
 export default function Home() {
   return (
     <main className="flex flex-col justify-center items-center">
-              <Navbar />
+      <Navbar />
       <HeroSection />
       <Features />
       <Testimonials />
-      <DemoBlogs  />
-      <CTA/>
-      <Footer/>
+      <DemoBlogs />
+      <CTA />
+      <Footer />
     </main>
   );
 }

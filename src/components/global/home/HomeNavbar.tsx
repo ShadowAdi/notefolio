@@ -8,7 +8,7 @@ const HomeNavbar = () => {
         <div className="flex h-16 items-center justify-between">
           <div className="md:flex md:items-center md:gap-12">
             <Link className="block text-black cursor-pointer" href="/">
-              <span className="text-black text-xl underline font-bold">
+              <span className="text-black text-xl font-bold">
                 Notefolio
               </span>
             </Link>

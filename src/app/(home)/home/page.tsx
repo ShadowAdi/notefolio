@@ -2,7 +2,7 @@ import React from 'react'
 
 const Home = () => {
     return (
-        <main>
+        <main className='px-8'>
             <h1>
                 Home
             </h1>
