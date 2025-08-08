@@ -7,7 +7,7 @@ interface LogoType {
 const FormHeader = ({ logo }: LogoType) => {
   return (
     <Link href={logo.url}>
-      <span className="text-xl font-bold text-black">{logo.title}</span>
+      <span className="text-2xl font-bold text-black">{logo.title}</span>
     </Link>
   );
 };

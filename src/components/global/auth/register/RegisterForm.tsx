@@ -1,8 +1,9 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { RegisterInterfaceType } from "@/types/auth/register/RegisterType";
-import React from "react";
+import React, { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { registerFormSchema } from "@/zodSchema/RegisterFormSchema";
@@ -10,7 +11,6 @@ import z from "zod";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import Image from "next/image";
+import { Eye, EyeClosed } from "lucide-react";
 
 const RegisterForm = ({ heading, buttonText }: RegisterInterfaceType) => {
   const form = useForm<z.infer<typeof registerFormSchema>>({
@@ -30,42 +31,56 @@ const RegisterForm = ({ heading, buttonText }: RegisterInterfaceType) => {
       profileUrl: "",
     },
   });
-  const url = form.watch("profileUrl");
+
+  const profileUrl = form.watch("profileUrl");
+  const [showPassword, setShowPassword] = useState(false);
+  const [imgError, setImgError] = useState(false);
 
   async function onSubmit(values: z.infer<typeof registerFormSchema>) {
     console.log(values);
   }
+
   return (
-    <div className="min-w-sm border-muted bg-[#fafafa] flex w-full max-w-sm flex-col items-center gap-y-4 rounded-md border px-6 py-8 shadow-md">
-      {heading && <h1 className="text-xl font-semibold">{heading}</h1>}
+    <div className="min-w-sm w-full max-w-lg bg-white border border-muted rounded-md px-10 md:px-6 py-8 shadow-md">
+      {heading && (
+        <h1 className="text-lg font-semibold text-center mb-6">{heading}</h1>
+      )}
+
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <FormField
-            control={form.control}
-            name="username"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Username</FormLabel>
-                <FormControl>
-                  <Input placeholder="Aditya" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input placeholder="adi@gmail.com" type="email" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Username</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Aditya" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      placeholder="adi@gmail.com"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
           <FormField
             control={form.control}
             name="password"
@@ -73,40 +88,59 @@ const RegisterForm = ({ heading, buttonText }: RegisterInterfaceType) => {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input placeholder="******" type="password" {...field} />
+                  <div className="relative">
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="******"
+                      {...field}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-gray-600 hover:underline cursor-pointer"
+                    >
+                      {!showPassword ? <EyeClosed /> : <Eye />}
+                    </button>
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="profileUrl"
             render={({ field }) => (
-              <div className="flex flex-col items-center space-y-3">
-                <FormItem>
-                  <FormLabel>Profile</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="https://image.com"
-                      type="url"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-                {url && (
+              <FormItem>
+                <FormLabel>Profile Image URL</FormLabel>
+                <FormControl>
+                  <Input
+                    type="url"
+                    placeholder="https://image.com"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+                {profileUrl && !imgError && (
                   <Image
-                    src={url}
-                    className="h-full w-full object-cover"
-                    height={300}
-                    width={1000}
+                    src={profileUrl}
+                    onError={() => setImgError(true)}
                     alt="Profile Preview"
+                    height={300}
+                    width={600}
+                    className="mt-3 rounded-md border object-cover w-full max-h-[300px]"
                   />
                 )}
-              </div>
+                {imgError && (
+                  <p className="text-sm text-red-500 mt-2">
+                    Couldn't load image from the provided URL.
+                  </p>
+                )}
+              </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="bio"
@@ -115,7 +149,7 @@ const RegisterForm = ({ heading, buttonText }: RegisterInterfaceType) => {
                 <FormLabel>Bio</FormLabel>
                 <FormControl>
                   <Textarea
-                    placeholder="Add A Bio..."
+                    placeholder="Add a short bio..."
                     className="min-h-[100px]"
                     {...field}
                   />
@@ -124,7 +158,10 @@ const RegisterForm = ({ heading, buttonText }: RegisterInterfaceType) => {
               </FormItem>
             )}
           />
-          <Button type="submit">{buttonText}</Button>
+
+          <Button type="submit" className="w-full !cursor-pointer">
+            {buttonText}
+          </Button>
         </form>
       </Form>
     </div>
