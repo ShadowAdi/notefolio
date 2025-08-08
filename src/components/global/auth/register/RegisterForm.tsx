@@ -38,9 +38,11 @@ const RegisterForm = ({ heading, buttonText }: RegisterInterfaceType) => {
   const profileUrl = form.watch("profileUrl");
   const [showPassword, setShowPassword] = useState(false);
   const [imgError, setImgError] = useState(false);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   async function onSubmit(values: z.infer<typeof registerFormSchema>) {
+    setLoading(true);
     try {
       const response = await axios.post(`/api/auth/register`, values);
       switch (response.status) {
@@ -75,6 +77,8 @@ const RegisterForm = ({ heading, buttonText }: RegisterInterfaceType) => {
       form.reset();
       console.error(`Failed to register user `, error);
       toast.error(`Failed to register user ` + error);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -198,7 +202,7 @@ const RegisterForm = ({ heading, buttonText }: RegisterInterfaceType) => {
           />
 
           <Button type="submit" className="w-full !cursor-pointer">
-            {buttonText}
+            {!loading ? buttonText : "Loading..."}
           </Button>
         </form>
       </Form>

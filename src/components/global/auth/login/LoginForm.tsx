@@ -30,9 +30,13 @@ const LoginForm = ({ heading, buttonText }: LoginInterfaceType) => {
   });
 
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   const router = useRouter();
 
   async function onSubmit(values: z.infer<typeof loginFomrSchema>) {
+    setLoading(true);
+
     try {
       const response = await axios.post(`/api/auth/login`, values);
       switch (response.status) {
@@ -67,6 +71,8 @@ const LoginForm = ({ heading, buttonText }: LoginInterfaceType) => {
       form.reset();
       console.error(`Failed to login user `, error);
       toast.error(`Failed to login user ` + error);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -120,7 +126,7 @@ const LoginForm = ({ heading, buttonText }: LoginInterfaceType) => {
           />
 
           <Button type="submit" className="w-full !cursor-pointer">
-            {buttonText}
+            {!loading ? buttonText : "Loading..."}
           </Button>
         </form>
       </Form>
