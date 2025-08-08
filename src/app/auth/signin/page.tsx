@@ -19,22 +19,19 @@ const Signin = ({
   signupText = "Dont have an account?",
   signupUrl = "http://localhost:3000/auth/signup",
 }) => {
+  
   return (
-    <main className="flex w-full h-full flex-1 items-center justify-between flex-col md:flex-row ">
-      <section className="h-full flex-1  ">
-        <div className="flex h-full items-center justify-center">
-          <div className="flex flex-col items-center gap-10 lg:justify-start">
-            <FormHeader logo={logo} />
-            <LoginForm buttonText={buttonText} heading={heading} />
-            <FormBottom
-              linkText={"Signup"}
-              text={signupText}
-              url={signupUrl}
-            />
-          </div>
+    <main className="flex w-full h-screen flex-1 items-center justify-between flex-col md:flex-row relative">
+      <section className="w-full py-6 md:w-[60%] h-full  flex items-center justify-center">
+        <div className="flex flex-col items-center gap-10 w-full max-w-md px-4">
+          <FormHeader logo={logo} />
+          <LoginForm buttonText={buttonText} heading={heading} />
+          <FormBottom linkText={"Signup"} text={signupText} url={signupUrl} />
         </div>
       </section>
-      <SharedSection />
+      <section className="w-[0%] md:w-[40%] h-[0] md:h-full">
+        <SharedSection />
+      </section>{" "}
     </main>
   );
 };
