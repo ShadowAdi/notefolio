@@ -13,15 +13,19 @@ const AuthContext = createContext<AuthContextInterface>({
   token: null,
   login: () => {},
   logout: () => {},
+  loading:true
 });
 
 export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const [token, setToken] = useState<string | null>(null);
+    const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const savedToken = localStorage.getItem("token");
     if (savedToken) {
       setToken(savedToken);
     }
+    setLoading(false)
   }, []);
 
   const login = (token: string) => {
@@ -35,7 +39,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated: !!token, token, login, logout }}
+      value={{ isAuthenticated: !!token, token, login, logout,loading }}
     >
       {children}
     </AuthContext.Provider>

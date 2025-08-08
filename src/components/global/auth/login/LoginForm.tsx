@@ -9,6 +9,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/context/AuthContext";
 import { LoginInterfaceType } from "@/types/auth/Login/LoginType";
 import { loginFomrSchema } from "@/zodSchema/LoginFormSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -28,6 +29,7 @@ const LoginForm = ({ heading, buttonText }: LoginInterfaceType) => {
       password: "",
     },
   });
+  const { login } = useAuth();
 
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -43,6 +45,7 @@ const LoginForm = ({ heading, buttonText }: LoginInterfaceType) => {
         case 200:
           form.reset();
           toast.success(response.data.message);
+          login(response.data.token);
           router.push("/home");
           break;
         case 500:

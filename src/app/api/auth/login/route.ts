@@ -49,7 +49,7 @@ export async function POST(request: Request) {
       }
     );
     return new Response(
-      JSON.stringify({ success: true, jwtToken, message: `Login Successfull` }),
+      JSON.stringify({ success: true, token:jwtToken, message: `Login Successfull` }),
       {
         status: 200,
       }

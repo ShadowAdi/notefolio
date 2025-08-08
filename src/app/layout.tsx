@@ -13,6 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 import { Toaster } from "@/components/ui/sonner";
+import { AuthContextProvider } from "@/context/AuthContext";
 
 export const metadata: Metadata = {
   title: "NoteFolio",
@@ -28,7 +29,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased w-full min-h-screen flex flex-col h-full`}
       >
-        {children}
+        <AuthContextProvider>{children}</AuthContextProvider>
         <Toaster richColors />
       </body>
     </html>

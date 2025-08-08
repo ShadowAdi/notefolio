@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import React from "react";
 
@@ -12,7 +13,7 @@ const HomeNavbar = () => {
             </Link>
           </div>
         </div>
-        <div className="flex items-center space-y-4">
+        <div className="flex items-center space-x-5 flex-row">
           <Link
             href={"/write"}
             className=" bg-stone-800 hover:bg-stone-900 transition-all duration-500 px-6  py-1.5 
@@ -20,6 +21,9 @@ const HomeNavbar = () => {
           >
             Write
           </Link>
+          <Button className=" bg-slate-50 hover:bg-slate-100 px-6  py-1.5 text-xs font-medium text-black shadow-sm rounded-full transition-all duration-500 !cursor-pointer">
+            Profile
+          </Button>
         </div>
       </div>
     </header>

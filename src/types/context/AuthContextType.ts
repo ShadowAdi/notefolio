@@ -3,4 +3,5 @@ export interface AuthContextInterface {
   token: string | null;
   login: (token: string) => void;
   logout: () => void;
+  loading: boolean;
 }
