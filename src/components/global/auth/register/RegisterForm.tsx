@@ -19,6 +19,9 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import Image from "next/image";
 import { Eye, EyeClosed } from "lucide-react";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const RegisterForm = ({ heading, buttonText }: RegisterInterfaceType) => {
   const form = useForm<z.infer<typeof registerFormSchema>>({
@@ -35,9 +38,31 @@ const RegisterForm = ({ heading, buttonText }: RegisterInterfaceType) => {
   const profileUrl = form.watch("profileUrl");
   const [showPassword, setShowPassword] = useState(false);
   const [imgError, setImgError] = useState(false);
+  const router = useRouter();
 
   async function onSubmit(values: z.infer<typeof registerFormSchema>) {
-    console.log(values);
+    try {
+      const response = await axios.post(`/api/auth/signup`, values);
+      switch (response.status) {
+        case 201:
+          toast.success(response.data.message);
+          router.push("/login");
+          break;
+        case 500:
+          toast.error(response.statusText);
+          break;
+        case 400:
+          toast.error(response.statusText);
+          break;
+        case 404:
+          toast.error(response.statusText);
+          break;
+        default:
+          break;
+      }
+    } catch (error) {
+      console.error(`Failed to register user `, error);
+    }
   }
 
   return (

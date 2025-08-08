@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/global/hero/Navbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -12,6 +11,9 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+
+import { Toaster } from "@/components/ui/sonner"
+
 
 export const metadata: Metadata = {
   title: "NoteFolio",
@@ -28,6 +30,8 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased w-full min-h-screen flex flex-col h-full`}
       >
         {children}
+                <Toaster />
+
       </body>
     </html>
   );

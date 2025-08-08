@@ -1,8 +1,9 @@
 import { db } from "@/db/db";
 import { User } from "@/schemas/User";
 import bcrypt from "bcrypt";
+import { eq } from "drizzle-orm";
 
-export async function POST(request: Request, res: Response) {
+export async function POST(request: Request) {
   const body = await request.json();
   const { username, email, password, profileUrl, bio } = body;
   if (!username || !email || !password) {
@@ -12,6 +13,15 @@ export async function POST(request: Request, res: Response) {
     });
   }
   try {
+    const users = await db.select().from(User).where(eq(User.email, email));
+    const isUserExist = users[0];
+    if (isUserExist) {
+      return new Response(JSON.stringify({ success: false }), {
+        status: 404,
+        statusText: `User with email: ${email} already exists`,
+      });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = {
       id: crypto.randomUUID(),
