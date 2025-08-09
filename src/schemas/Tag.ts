@@ -1,9 +1,9 @@
 import { pgTable, text, uuid } from "drizzle-orm/pg-core";
-import { Blog } from "./Blog";
+import { BlogSchema } from "./Blog";
 
 export const tagTable = pgTable("blogTags", {
   blogId: uuid("blogId")
     .notNull()
-    .references(() => Blog.id),
+    .references(() => BlogSchema.id),
   tag: text("tag").notNull(),
 });

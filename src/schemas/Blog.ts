@@ -7,7 +7,7 @@ import {
 import { User } from "./User";
 import { sql } from "drizzle-orm";
 
-export const Blog = pgTable("blog", {
+export const BlogSchema = pgTable("blog", {
   id: uuid("id").primaryKey(),
   blogTitle: text("blogTitle").unique().notNull(),
   blogDescription: text("blogDescription").notNull(),
