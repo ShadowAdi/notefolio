@@ -1,5 +1,5 @@
 import { pgTable,uuid } from "drizzle-orm/pg-core";
-import { Blog } from "./Blog";
+import { BlogSchema } from "./Blog";
 import { User } from "./User";
 
 export const BlogDownvote = pgTable(
@@ -7,7 +7,7 @@ export const BlogDownvote = pgTable(
   {
     blogId: uuid("blog_id")
       .notNull()
-      .references(() => Blog.id),
+      .references(() => BlogSchema.id),
     userId: uuid("user_id")
       .notNull()
       .references(() => User.id),

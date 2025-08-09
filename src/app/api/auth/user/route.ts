@@ -6,11 +6,10 @@ export async function GET(request: Request) {
     return new Response(JSON.stringify({ success: true, user: safeUser }), {
       status: 200,
     });
-  } catch (error) {
-    console.error(`Failed to get User ${error}`);
-    return new Response(JSON.stringify({ success: false, error }), {
-      status: 500,
-      statusText: `Failed To get User. Server Error`,
-    });
+  } catch (err: any) {
+    return new Response(
+      JSON.stringify({ success: false, message: err.message }),
+      { status: 401 }
+    );
   }
 }

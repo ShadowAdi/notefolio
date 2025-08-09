@@ -1,4 +1,4 @@
-import { Blog } from "@/schemas/Blog";
+import { BlogSchema } from "@/schemas/Blog";
 import { BlogDownvote } from "@/schemas/BlogDownvote";
 import { BlogUpvote } from "@/schemas/BlogUpvote";
 import { Discussion } from "@/schemas/Disscussions";
@@ -17,7 +17,7 @@ if (!DATABASE_URL) {
 export const db = drizzle(DATABASE_URL, {
   schema: {
     User,
-    Blog,
+    BlogSchema,
     Discussion,
     BlogUpvote,
     BlogDownvote,

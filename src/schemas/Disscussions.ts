@@ -1,6 +1,6 @@
 import { sql } from "drizzle-orm";
 import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
-import { Blog } from "./Blog";
+import { BlogSchema } from "./Blog";
 import { User } from "./User";
 
 export const Discussion = pgTable("discussion", {
@@ -12,7 +12,7 @@ export const Discussion = pgTable("discussion", {
     .notNull(),
   blogId: uuid("blodId")
     .notNull()
-    .references(() => Blog.id),
+    .references(() => BlogSchema.id),
   userId: uuid("authordId")
     .notNull()
     .references(() => User.id),
