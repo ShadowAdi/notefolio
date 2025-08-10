@@ -1,18 +1,31 @@
 "use client";
 import React, { useState } from "react";
-import { EditorContent, useEditor } from "@tiptap/react";
+import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { BubbleMenu } from "@tiptap/react/menus";
 import { Button } from "@/components/ui/button";
 import Blockquote from "@tiptap/extension-blockquote";
-import { Code, LinkIcon, TextQuote, XIcon } from "lucide-react";
+import {
+  AlignCenter,
+  AlignLeft,
+  AlignRight,
+  Code,
+  LinkIcon,
+  Redo,
+  TextQuote,
+  Undo,
+  XIcon,
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import Link from "@tiptap/extension-link";
 import Heading from "@tiptap/extension-heading";
 import HorizontalRule from "@tiptap/extension-horizontal-rule";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import { all, createLowlight } from "lowlight";
-import 'highlight.js/styles/github-dark.css'; 
+import "highlight.js/styles/github-dark.css";
+import TextAlign from "@tiptap/extension-text-align";
+import { Placeholder } from "@tiptap/extensions";
+import Youtube from '@tiptap/extension-youtube'
 
 const Write = () => {
   const [blogTitle, setBlogTitle] = useState("");
@@ -97,6 +110,14 @@ const Write = () => {
         lowlight,
         defaultLanguage: "javascript",
       }),
+      TextAlign.configure({}),
+      Placeholder.configure({
+        placeholder: "Write something …",
+      }),
+       Youtube.configure({
+        controls: false,
+        nocookie: true,
+      }),
     ],
     editable: true,
     immediatelyRender: false,
@@ -110,6 +131,19 @@ const Write = () => {
       },
     },
   });
+
+  const editorState = useEditorState({
+    editor,
+    selector: (ctx) => {
+      return {
+        canUndo: ctx?.editor?.can().chain().focus().undo().run(),
+        canRedo: ctx?.editor?.can().chain().focus().redo().run(),
+      };
+    },
+  });
+
+  const canUndo = editorState?.canUndo ?? false;
+  const canRedo = editorState?.canRedo ?? false;
 
   const getCurrentHeadingLevel = () => {
     if (!editor) return null;
@@ -133,7 +167,7 @@ const Write = () => {
       editor
         .chain()
         .focus()
-        .toggleHeading({ level: currentLevel + 1 })
+        .toggleHeading({ level: (currentLevel + 1) as any })
         .run();
     } else {
       editor.chain().focus().setParagraph().run();
@@ -146,7 +180,7 @@ const Write = () => {
   };
 
   return (
-    <main className="flex flex-col gap-4 items-center">
+    <main className="flex flex-col gap-4 flex-1 items-center relative">
       <div className="flex flex-col items-center max-w-2xl w-full">
         <input
           onChange={(e) => setBlogTitle(e.currentTarget.value)}
@@ -158,7 +192,7 @@ const Write = () => {
         <div className="w-full h-full relative">
           <EditorContent
             placeholder="Start Writing..."
-            className="list-disc list-inside w-full h-full overflow-y-auto ProseMirror scrollbar-transparent_tiptap"
+            className="list-disc list-inside w-full h-full overflow-y-auto ProseMirror scrollbar-transparent_tiptap placeholder:text-black"
             style={{
               whiteSpace: "pre-line",
               overflowY: "auto",
@@ -357,10 +391,72 @@ const Write = () => {
                 >
                   <Code size={16} stroke="white" />
                 </Button>
+                <Button
+                  onClick={() => {
+                    if (!editor) {
+                      return;
+                    }
+                    editor.chain().focus().setTextAlign("left").run();
+                  }}
+                  className={`flex h-8 w-8 items-center justify-center hover:bg-stone-700 p-2 text-base cursor-pointer rounded-md text-white bg-stone-950 ${
+                    editor.isActive({ textAlign: "left" }) ? "bg-stone-700" : ""
+                  } `}
+                  type="button"
+                >
+                  <AlignLeft size={16} stroke="white" />
+                </Button>
+                <Button
+                  onClick={() => {
+                    if (!editor) {
+                      return;
+                    }
+                    editor.chain().focus().setTextAlign("center").run();
+                  }}
+                  className={`flex h-8 w-8 items-center justify-center hover:bg-stone-700 p-2 text-base cursor-pointer rounded-md text-white bg-stone-950 ${
+                    editor.isActive({ textAlign: "center" })
+                      ? "bg-stone-700"
+                      : ""
+                  } `}
+                  type="button"
+                >
+                  <AlignCenter size={16} stroke="white" />
+                </Button>
+                <Button
+                  onClick={() => {
+                    if (!editor) {
+                      return;
+                    }
+                    editor.chain().focus().setTextAlign("right").run();
+                  }}
+                  className={`flex h-8 w-8 items-center justify-center hover:bg-stone-700 p-2 text-base cursor-pointer rounded-md text-white bg-stone-950 ${
+                    editor.isActive({ textAlign: "right" })
+                      ? "bg-stone-700"
+                      : ""
+                  } `}
+                  type="button"
+                >
+                  <AlignRight size={16} stroke="white" />
+                </Button>
               </>
             )}
           </BubbleMenu>
         )}
+      </div>
+      <div className="absolute bottom-6 right-6 flex items-center space-x-5 ">
+        <Button
+          onClick={() => editor?.chain().focus().undo().run()}
+          disabled={!canUndo}
+          className="rounded-full flex items-center justify-center p-5 cursor-pointer"
+        >
+          <Undo stroke="white" size={16} />
+        </Button>
+        <Button
+          onClick={() => editor?.chain().focus().redo().run()}
+          disabled={!canRedo}
+          className="rounded-full flex items-center justify-center p-5 cursor-pointer"
+        >
+          <Redo stroke="white" size={16} />
+        </Button>
       </div>
     </main>
   );

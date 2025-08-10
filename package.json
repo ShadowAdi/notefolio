@@ -19,6 +19,8 @@
     "@tiptap/extension-heading": "^3.0.9",
     "@tiptap/extension-horizontal-rule": "^3.0.9",
     "@tiptap/extension-link": "^3.0.9",
+    "@tiptap/extension-text-align": "^3.0.9",
+    "@tiptap/extension-youtube": "^3.0.9",
     "@tiptap/pm": "^3.0.9",
     "@tiptap/react": "^3.0.9",
     "@tiptap/starter-kit": "^3.0.9",
