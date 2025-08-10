@@ -120,3 +120,21 @@
     @apply bg-background text-foreground;
   }
 }
+
+.ProseMirror pre {
+  background: #1e1e1e;
+  color: #d4d4d4;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+}
+
+.ProseMirror pre code {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.9rem;
+}
+
+.hljs {
+  display: block;
+  overflow-x: auto;
+}

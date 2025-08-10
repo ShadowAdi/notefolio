@@ -5,17 +5,21 @@ import StarterKit from "@tiptap/starter-kit";
 import { BubbleMenu } from "@tiptap/react/menus";
 import { Button } from "@/components/ui/button";
 import Blockquote from "@tiptap/extension-blockquote";
-import { LinkIcon, TextQuote, XIcon } from "lucide-react";
+import { Code, LinkIcon, TextQuote, XIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import Link from "@tiptap/extension-link";
 import Heading from "@tiptap/extension-heading";
 import HorizontalRule from "@tiptap/extension-horizontal-rule";
+import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
+import { all, createLowlight } from "lowlight";
+import 'highlight.js/styles/github-dark.css'; 
 
 const Write = () => {
   const [blogTitle, setBlogTitle] = useState("");
   const [blogDescription, setBlogDescription] = useState("");
   const [openLink, setOpenLink] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
+  const lowlight = createLowlight(all);
 
   const editor = useEditor({
     content: blogDescription,
@@ -89,6 +93,10 @@ const Write = () => {
         },
       }),
       HorizontalRule,
+      CodeBlockLowlight.configure({
+        lowlight,
+        defaultLanguage: "javascript",
+      }),
     ],
     editable: true,
     immediatelyRender: false,
@@ -103,7 +111,6 @@ const Write = () => {
     },
   });
 
-  // Function to get current heading level or return null if not a heading
   const getCurrentHeadingLevel = () => {
     if (!editor) return null;
 
@@ -121,22 +128,18 @@ const Write = () => {
     const currentLevel = getCurrentHeadingLevel();
 
     if (currentLevel === null) {
-      // Not a heading, make it H1
       editor.chain().focus().toggleHeading({ level: 1 }).run();
     } else if (currentLevel < 6) {
-      // Increase heading level (H1 -> H2 -> H3 etc.)
       editor
         .chain()
         .focus()
         .toggleHeading({ level: currentLevel + 1 })
         .run();
     } else {
-      // At H6, convert back to normal paragraph
       editor.chain().focus().setParagraph().run();
     }
   };
 
-  // Function to get display text for heading button
   const getHeadingButtonText = () => {
     const currentLevel = getCurrentHeadingLevel();
     return currentLevel ? `H${currentLevel}` : "H";
@@ -339,6 +342,20 @@ const Write = () => {
                   type="button"
                 >
                   HR
+                </Button>
+                <Button
+                  onClick={() => {
+                    if (!editor) {
+                      return;
+                    }
+                    editor.chain().focus().toggleCodeBlock().run();
+                  }}
+                  className={`flex h-8 w-8 items-center justify-center hover:bg-stone-700 p-2 text-base cursor-pointer rounded-md text-white bg-stone-950 ${
+                    editor.isActive("codeBlock") ? "bg-stone-700" : ""
+                  } `}
+                  type="button"
+                >
+                  <Code size={16} stroke="white" />
                 </Button>
               </>
             )}
