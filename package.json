@@ -18,6 +18,7 @@
     "@tiptap/extension-code-block-lowlight": "^3.0.9",
     "@tiptap/extension-heading": "^3.0.9",
     "@tiptap/extension-horizontal-rule": "^3.0.9",
+    "@tiptap/extension-image": "^3.0.9",
     "@tiptap/extension-link": "^3.0.9",
     "@tiptap/extension-text-align": "^3.0.9",
     "@tiptap/extension-youtube": "^3.0.9",

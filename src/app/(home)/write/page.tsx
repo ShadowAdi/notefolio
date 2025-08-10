@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { use, useCallback, useState } from "react";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { BubbleMenu, FloatingMenu } from "@tiptap/react/menus";
@@ -10,6 +10,7 @@ import {
   AlignLeft,
   AlignRight,
   Code,
+  ImageIcon,
   LinkIcon,
   ListIcon,
   ListOrderedIcon,
@@ -30,6 +31,7 @@ import { Placeholder } from "@tiptap/extensions";
 import Youtube from "@tiptap/extension-youtube";
 import { FaYoutube } from "react-icons/fa";
 import { BulletList, ListItem, OrderedList } from "@tiptap/extension-list";
+import Image from "@tiptap/extension-image";
 
 const Write = () => {
   const [blogTitle, setBlogTitle] = useState("");
@@ -41,6 +43,10 @@ const Write = () => {
   const [width, setWidth] = React.useState(640);
   const [youtubeOpenLink, setYoutubeOpenLink] = useState(false);
   const [youtubeUrl, setYoutubeUrl] = useState("");
+  const [imageOpenLink, setImageOpenLink] = useState(false);
+  const [imageUrl, setImageUrl] = useState("");
+  const [imageWidth, setImageWidth] = useState(320);
+  const [imageHeight, setImageHeight] = useState(180);
 
   const editor = useEditor({
     content: blogDescription,
@@ -152,6 +158,12 @@ const Write = () => {
         keepMarks: true,
         keepAttributes: true,
       }),
+      Image.configure({
+        inline: true,
+        HTMLAttributes: {
+          class: "object-cover my-2", // Removed fixed dimensions
+        },
+      }),
     ],
     editable: true,
     immediatelyRender: false,
@@ -176,7 +188,7 @@ const Write = () => {
     },
   });
 
-  const addYoutubeVideo = () => {
+  const addYoutubeVideo = useCallback(() => {
     if (youtubeUrl) {
       editor?.commands.setYoutubeVideo({
         src: youtubeUrl,
@@ -184,7 +196,25 @@ const Write = () => {
         height: Math.max(180, parseInt(String(height), 10)) || 480,
       });
     }
-  };
+  }, [editor, youtubeUrl, height, width]);
+
+  const addImage = useCallback(() => {
+    if (imageUrl) {
+      editor
+        ?.chain()
+        .focus()
+        .setImage({
+          src: imageUrl,
+          width: Math.max(100, parseInt(String(imageWidth), 10)) || 320,
+          height: Math.max(100, parseInt(String(imageHeight), 10)) || 180,
+        })
+        .run();
+      setImageOpenLink(false);
+      setImageUrl("");
+      setImageWidth(320);
+      setImageHeight(180);
+    }
+  }, [editor, imageUrl, imageWidth, imageHeight]);
 
   const canUndo = editorState?.canUndo ?? false;
   const canRedo = editorState?.canRedo ?? false;
@@ -394,6 +424,55 @@ const Write = () => {
                 </div>
                 <div className="flex flex-row w-full  space-x-4  items-center"></div>
               </div>
+            ) : imageOpenLink ? (
+              <div className="flex flex-col w-full items-center space-y-3">
+                <div className="flex flex-row space-x-4 items-center">
+                  <Input
+                    className="text-white w-64 border-0 focus-visible:ring-0"
+                    onChange={(e) => setImageUrl(e.target.value)}
+                    placeholder="Add Image URL..."
+                    value={imageUrl}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        addImage();
+                      }
+                      if (e.key === "Escape") {
+                        setImageOpenLink(false);
+                      }
+                    }}
+                  />
+                  <Input
+                    id="imageWidth"
+                    type="number"
+                    min="100"
+                    max="1024"
+                    placeholder="width"
+                    value={imageWidth}
+                    className="w-16 !py-0 px-0.5 text-white border-0 focus-visible:ring-0 no-scrollbar"
+                    onChange={(event) =>
+                      setImageWidth(Number(event.target.value))
+                    }
+                  />
+                  <Input
+                    id="imageHeight"
+                    type="number"
+                    min="100"
+                    max="720"
+                    placeholder="height"
+                    value={imageHeight}
+                    className="w-16 !py-0 px-0.5 text-white border-0 focus-visible:ring-0 no-scrollbar"
+                    onChange={(event) =>
+                      setImageHeight(Number(event.target.value))
+                    }
+                  />
+                  <div
+                    onClick={() => setImageOpenLink(false)}
+                    className="cursor-pointer"
+                  >
+                    <XIcon size={16} stroke="white" />
+                  </div>
+                </div>
+              </div>
             ) : (
               <>
                 <Button
@@ -576,6 +655,20 @@ const Write = () => {
                 >
                   <ListIcon size={16} stroke="white" />
                 </Button>
+                <Button
+                  onClick={() => {
+                    if (!editor) {
+                      return;
+                    }
+                    setImageUrl("");
+                    setImageOpenLink(true);
+                  }}
+                  className={`flex h-8 w-8 items-center justify-center hover:bg-stone-700 p-2 text-base cursor-pointer rounded-md
+                 text-white bg-stone-950`}
+                  type="button"
+                >
+                  <ImageIcon size={16} stroke="white" />
+                </Button>
               </>
             )}
           </BubbleMenu>
@@ -664,6 +757,55 @@ const Write = () => {
                   </div>
                 </div>
                 <div className="flex flex-row w-full  space-x-4  items-center"></div>
+              </div>
+            ) : imageOpenLink ? (
+              <div className="flex flex-col w-full items-center space-y-3">
+                <div className="flex flex-row space-x-4 items-center">
+                  <Input
+                    className="text-white w-64 border-0 focus-visible:ring-0"
+                    onChange={(e) => setImageUrl(e.target.value)}
+                    placeholder="Add Image URL..."
+                    value={imageUrl}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        addImage();
+                      }
+                      if (e.key === "Escape") {
+                        setImageOpenLink(false);
+                      }
+                    }}
+                  />
+                  <Input
+                    id="imageWidth"
+                    type="number"
+                    min="100"
+                    max="1024"
+                    placeholder="width"
+                    value={imageWidth}
+                    className="w-16 !py-0 px-0.5 text-white border-0 focus-visible:ring-0 no-scrollbar"
+                    onChange={(event) =>
+                      setImageWidth(Number(event.target.value))
+                    }
+                  />
+                  <Input
+                    id="imageHeight"
+                    type="number"
+                    min="100"
+                    max="720"
+                    placeholder="height"
+                    value={imageHeight}
+                    className="w-16 !py-0 px-0.5 text-white border-0 focus-visible:ring-0 no-scrollbar"
+                    onChange={(event) =>
+                      setImageHeight(Number(event.target.value))
+                    }
+                  />
+                  <div
+                    onClick={() => setImageOpenLink(false)}
+                    className="cursor-pointer"
+                  >
+                    <XIcon size={16} stroke="white" />
+                  </div>
+                </div>
               </div>
             ) : (
               <>
@@ -846,6 +988,18 @@ const Write = () => {
                   type="button"
                 >
                   <ListIcon size={16} stroke="white" />
+                </Button>
+                <Button
+                  onClick={() => {
+                    setImageUrl("");
+                    setImageOpenLink(true);
+                  }}
+                  className={`flex h-8 w-8 items-center justify-center hover:bg-stone-700 p-2 text-base cursor-pointer rounded-md text-white bg-stone-950 ${
+                    editor.isActive("image") ? "bg-stone-700" : ""
+                  }`}
+                  type="button"
+                >
+                  <ImageIcon size={16} stroke="white" />
                 </Button>
               </>
             )}
