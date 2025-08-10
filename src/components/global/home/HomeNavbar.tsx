@@ -1,12 +1,13 @@
 "use client";
-import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import React from "react";
 
 const HomeNavbar = () => {
   const { user, isAuthenticated, loading } = useAuth();
-  
+  const pathname = usePathname();
+
   return (
     <header className="bg-white py-3 w-full">
       <div className="mx-auto max-w-screen-xl flex flex-row items-center justify-between px-4 sm:px-6 lg:px-8 py-2">
@@ -18,13 +19,23 @@ const HomeNavbar = () => {
           </div>
         </div>
         <div className="flex items-center space-x-5 flex-row">
-          <Link
-            href={"/write"}
-            className=" bg-stone-800 hover:bg-stone-900 transition-all duration-500 px-6  py-1.5 
+          {pathname?.includes("/write") ? (
+            <Link
+              href={"/write"}
+              className=" bg-stone-800 hover:bg-stone-900 transition-all duration-500 px-6  py-1.5 
             text-xs font-medium text-white shadow-sm rounded-full"
-          >
-            Write
-          </Link>
+            >
+              Publish
+            </Link>
+          ) : (
+            <Link
+              href={"/write"}
+              className=" bg-stone-800 hover:bg-stone-900 transition-all duration-500 px-6  py-1.5 
+            text-xs font-medium text-white shadow-sm rounded-full"
+            >
+              Write
+            </Link>
+          )}
           <Link
             href={"/profile"}
             className=" bg-slate-50 hover:bg-slate-100 transition-all duration-500 px-6  py-1.5 
