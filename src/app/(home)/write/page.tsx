@@ -11,13 +11,15 @@ import {
   AlignRight,
   Code,
   LinkIcon,
+  ListIcon,
+  ListOrderedIcon,
   Redo,
   TextQuote,
   Undo,
   XIcon,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import Link from "@tiptap/extension-link";
+import { Link } from "@tiptap/extension-link";
 import Heading from "@tiptap/extension-heading";
 import HorizontalRule from "@tiptap/extension-horizontal-rule";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
@@ -27,6 +29,7 @@ import TextAlign from "@tiptap/extension-text-align";
 import { Placeholder } from "@tiptap/extensions";
 import Youtube from "@tiptap/extension-youtube";
 import { FaYoutube } from "react-icons/fa";
+import { BulletList, ListItem, OrderedList } from "@tiptap/extension-list";
 
 const Write = () => {
   const [blogTitle, setBlogTitle] = useState("");
@@ -42,7 +45,12 @@ const Write = () => {
   const editor = useEditor({
     content: blogDescription,
     extensions: [
-      StarterKit.configure({ horizontalRule: false }),
+      StarterKit.configure({
+        horizontalRule: false,
+        orderedList: false,
+        listItem: false,
+        bulletList: false,
+      }),
       Blockquote.configure({
         HTMLAttributes: {
           class: "border-l-4 border-gray-300 pl-4 italic", // Optional: Style the blockquote
@@ -115,13 +123,34 @@ const Write = () => {
         lowlight,
         defaultLanguage: "javascript",
       }),
-      TextAlign.configure({}),
+      TextAlign.configure({
+        types: ["heading", "paragraph"],
+      }),
       Placeholder.configure({
         placeholder: "Write something …",
       }),
       Youtube.configure({
         controls: false,
         nocookie: true,
+      }),
+      OrderedList.configure({
+        HTMLAttributes: {
+          class: "list-decimal list-outside ml-4",
+        },
+        keepMarks: true,
+        keepAttributes: true,
+      }),
+      ListItem.configure({
+        HTMLAttributes: {
+          class: "my-1",
+        },
+      }),
+      BulletList.configure({
+        HTMLAttributes: {
+          class: "list-disc list-outside ml-4", // Style for unordered list
+        },
+        keepMarks: true,
+        keepAttributes: true,
       }),
     ],
     editable: true,
@@ -195,8 +224,8 @@ const Write = () => {
   };
 
   return (
-    <main className="flex flex-col gap-4 flex-1 items-center relative">
-      <div className="flex flex-col items-center max-w-2xl w-full">
+    <main className="flex flex-col gap-4 flex-1 items-center h-screen ">
+      <div className="flex flex-col h-full flex-1 relative  items-center max-w-2xl w-full">
         <input
           onChange={(e) => setBlogTitle(e.currentTarget.value)}
           value={blogTitle}
@@ -204,10 +233,10 @@ const Write = () => {
           placeholder="Add A Title..."
           className="py-5 w-full outline-0 ring-0 focus-visible:ring-0 placeholder:text-neutral-400 text-black text-2xl"
         />
-        <div className="w-full h-full relative">
+        <div className="w-full h-full flex-1   relative">
           <EditorContent
             placeholder="Start Writing..."
-            className="list-disc list-inside w-full h-full overflow-y-auto ProseMirror scrollbar-transparent_tiptap placeholder:text-black"
+            className="list-disc list-inside flex-1 min-h-[400px] w-full h-full overflow-y-auto ProseMirror scrollbar-transparent_tiptap placeholder:text-black"
             style={{
               whiteSpace: "pre-line",
               overflowY: "auto",
@@ -258,9 +287,27 @@ const Write = () => {
                 font-size: 1rem !important;
                 line-height: 1.5rem !important;
               }
+              .ProseMirror ol { list-style-type: decimal !important; margin-left: 1.5rem !important; padding-left: 0 !important; }
+              .ProseMirror ol li { margin: 0.25rem 0 !important; }
             `,
             }}
           />
+          <div className="absolute top-6 right-6 flex items-center space-x-5 ">
+            <Button
+              onClick={() => editor?.chain().focus().undo().run()}
+              disabled={!canUndo}
+              className="rounded-full flex items-center justify-center p-5 cursor-pointer"
+            >
+              <Undo stroke="white" size={16} />
+            </Button>
+            <Button
+              onClick={() => editor?.chain().focus().redo().run()}
+              disabled={!canRedo}
+              className="rounded-full flex items-center justify-center p-5 cursor-pointer"
+            >
+              <Redo stroke="white" size={16} />
+            </Button>
+          </div>
         </div>
         {editor && (
           <BubbleMenu
@@ -504,6 +551,30 @@ const Write = () => {
                   type="button"
                 >
                   <FaYoutube size={16} stroke="white" />
+                </Button>
+                <Button
+                  onClick={() => {
+                    editor.chain().focus().toggleOrderedList().run();
+                  }}
+                  className={`flex h-8 w-8 items-center justify-center hover:bg-stone-700 p-2 text-base cursor-pointer rounded-md
+                 text-white bg-stone-950 ${
+                   editor.isActive("orderedList") ? "bg-stone-700" : ""
+                 }`}
+                  type="button"
+                >
+                  <ListOrderedIcon size={16} stroke="white" />
+                </Button>
+                <Button
+                  onClick={() => {
+                    editor.chain().focus().toggleBulletList().run();
+                  }}
+                  className={`flex h-8 w-8 items-center justify-center hover:bg-stone-700 p-2 text-base cursor-pointer rounded-md
+                 text-white bg-stone-950 ${
+                   editor.isActive("bulletList") ? "bg-stone-700" : ""
+                 }`}
+                  type="button"
+                >
+                  <ListIcon size={16} stroke="white" />
                 </Button>
               </>
             )}
@@ -752,26 +823,34 @@ const Write = () => {
                 >
                   <FaYoutube size={16} stroke="white" />
                 </Button>
+                <Button
+                  onClick={() => {
+                    editor.chain().focus().toggleOrderedList().run();
+                  }}
+                  className={`flex h-8 w-8 items-center justify-center hover:bg-stone-700 p-2 text-base cursor-pointer rounded-md
+                 text-white bg-stone-950 ${
+                   editor.isActive("orderedList") ? "is-active" : ""
+                 }`}
+                  type="button"
+                >
+                  <ListOrderedIcon size={16} stroke="white" />
+                </Button>
+                <Button
+                  onClick={() => {
+                    editor.chain().focus().toggleBulletList().run();
+                  }}
+                  className={`flex h-8 w-8 items-center justify-center hover:bg-stone-700 p-2 text-base cursor-pointer rounded-md
+                 text-white bg-stone-950 ${
+                   editor.isActive("bulletList") ? "bg-stone-700" : ""
+                 }`}
+                  type="button"
+                >
+                  <ListIcon size={16} stroke="white" />
+                </Button>
               </>
             )}
           </FloatingMenu>
         )}
-      </div>
-      <div className="absolute bottom-6 right-6 flex items-center space-x-5 ">
-        <Button
-          onClick={() => editor?.chain().focus().undo().run()}
-          disabled={!canUndo}
-          className="rounded-full flex items-center justify-center p-5 cursor-pointer"
-        >
-          <Undo stroke="white" size={16} />
-        </Button>
-        <Button
-          onClick={() => editor?.chain().focus().redo().run()}
-          disabled={!canRedo}
-          className="rounded-full flex items-center justify-center p-5 cursor-pointer"
-        >
-          <Redo stroke="white" size={16} />
-        </Button>
       </div>
     </main>
   );
