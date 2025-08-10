@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { BubbleMenu } from "@tiptap/react/menus";
+import { BubbleMenu, FloatingMenu } from "@tiptap/react/menus";
 import { Button } from "@/components/ui/button";
 import Blockquote from "@tiptap/extension-blockquote";
 import {
@@ -25,7 +25,8 @@ import { all, createLowlight } from "lowlight";
 import "highlight.js/styles/github-dark.css";
 import TextAlign from "@tiptap/extension-text-align";
 import { Placeholder } from "@tiptap/extensions";
-import Youtube from '@tiptap/extension-youtube'
+import Youtube from "@tiptap/extension-youtube";
+import { FaYoutube } from "react-icons/fa";
 
 const Write = () => {
   const [blogTitle, setBlogTitle] = useState("");
@@ -33,6 +34,10 @@ const Write = () => {
   const [openLink, setOpenLink] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
   const lowlight = createLowlight(all);
+  const [height, setHeight] = React.useState(480);
+  const [width, setWidth] = React.useState(640);
+  const [youtubeOpenLink, setYoutubeOpenLink] = useState(false);
+  const [youtubeUrl, setYoutubeUrl] = useState("");
 
   const editor = useEditor({
     content: blogDescription,
@@ -114,7 +119,7 @@ const Write = () => {
       Placeholder.configure({
         placeholder: "Write something …",
       }),
-       Youtube.configure({
+      Youtube.configure({
         controls: false,
         nocookie: true,
       }),
@@ -141,6 +146,16 @@ const Write = () => {
       };
     },
   });
+
+  const addYoutubeVideo = () => {
+    if (youtubeUrl) {
+      editor?.commands.setYoutubeVideo({
+        src: youtubeUrl,
+        width: Math.max(320, parseInt(String(width), 10)) || 640,
+        height: Math.max(180, parseInt(String(height), 10)) || 480,
+      });
+    }
+  };
 
   const canUndo = editorState?.canUndo ?? false;
   const canRedo = editorState?.canRedo ?? false;
@@ -288,6 +303,49 @@ const Write = () => {
                 >
                   <XIcon size={16} stroke="white" />{" "}
                 </div>
+              </div>
+            ) : youtubeOpenLink ? (
+              <div className="flex flex-col w-full items-center space-y-3">
+                <div className="flex flex-row space-x-4  items-center">
+                  <Input
+                    className=" text-white w-64 border-0 focus-visible:ring-0"
+                    onChange={(e) => {
+                      setYoutubeUrl(e.target.value);
+                    }}
+                    placeholder="Add Link..."
+                    value={youtubeUrl}
+                    onKeyDown={addYoutubeVideo}
+                  />
+                  <Input
+                    id="width"
+                    type="number"
+                    min="320"
+                    max="1024"
+                    placeholder="width"
+                    value={width}
+                    className="w-16 !py-0 px-0.5 text-white border-0 focus-visible:ring-0 no-scrollbar"
+                    onChange={(event) => setWidth(Number(event.target.value))}
+                  />
+                  <Input
+                    id="height"
+                    type="number"
+                    min="180"
+                    max="720"
+                    className="w-16 !py-0 px-0.5 text-white border-0 focus-visible:ring-0 no-scrollbar"
+                    placeholder="height"
+                    value={height}
+                    onChange={(event) => setHeight(Number(event.target.value))}
+                  />
+                  <div
+                    onClick={() => {
+                      setOpenLink(false);
+                    }}
+                    className="cursor-pointer"
+                  >
+                    <XIcon size={16} stroke="white" />{" "}
+                  </div>
+                </div>
+                <div className="flex flex-row w-full  space-x-4  items-center"></div>
               </div>
             ) : (
               <>
@@ -437,9 +495,266 @@ const Write = () => {
                 >
                   <AlignRight size={16} stroke="white" />
                 </Button>
+                <Button
+                  onClick={() => {
+                    setYoutubeOpenLink((prev) => !prev);
+                  }}
+                  className={`flex h-8 w-8 items-center justify-center hover:bg-stone-700 p-2 text-base cursor-pointer rounded-md
+                 text-white bg-stone-950 `}
+                  type="button"
+                >
+                  <FaYoutube size={16} stroke="white" />
+                </Button>
               </>
             )}
           </BubbleMenu>
+        )}
+        {editor && (
+          <FloatingMenu
+            className="floating-menu flex flex-row items-center gap-1 justify-center bg-stone-950 rounded-md px-3 py-2"
+            editor={editor}
+          >
+            {openLink ? (
+              <div className="flex flex-row space-x-4  items-center">
+                <Input
+                  className=" text-white w-64 border-0 focus-visible:ring-0"
+                  onChange={(e) => {
+                    setLinkUrl(e.target.value);
+                  }}
+                  placeholder="Add Link..."
+                  value={linkUrl}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      if (linkUrl) {
+                        editor
+                          .chain()
+                          .focus()
+                          .extendMarkRange("link")
+                          .setLink({ href: linkUrl })
+                          .run();
+                      } else {
+                        editor.chain().focus().unsetLink().run();
+                      }
+                      setOpenLink(false);
+                    }
+                    if (e.key === "Escape") {
+                      setOpenLink(false);
+                    }
+                  }}
+                />
+                <div
+                  onClick={() => {
+                    setOpenLink(false);
+                  }}
+                  className="cursor-pointer"
+                >
+                  <XIcon size={16} stroke="white" />{" "}
+                </div>
+              </div>
+            ) : youtubeOpenLink ? (
+              <div className="flex flex-col w-full items-center space-y-3">
+                <div className="flex flex-row space-x-4  items-center">
+                  <Input
+                    className=" text-white w-64 border-0 focus-visible:ring-0"
+                    onChange={(e) => {
+                      setYoutubeUrl(e.target.value);
+                    }}
+                    placeholder="Add Link..."
+                    value={youtubeUrl}
+                    onKeyDown={addYoutubeVideo}
+                  />
+                  <Input
+                    id="width"
+                    type="number"
+                    min="320"
+                    max="1024"
+                    placeholder="width"
+                    value={width}
+                    className="w-16 !py-0 px-0.5 text-white border-0 focus-visible:ring-0 no-scrollbar"
+                    onChange={(event) => setWidth(Number(event.target.value))}
+                  />
+                  <Input
+                    id="height"
+                    type="number"
+                    min="180"
+                    max="720"
+                    className="w-16 !py-0 px-0.5 text-white border-0 focus-visible:ring-0 no-scrollbar"
+                    placeholder="height"
+                    value={height}
+                    onChange={(event) => setHeight(Number(event.target.value))}
+                  />
+                  <div
+                    onClick={() => {
+                      setOpenLink(false);
+                    }}
+                    className="cursor-pointer"
+                  >
+                    <XIcon size={16} stroke="white" />{" "}
+                  </div>
+                </div>
+                <div className="flex flex-row w-full  space-x-4  items-center"></div>
+              </div>
+            ) : (
+              <>
+                <Button
+                  onClick={() => editor.chain().focus().toggleBold().run()}
+                  className={`flex h-8 w-8 items-center justify-center hover:bg-stone-700 p-2 text-base cursor-pointer rounded-md text-white bg-stone-950 ${
+                    editor.isActive("bold") ? "bg-stone-700" : ""
+                  }`}
+                  type="button"
+                >
+                  B
+                </Button>
+                <Button
+                  onClick={() => editor.chain().focus().toggleItalic().run()}
+                  className={`flex h-8 w-8 items-center justify-center hover:bg-stone-700 p-2 text-base cursor-pointer rounded-md text-white bg-stone-950 ${
+                    editor.isActive("italic") ? "bg-stone-700" : ""
+                  }`}
+                  type="button"
+                >
+                  I
+                </Button>
+                <Button
+                  onClick={() => editor.chain().focus().toggleStrike().run()}
+                  className={`flex h-8 w-8 items-center justify-center hover:bg-stone-700 p-2 text-base cursor-pointer line-through rounded-md text-white bg-stone-950 ${
+                    editor.isActive("strike") ? "bg-stone-700" : ""
+                  }`}
+                  type="button"
+                >
+                  S
+                </Button>
+                <Button
+                  onClick={() => editor.chain().focus().toggleUnderline().run()}
+                  className={`flex h-8 w-8 items-center justify-center hover:bg-stone-700 p-2 text-base cursor-pointer rounded-md text-white bg-stone-950 ${
+                    editor.isActive("underline") ? "bg-stone-700" : ""
+                  }`}
+                  type="button"
+                >
+                  U
+                </Button>
+                <Button
+                  onClick={() => {
+                    editor.chain().focus().toggleBlockquote().run();
+                  }}
+                  className={`flex h-8 w-8 items-center justify-center hover:bg-stone-700 p-2 text-base cursor-pointer rounded-md text-white bg-stone-950 ${
+                    editor.isActive("blockquote") ? "bg-stone-700" : ""
+                  }`}
+                  type="button"
+                >
+                  <TextQuote size={16} stroke="white" />
+                </Button>
+                <Button
+                  onClick={() => {
+                    setLinkUrl(editor.getAttributes("link").href || "");
+                    setOpenLink((prev) => !prev);
+                  }}
+                  className={`flex h-8 w-8 items-center justify-center hover:bg-stone-700 p-2 text-base cursor-pointer rounded-md
+                 text-white bg-stone-950 ${
+                   editor.isActive("link") ? "bg-stone-700" : ""
+                 }`}
+                  type="button"
+                >
+                  <LinkIcon size={16} stroke="white" />
+                </Button>
+                <Button
+                  onClick={cycleHeading}
+                  className={`flex h-8 w-8 items-center justify-center hover:bg-stone-700 p-2 text-base cursor-pointer rounded-md text-white bg-stone-950 ${
+                    getCurrentHeadingLevel() ? "bg-stone-700" : ""
+                  }`}
+                  type="button"
+                >
+                  {getHeadingButtonText()}
+                </Button>
+                <Button
+                  onClick={() => {
+                    if (!editor) {
+                      return;
+                    }
+                    editor
+                      .chain()
+                      .focus()
+                      .setTextSelection(editor.state.selection.to)
+                      .setHorizontalRule()
+                      .run();
+                  }}
+                  className={`flex h-8 w-8 items-center justify-center hover:bg-stone-700 p-2 text-base cursor-pointer rounded-md text-white bg-stone-950 `}
+                  type="button"
+                >
+                  HR
+                </Button>
+                <Button
+                  onClick={() => {
+                    if (!editor) {
+                      return;
+                    }
+                    editor.chain().focus().toggleCodeBlock().run();
+                  }}
+                  className={`flex h-8 w-8 items-center justify-center hover:bg-stone-700 p-2 text-base cursor-pointer rounded-md text-white bg-stone-950 ${
+                    editor.isActive("codeBlock") ? "bg-stone-700" : ""
+                  } `}
+                  type="button"
+                >
+                  <Code size={16} stroke="white" />
+                </Button>
+                <Button
+                  onClick={() => {
+                    if (!editor) {
+                      return;
+                    }
+                    editor.chain().focus().setTextAlign("left").run();
+                  }}
+                  className={`flex h-8 w-8 items-center justify-center hover:bg-stone-700 p-2 text-base cursor-pointer rounded-md text-white bg-stone-950 ${
+                    editor.isActive({ textAlign: "left" }) ? "bg-stone-700" : ""
+                  } `}
+                  type="button"
+                >
+                  <AlignLeft size={16} stroke="white" />
+                </Button>
+                <Button
+                  onClick={() => {
+                    if (!editor) {
+                      return;
+                    }
+                    editor.chain().focus().setTextAlign("center").run();
+                  }}
+                  className={`flex h-8 w-8 items-center justify-center hover:bg-stone-700 p-2 text-base cursor-pointer rounded-md text-white bg-stone-950 ${
+                    editor.isActive({ textAlign: "center" })
+                      ? "bg-stone-700"
+                      : ""
+                  } `}
+                  type="button"
+                >
+                  <AlignCenter size={16} stroke="white" />
+                </Button>
+                <Button
+                  onClick={() => {
+                    if (!editor) {
+                      return;
+                    }
+                    editor.chain().focus().setTextAlign("right").run();
+                  }}
+                  className={`flex h-8 w-8 items-center justify-center hover:bg-stone-700 p-2 text-base cursor-pointer rounded-md text-white bg-stone-950 ${
+                    editor.isActive({ textAlign: "right" })
+                      ? "bg-stone-700"
+                      : ""
+                  } `}
+                  type="button"
+                >
+                  <AlignRight size={16} stroke="white" />
+                </Button>
+                <Button
+                  onClick={() => {
+                    setYoutubeOpenLink((prev) => !prev);
+                  }}
+                  className={`flex h-8 w-8 items-center justify-center hover:bg-stone-700 p-2 text-base cursor-pointer rounded-md
+                 text-white bg-stone-950 `}
+                  type="button"
+                >
+                  <FaYoutube size={16} stroke="white" />
+                </Button>
+              </>
+            )}
+          </FloatingMenu>
         )}
       </div>
       <div className="absolute bottom-6 right-6 flex items-center space-x-5 ">
