@@ -33,7 +33,6 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
       });
 
       if (response.status === 200 && response.data.success) {
-        console.log("response ",response.data)
         setUser(response.data.user);
       } else {
         toast.error(response.data.message || "Failed to load user");

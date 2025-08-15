@@ -1,12 +1,20 @@
-import axios from 'axios'
-import React from 'react'
+import BlogListBase from "@/components/global/home/Blogs/BlogListBase";
+import axios from "axios";
+import React from "react";
 
-const Home = async() => {
-  const response=await axios.get(`/api/blog`)
-  const data=await response.data
+const Home = async () => {
+  const response = await axios.get(`http://localhost:3000/api/blog`);
+  if (response.status !== 200) {
+    throw new Error(`Failed to fetch all Blogs`);
+  }
+  const result = await response.data;
+  const {data}=result
+
   return (
-    <div>Home</div>
-  )
-}
+    <main className="flex flex-col gap-4 flex-1 items-center h-screen ">
+      <BlogListBase data={data} />
+    </main>
+  );
+};
 
-export default Home
+export default Home;

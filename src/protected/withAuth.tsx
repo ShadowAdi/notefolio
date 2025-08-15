@@ -5,8 +5,8 @@ import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { ComponentType, useEffect } from "react";
 
-export default function withHOC(Component: ComponentType) {
-  return function ProtectedPage(props: any) {
+export default function withAuth<P extends Object>(Component: ComponentType<P>) {
+  return function ProtectedPage(props: P) {
     const { isAuthenticated, loading } = useAuth();
     const router = useRouter();
     useEffect(() => {
