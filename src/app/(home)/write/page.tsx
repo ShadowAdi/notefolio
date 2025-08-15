@@ -19,6 +19,7 @@ import {
   Undo,
   XIcon,
 } from "lucide-react";
+import { Placeholder } from '@tiptap/extensions'
 import { Input } from "@/components/ui/input";
 import { Link } from "@tiptap/extension-link";
 import Heading from "@tiptap/extension-heading";
@@ -27,7 +28,6 @@ import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import { all, createLowlight } from "lowlight";
 import "highlight.js/styles/github-dark.css";
 import TextAlign from "@tiptap/extension-text-align";
-import { Placeholder } from "@tiptap/extensions";
 import Youtube from "@tiptap/extension-youtube";
 import { FaYoutube } from "react-icons/fa";
 import { BulletList, ListItem, OrderedList } from "@tiptap/extension-list";
@@ -59,7 +59,7 @@ const Write = () => {
       }),
       Blockquote.configure({
         HTMLAttributes: {
-          class: "border-l-4 border-gray-300 pl-4 italic", // Optional: Style the blockquote
+          class: "border-l-4 border-gray-300 pl-4 italic", 
         },
       }),
       Link.configure({
@@ -265,6 +265,7 @@ const Write = () => {
         />
         <div className="w-full h-full flex-1   relative">
           <EditorContent
+
             placeholder="Start Writing..."
             className="list-disc list-inside flex-1 min-h-[400px] w-full h-full overflow-y-auto ProseMirror scrollbar-transparent_tiptap placeholder:text-black"
             style={{
@@ -341,8 +342,9 @@ const Write = () => {
         </div>
         {editor && (
           <BubbleMenu
+
             editor={editor}
-            className="bubble-menu flex flex-row items-center gap-1 justify-center bg-stone-950 rounded-md px-3 py-2"
+            className="bubble-menu flex flex-row items-center gap-1 bg-stone-950 rounded-md px-3 py-2 max-w-[320px] overflow-x-auto  no-scrollbar"
           >
             {openLink ? (
               <div className="flex flex-row space-x-4  items-center">
@@ -675,7 +677,7 @@ const Write = () => {
         )}
         {editor && (
           <FloatingMenu
-            className="floating-menu flex flex-row items-center gap-1 justify-center bg-stone-950 rounded-md px-3 py-2"
+             className="floating-menu flex flex-row items-center gap-1 bg-stone-950 rounded-md px-3 py-2 max-w-[340px] overflow-x-auto  no-scrollbar"
             editor={editor}
           >
             {openLink ? (

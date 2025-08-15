@@ -46,46 +46,47 @@ const PublishModal = () => {
   const [blogTags, setBlogTags] = useState<string[]>([]);
 
   
-  async function onSubmit(values: z.infer<typeof blogFormSchema>) {
-    setLoading(true);
-    try {
-      const response = await axios.post(`/api/auth/register`, values);
-      switch (response.status) {
-        case 201:
-          form.reset();
-          toast.success(response.data.message);
-          router.push("/auth/signin");
-          break;
-        case 500:
-          form.reset();
-          toast.error(response.statusText);
-          break;
-        case 400:
-          form.reset();
-          toast.error(response.statusText);
-          break;
-        case 404:
-          form.reset();
-          toast.error(response.statusText);
-          break;
-        default:
-          if (response.data.success) {
-            toast.success(`User Created`);
-          } else {
-            toast.error(`Failed to create User`);
-          }
-          form.reset();
-          router.push("/auth/signin");
-          break;
-      }
-    } catch (error) {
-      form.reset();
-      console.error(`Failed to register user `, error);
-      toast.error(`Failed to register user ` + error);
-    } finally {
-      setLoading(false);
-    }
-  }
+  // async function onSubmit(values: z.infer<typeof blogFormSchema>) {
+  //   setLoading(true);
+  //   try {
+  //     const response = await axios.post(`/api/auth/register`, values);
+  //     switch (response.status) {
+  //       case 201:
+  //         form.reset();
+  //         toast.success(response.data.message);
+  //         router.push("/auth/signin");
+  //         break;
+  //       case 500:
+  //         form.reset();
+  //         toast.error(response.statusText);
+  //         break;
+  //       case 400:
+  //         form.reset();
+  //         toast.error(response.statusText);
+  //         break;
+  //       case 404:
+  //         form.reset();
+  //         toast.error(response.statusText);
+  //         break;
+  //       default:
+  //         if (response.data.success) {
+  //           toast.success(`User Created`);
+  //         } else {
+  //           toast.error(`Failed to create User`);
+  //         }
+  //         form.reset();
+  //         router.push("/auth/signin");
+  //         break;
+  //     }
+  //   } catch (error) {
+  //     form.reset();
+  //     console.error(`Failed to register user `, error);
+  //     toast.error(`Failed to register user ` + error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }
+  
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -98,7 +99,7 @@ const PublishModal = () => {
             Add a cover image and tags before publishing your post.
           </DialogDescription>
 
-          <Form {...form}>
+          {/* <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
                 control={form.control}
@@ -177,7 +178,7 @@ const PublishModal = () => {
                 )}
               />
             </form>
-          </Form>
+          </Form> */}
         </DialogHeader>
       </DialogContent>
     </Dialog>

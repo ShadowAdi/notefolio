@@ -130,11 +130,42 @@
 }
 
 .ProseMirror pre code {
-  font-family: 'Fira Code', monospace;
+  font-family: "Fira Code", monospace;
   font-size: 0.9rem;
 }
 
 .hljs {
   display: block;
   overflow-x: auto;
+}
+
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: #999;
+  pointer-events: none;
+  height: 0;
+}
+
+.floating-menu::-webkit-scrollbar {
+  height: 4px;  
+  width: 4px;  
+}
+
+.floating-menu::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.floating-menu::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+}
+
+.floating-menu::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* For Firefox */
+.floating-menu {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
 }
