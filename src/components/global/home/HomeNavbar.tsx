@@ -3,6 +3,7 @@ import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
+import PublishModal from "./write/PublishModal";
 
 const HomeNavbar = () => {
   const { user, isAuthenticated, loading } = useAuth();
@@ -20,13 +21,7 @@ const HomeNavbar = () => {
         </div>
         <div className="flex items-center space-x-5 flex-row">
           {pathname?.includes("/write") ? (
-            <Link
-              href={"/write"}
-              className=" bg-stone-800 hover:bg-stone-900 transition-all duration-500 px-6  py-1.5 
-            text-xs font-medium text-white shadow-sm rounded-full"
-            >
-              Publish
-            </Link>
+            <PublishModal />
           ) : (
             <Link
               href={"/write"}

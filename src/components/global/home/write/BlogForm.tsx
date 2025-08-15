@@ -28,13 +28,11 @@ const BlogForm = ({ heading, buttonText }: RegisterInterfaceType) => {
   const form = useForm<z.infer<typeof blogFormSchema>>({
     resolver: zodResolver(blogFormSchema),
     defaultValues: {
-     blogCover:"",
      blogDescription:"",
      blogTitle:""
     },
   });
 
-  const coverImageError = form.watch("blogCover");
   const [imgError, setImgError] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -118,39 +116,6 @@ const BlogForm = ({ heading, buttonText }: RegisterInterfaceType) => {
               )}
             />
           </div>
-
-          <FormField
-            control={form.control}
-            name="blogCover"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Cover Image URL</FormLabel>
-                <FormControl>
-                  <Input
-                    type="url"
-                    placeholder="https://image.com"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-                {coverImageError && !imgError && (
-                  <Image
-                    src={coverImageError}
-                    onError={() => setImgError(true)}
-                    alt="Cover Image"
-                    height={300}
-                    width={600}
-                    className="mt-3 rounded-md border object-cover w-full max-h-[300px]"
-                  />
-                )}
-                {imgError && (
-                  <p className="text-sm text-red-500 mt-2">
-                    Couldn't load image from the provided URL.
-                  </p>
-                )}
-              </FormItem>
-            )}
-          />
 
           <Button type="submit" className="w-full !cursor-pointer">
             {!loading ? buttonText : "Loading..."}
