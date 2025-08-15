@@ -19,88 +19,106 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/context/AuthContext";
+import { WriteBlogContext } from "@/context/WriteBlogContext";
 import { blogFormSchema } from "@/zodSchema/blogFormSchema";
 import { publishBlogSchema } from "@/zodSchema/publishBlogSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
+import { XIcon } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
 
 const PublishModal = () => {
+  const {
+    blogTags,
+    setBlogTags,
+    blogCover,
+    setBlogCover,
+    blogDescription,
+    blogTitle,
+  } = useContext(WriteBlogContext);
   const form = useForm<z.infer<typeof publishBlogSchema>>({
     resolver: zodResolver(publishBlogSchema),
     defaultValues: {
-      blogCover: "",
-      tags: [],
+      blogCover: blogCover || "",
+      tags: blogTags || [],
     },
   });
-  const blogCover = form.watch("blogCover");
-  const router=useRouter()
+  const router = useRouter();
+  const { isAuthenticated, token, loading: userLoading, user } = useAuth();
 
   const [imgError, setImgError] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [blogTags, setBlogTags] = useState<string[]>([]);
+  const [tagInput, setTagInput] = useState("");
 
-  
-  // async function onSubmit(values: z.infer<typeof blogFormSchema>) {
-  //   setLoading(true);
-  //   try {
-  //     const response = await axios.post(`/api/auth/register`, values);
-  //     switch (response.status) {
-  //       case 201:
-  //         form.reset();
-  //         toast.success(response.data.message);
-  //         router.push("/auth/signin");
-  //         break;
-  //       case 500:
-  //         form.reset();
-  //         toast.error(response.statusText);
-  //         break;
-  //       case 400:
-  //         form.reset();
-  //         toast.error(response.statusText);
-  //         break;
-  //       case 404:
-  //         form.reset();
-  //         toast.error(response.statusText);
-  //         break;
-  //       default:
-  //         if (response.data.success) {
-  //           toast.success(`User Created`);
-  //         } else {
-  //           toast.error(`Failed to create User`);
-  //         }
-  //         form.reset();
-  //         router.push("/auth/signin");
-  //         break;
-  //     }
-  //   } catch (error) {
-  //     form.reset();
-  //     console.error(`Failed to register user `, error);
-  //     toast.error(`Failed to register user ` + error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }
-  
+  async function onSubmit(values: z.infer<typeof publishBlogSchema>) {
+    if (userLoading) {
+      return;
+    }
+    if (!isAuthenticated || !token || !user) {
+      toast(`You are not Logged In`);
+      router.push(`/auth/signin`);
+    }
+    setLoading(true);
+    const payload = {
+      blogTitle,
+      blogDescription,
+      tags: values.tags,
+      blogCover: values.blogCover,
+      authorId: user?.id,
+    };
+    try {
+      const response = await axios.post(`/api/blog/`, payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await response.data;
+      if (!data.success) {
+        toast(`Failed to publish Blog. ${data.error}`);
+        form.setValue("blogCover", "");
+        form.setValue("tags", []);
+        setBlogCover("");
+        setBlogTags([]);
+      } else {
+        form.reset();
+        toast.success(`Blog Published Successfully`);
+        router.push(`/blog/${data?.blog?.id}`);
+      }
+    } catch (error) {
+      console.error(`Failed to Published Blog: ${error}`);
+      toast.error(`Failed to Published Blog: ${error}`);
+      form.setValue("blogCover", "");
+      form.setValue("tags", []);
+      setBlogCover("");
+      setBlogTags([]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>Publish</Button>
+        <Button className="!cursor-pointer">Publish</Button>
       </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
+      <DialogContent className="max-h-[90vh] overflow-y-auto max-w-[640px] no-scrollbar publishModal">
+        <DialogHeader className="w-full">
           <DialogTitle>Final Steps 🎉</DialogTitle>
           <DialogDescription>
             Add a cover image and tags before publishing your post.
           </DialogDescription>
 
-          {/* <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-6 w-full"
+            >
               <FormField
                 control={form.control}
                 name="blogCover"
@@ -112,6 +130,11 @@ const PublishModal = () => {
                         type="url"
                         placeholder="https://image.com"
                         {...field}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          setBlogCover(e.target.value);
+                          setImgError(false);
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -136,15 +159,17 @@ const PublishModal = () => {
               <FormField
                 control={form.control}
                 name="tags"
-                render={({ field }) => (
+                render={() => (
                   <FormItem>
                     <FormLabel>Tags</FormLabel>
                     <FormControl>
                       <Input
+                        value={tagInput}
+                        onChange={(e) => setTagInput(e.target.value)}
                         onKeyDown={(e) => {
                           if (e.key === "Enter") {
                             e.preventDefault();
-                            const value = e.currentTarget.value.trim();
+                            const value = tagInput.trim();
                             if (
                               value &&
                               !blogTags.includes(value) &&
@@ -153,32 +178,45 @@ const PublishModal = () => {
                               const newTags = [...blogTags, value];
                               setBlogTags(newTags);
                               form.setValue("tags", newTags);
-                              e.currentTarget.value = "";
                             }
+                            setTagInput("");
                           }
                         }}
                         type="text"
                         placeholder="tagName"
-                        {...field}
                       />
                     </FormControl>
-                    <div className="w-full flex flex-row items-center gap-3 ">
+                    <div className="mt-3 grid grid-cols-[repeat(auto-fit,minmax(100px,1fr))] gap-2">
                       {blogTags.length > 0 &&
                         blogTags.map((blog, i) => (
                           <Badge
                             key={i}
-                            className="px-5 py-5 rounded-md flex items-center justify-center"
+                            className="px-3 py-2 flex items-center justify-between gap-2 rounded-md cursor-pointer bg-gray-800 text-white hover:bg-gray-700 transition-colors"
                           >
-                            {blog}
+                            <span className="truncate">{blog}</span>
+                            <XIcon
+                              onClick={() => {
+                                const updatedTags = blogTags.filter(
+                                  (_, index) => index !== i
+                                );
+                                setBlogTags(updatedTags);
+                                form.setValue("tags", updatedTags);
+                              }}
+                              className="h-4 w-4 text-gray-300 hover:text-red-400 transition-colors"
+                            />
                           </Badge>
                         ))}
                     </div>
+
                     <FormMessage />
                   </FormItem>
                 )}
               />
+              <Button type="submit" className="w-full !cursor-pointer">
+                {!loading && !userLoading ? "Publish" : "Loading..."}
+              </Button>
             </form>
-          </Form> */}
+          </Form>
         </DialogHeader>
       </DialogContent>
     </Dialog>

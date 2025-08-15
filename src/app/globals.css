@@ -169,3 +169,27 @@
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
 }
+
+.publishModal::-webkit-scrollbar {
+  height: 4px;  
+  width: 4px;  
+}
+
+.publishModal::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.publishModal::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+}
+
+.publishModal::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* For Firefox */
+.publishModal {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}

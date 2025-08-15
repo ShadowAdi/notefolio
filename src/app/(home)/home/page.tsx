@@ -1,13 +1,12 @@
-"use client"; 
-import withAuth from "@/protected/withAuth";
-import React from "react";
+import axios from 'axios'
+import React from 'react'
 
-const Home = () => {
+const Home = async() => {
+  const response=await axios.get(`/api/blog`)
+  const data=await response.data
   return (
-    <main className="px-8">
-      <h1>Home</h1>
-    </main>
-  );
-};
+    <div>Home</div>
+  )
+}
 
-export default withAuth(Home);
+export default Home

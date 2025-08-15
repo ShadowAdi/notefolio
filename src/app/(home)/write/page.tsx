@@ -1,5 +1,5 @@
 "use client";
-import React, { use, useCallback, useState } from "react";
+import React, { use, useCallback, useContext, useState } from "react";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { BubbleMenu, FloatingMenu } from "@tiptap/react/menus";
@@ -19,7 +19,7 @@ import {
   Undo,
   XIcon,
 } from "lucide-react";
-import { Placeholder } from '@tiptap/extensions'
+import { Placeholder } from "@tiptap/extensions";
 import { Input } from "@/components/ui/input";
 import { Link } from "@tiptap/extension-link";
 import Heading from "@tiptap/extension-heading";
@@ -32,10 +32,11 @@ import Youtube from "@tiptap/extension-youtube";
 import { FaYoutube } from "react-icons/fa";
 import { BulletList, ListItem, OrderedList } from "@tiptap/extension-list";
 import Image from "@tiptap/extension-image";
+import { WriteBlogContext } from "@/context/WriteBlogContext";
 
 const Write = () => {
-  const [blogTitle, setBlogTitle] = useState("");
-  const [blogDescription, setBlogDescription] = useState("");
+  const { blogTitle, blogDescription, setBlogDescription, setBlogTitle } =
+    useContext(WriteBlogContext);
   const [openLink, setOpenLink] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
   const lowlight = createLowlight(all);
@@ -59,7 +60,7 @@ const Write = () => {
       }),
       Blockquote.configure({
         HTMLAttributes: {
-          class: "border-l-4 border-gray-300 pl-4 italic", 
+          class: "border-l-4 border-gray-300 pl-4 italic",
         },
       }),
       Link.configure({
@@ -265,7 +266,6 @@ const Write = () => {
         />
         <div className="w-full h-full flex-1   relative">
           <EditorContent
-
             placeholder="Start Writing..."
             className="list-disc list-inside flex-1 min-h-[400px] w-full h-full overflow-y-auto ProseMirror scrollbar-transparent_tiptap placeholder:text-black"
             style={{
@@ -676,7 +676,7 @@ const Write = () => {
         )}
         {editor && (
           <FloatingMenu
-             className="floating-menu flex flex-row items-center gap-1 bg-stone-950 rounded-md px-3 py-2 max-w-[340px] overflow-x-auto  no-scrollbar"
+            className="floating-menu flex flex-row items-center gap-1 bg-stone-950 rounded-md px-3 py-2 max-w-[340px] overflow-x-auto  no-scrollbar"
             editor={editor}
           >
             {openLink ? (

@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import {
   createContext,
   Dispatch,
@@ -14,8 +14,8 @@ export const WriteBlogContext = createContext<{
   setBlogDescription: Dispatch<React.SetStateAction<string>>;
   blogCover: string;
   setBlogCover: Dispatch<React.SetStateAction<string>>;
-    blogTags: [string]|[];
-  setBlogTags: Dispatch<React.SetStateAction<[string]|[]>>;
+  blogTags: string[];
+  setBlogTags: Dispatch<React.SetStateAction<string[]>>;
 }>({
   blogTitle: "",
   setBlogTitle: () => {},
@@ -23,15 +23,15 @@ export const WriteBlogContext = createContext<{
   setBlogDescription: () => {},
   blogCover: "",
   setBlogCover: () => {},
-  blogTags:[],
-  setBlogTags:()=>{}
+  blogTags: [],
+  setBlogTags: () => {},
 });
 
 export const WriteContextProvider = ({ children }: { children: ReactNode }) => {
   const [blogTitle, setBlogTitle] = useState("");
   const [blogDescription, setBlogDescription] = useState("");
   const [blogCover, setBlogCover] = useState("");
-  const [blogTags, setBlogTags] = useState<[string]|[]>([])
+  const [blogTags, setBlogTags] = useState<string[]>([]);
 
   return (
     <WriteBlogContext.Provider
@@ -43,7 +43,7 @@ export const WriteContextProvider = ({ children }: { children: ReactNode }) => {
         blogCover,
         setBlogCover,
         blogTags,
-        setBlogTags
+        setBlogTags,
       }}
     >
       {children}

@@ -12,7 +12,7 @@ export async function POST(request: Request) {
     return safeUser;
   }
   const body = await request.json();
-  const { blogTitle, blogDescription, blogCover, blogTags } = body;
+  const { blogTitle, blogDescription, blogCover, tags } = body;
   if (!blogTitle || !blogDescription || !blogCover) {
     return new Response(JSON.stringify({ success: false }), {
       status: 400,
@@ -38,8 +38,8 @@ export async function POST(request: Request) {
         createdAt: new Date(),
       })
       .returning();
-    if (blogTags && blogTags.length > 0) {
-      const tagValues = blogTags.map(
+    if (tags && tags.length > 0) {
+      const tagValues = tags.map(
         (blogTag: { blogId: string; tag: string }) => ({
           blogId,
           tag: blogTag,
@@ -48,13 +48,13 @@ export async function POST(request: Request) {
       await db.insert(tagTable).values(tagValues);
     }
     return NextResponse.json(
-      { message: "Blog created successfully", blog: newBlog },
+      { message: "Blog created successfully", blog: newBlog,success:true },
       { status: 201 }
     );
   } catch (error) {
     console.error("Error creating blog:", error);
     return NextResponse.json(
-      { error: "Failed to create blog" },
+      { error: "Failed to Create Blog "+error },
       { status: 500 }
     );
   }
