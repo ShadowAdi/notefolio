@@ -6,6 +6,7 @@ import { Discussion } from "@/schemas/Disscussions";
 import { Followers } from "@/schemas/Followers";
 import { tagTable } from "@/schemas/Tag";
 import { User } from "@/schemas/User";
+import { verifyUser } from "@/services/VerifyUser";
 import { eq, sql } from "drizzle-orm";
 
 export async function GET(
@@ -110,6 +111,70 @@ export async function GET(
     );
   } catch (error) {
     console.error(`Failed to get single blog `, error);
+    return new Response(
+      JSON.stringify({ success: false, error: String(error) }),
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const user = await verifyUser(request);
+    if (!user) {
+      console.error(`Authenticated User Not Found`);
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: `You are not Authorized`,
+        })
+      );
+    }
+    const id = params.id;
+    const blogFound = await db
+      .select({
+        id: BlogSchema.id,
+        authorId: BlogSchema.authorId,
+      })
+      .from(BlogSchema)
+      .where(eq(BlogSchema.id, id));
+    if (!blogFound) {
+      return new Response(
+        JSON.stringify({ success: false, message: `Blog Do Not Exist` }),
+        {
+          status: 404,
+        }
+      );
+    }
+
+    if (user.id !== blogFound[0].authorId) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: `Blog can be only deleted by Author`,
+        }),
+        {
+          status: 404,
+        }
+      );
+    }
+
+    await db.delete(BlogSchema).where(eq(BlogSchema.id, id));
+
+    return new Response(
+      JSON.stringify({
+        success: true,
+        message: `Blog Deleted Successfully`,
+      }),
+      {
+        status: 200,
+      }
+    );
+  } catch (error) {
+    console.error(`Failed to delete blog `, error);
     return new Response(
       JSON.stringify({ success: false, error: String(error) }),
       { status: 500 }
