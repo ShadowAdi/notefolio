@@ -12,7 +12,7 @@ const Home = async () => {
 
   return (
     <main className="flex flex-col gap-4 flex-1 items-center h-screen ">
-      <BlogListBase data={data} />
+      <BlogListBase data={data} key={"Blogs"} />
     </main>
   );
 };
