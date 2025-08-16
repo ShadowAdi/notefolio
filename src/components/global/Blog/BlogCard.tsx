@@ -29,20 +29,14 @@ const BlogCard = ({ blog }: { blog: SingleBlogInterface }) => {
       >
         {blog?.blogCover ? (
           <div className="w-full h-48 overflow-hidden">
-            <Link
-              href={`/blog/${blog.id}`}
-              target="_blank"
-              className="block transition-opacity duration-300 group-hover:opacity-80"
-            >
-              <Image
-                src={blog?.blogCover}
-                alt={blog.blogTitle}
-                height={400}
-                width={600}
-                unoptimized={false}
-                className="h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
-              />
-            </Link>
+            <Image
+              src={blog?.blogCover}
+              alt={blog.blogTitle}
+              height={400}
+              width={600}
+              unoptimized={false}
+              className="h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
+            />
           </div>
         ) : (
           <div className="aspect-video w-full h-48">
@@ -51,9 +45,7 @@ const BlogCard = ({ blog }: { blog: SingleBlogInterface }) => {
         )}
         <CardHeader className="px-4 py-2">
           <h3 className="text-xl font-bold capitalize hover:underline decoration-blue-500 decoration-2 md:text-2xl transition-colors duration-200">
-            <Link href={`/blog/${blog.id}`} target="_blank">
-              {blog.blogTitle}
-            </Link>
+            {blog.blogTitle}
           </h3>
         </CardHeader>
         <CardContent className="px-4 py-1">
@@ -70,7 +62,9 @@ const BlogCard = ({ blog }: { blog: SingleBlogInterface }) => {
             blog.tags.slice(0, 5).map((tag, i) => (
               <Badge
                 key={i}
-                className={`px-3 py-1 rounded-full text-white text-xs font-medium ${tagColors[i % tagColors.length]} transition-colors duration-200`}
+                className={`px-3 py-1 rounded-full text-white text-xs font-medium ${
+                  tagColors[i % tagColors.length]
+                } transition-colors duration-200`}
               >
                 {tag}
               </Badge>
