@@ -181,3 +181,88 @@ export async function DELETE(
     );
   }
 }
+
+export async function PATCH(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const user = await verifyUser(request);
+    if (!user) {
+      console.error(`Authenticated User Not Found`);
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: `You are not Authorized`,
+        })
+      );
+    }
+    const body = await request.json();
+    const { blogTitle, blogDescription, blogCover, tags } = body;
+
+    const id = params.id;
+    const blogFound = await db
+      .select({
+        id: BlogSchema.id,
+        authorId: BlogSchema.authorId,
+      })
+      .from(BlogSchema)
+      .where(eq(BlogSchema.id, id));
+
+    if (blogFound.length === 0) {
+      return new Response(
+        JSON.stringify({ success: false, message: `Blog Does Not Exist` }),
+        { status: 404 }
+      );
+    }
+
+    if (user.id !== blogFound[0].authorId) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: `Blog can be only deleted by Author`,
+        }),
+        {
+          status: 404,
+        }
+      );
+    }
+
+    const updatedBlog: any = {};
+    if (blogTitle) {
+      updatedBlog[blogTitle] = blogTitle;
+    }
+    if (blogCover) {
+      updatedBlog[blogCover] = blogCover;
+    }
+    if (blogDescription) {
+      updatedBlog[blogDescription] = blogDescription;
+    }
+
+    await db.update(BlogSchema).set(updatedBlog).where(eq(BlogSchema.id, id));
+
+    if (tags && Array.isArray(tags)) {
+      await db.delete(tagTable).where(eq(tagTable.blogId, id));
+      for (const tag of tags) {
+        await db.insert(tagTable).values({ blogId: id, tag });
+      }
+    }
+
+    return new Response(
+      JSON.stringify({
+        success: true,
+        message: `Blog Updated Successfully`,
+        blodId: id,
+      }),
+      {
+        status: 200,
+      }
+    );
+  } catch (error) {
+    console.error(`Failed to update blog `, error);
+    return new Response(
+      JSON.stringify({ success: false, error: String(error) }),
+      { status: 500 }
+    );
+  }
+}
