@@ -104,6 +104,7 @@ export async function GET(
         user,
         blogTagsFound,
         blogFound,
+        success:true
       }),
       {
         status: 200,
