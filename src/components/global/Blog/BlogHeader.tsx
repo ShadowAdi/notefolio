@@ -1,10 +1,13 @@
+"use client";
+
 import Image from "next/image";
 import React from "react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
+import { toast } from "sonner";
 
-interface BlogHeader {
+interface BlogHeaderProps {
   blogTitle: string;
   profileUrl: string | null;
   username: string;
@@ -18,15 +21,26 @@ const BlogHeader = ({
   username,
   createdAt,
   authorId,
-}: BlogHeader) => {
+}: BlogHeaderProps) => {
   const { user, loading, isAuthenticated } = useAuth();
+
+  const handleFollowClick = () => {
+    if (!isAuthenticated) {
+      toast.info("Please log in to follow this author.");
+      return;
+    }
+
+    toast.success(`Now following ${username}`);
+  };
+
   return (
     <div className="flex flex-col space-y-5 w-full items-start">
       <h1 className="text-4xl capitalize font-bold text-gray-900">
         {blogTitle}
       </h1>
-      <div className="flex items-center justify-between gap-4  w-full">
-        <div className="flex items-center  space-x-4">
+
+      <div className="flex items-center justify-between gap-4 w-full">
+        <div className="flex items-center space-x-4">
           <div className="relative w-10 h-10 rounded-full overflow-hidden">
             {profileUrl ? (
               <Image
@@ -36,10 +50,7 @@ const BlogHeader = ({
                 className="object-cover"
               />
             ) : (
-              <div
-                className="w-full h-full bg-gray-300 flex items-center justify-center
-             text-gray-600 text-lg"
-              >
+              <div className="w-full h-full bg-gray-300 flex items-center justify-center text-gray-600 text-lg">
                 {username ? username[0].toUpperCase() : "U"}
               </div>
             )}
@@ -53,8 +64,12 @@ const BlogHeader = ({
             </p>
           </div>
         </div>
-        {!loading && isAuthenticated && user && authorId !== user.id && (
-          <Button className="px-6 py-4 bg-transparent rounded-full !cursor-pointer hover:bg-transparent hover:shadow-md border-black border flex items-center justify-center">
+
+        {!loading && authorId !== user?.id && (
+          <Button
+            onClick={handleFollowClick}
+            className="px-6 py-4 bg-transparent rounded-full !cursor-pointer hover:bg-transparent hover:shadow-md border-black border flex items-center justify-center"
+          >
             <span className="text-base text-black">Follow</span>
           </Button>
         )}
