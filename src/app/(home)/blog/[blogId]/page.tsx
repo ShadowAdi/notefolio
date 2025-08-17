@@ -41,46 +41,49 @@ const Blog = async ({ params }: { params: { blogId: string } }) => {
   } = data;
 
   return (
-    <main className="flex flex-row  gap-8 flex-1 items-start justify-between w-full max-w-6xl mx-auto px-4 py-8">
-      <div className="flex flex-col flex-1 w-[80%] items-start space-y-8">
-        <BlogHeader
-          blogTitle={blogFound.blogTitle}
-          createdAt={blogFound.createdAt}
-          profileUrl={user.profileUrl}
-          username={user.username}
-        />
+    <main className="flex flex-col  gap-8 flex-1 items-start justify-between w-full max-w-6xl mx-auto px-4 py-8">
+      <div className="flex flex-row  gap-8 flex-1 items-start justify-between w-full  mx-auto">
+        <section className="flex flex-col flex-1 w-[80%] items-start space-y-8">
+          <BlogHeader
+            blogTitle={blogFound.blogTitle}
+            createdAt={blogFound.createdAt}
+            profileUrl={user.profileUrl}
+            username={user.username}
+            authorId={blogFound.authorId}
+          />
 
-        <BlogInfo
-          blogDescription={blogFound?.blogDescription}
-          blogTitle={blogFound.blogTitle}
-        />
+          <BlogInfo
+            blogDescription={blogFound?.blogDescription}
+            blogTitle={blogFound.blogTitle}
+          />
 
-        {blogFound.blogCover ? (
-          <div className="relative w-full h-96 rounded-lg overflow-hidden">
-            <Image
-              src={blogFound.blogCover}
-              alt={blogFound.blogTitle}
-              fill
-              className="object-cover"
-              priority
-            />
-          </div>
-        ) : (
-          <div className="w-full h-96 bg-gray-200 rounded-lg flex items-center justify-center">
-            <span className="text-gray-500">No Cover Image</span>
-          </div>
-        )}
+          {blogFound.blogCover ? (
+            <div className="relative w-full h-96 rounded-lg overflow-hidden">
+              <Image
+                src={blogFound.blogCover}
+                alt={blogFound.blogTitle}
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
+          ) : (
+            <div className="w-full h-96 bg-gray-200 rounded-lg flex items-center justify-center">
+              <span className="text-gray-500">No Cover Image</span>
+            </div>
+          )}
 
-        <div
-          className="prose prose-lg max-w-none text-gray-800"
-          dangerouslySetInnerHTML={{ __html: blogFound.blogDescription }}
-        />
+          <div
+            className="prose prose-lg max-w-none text-gray-800"
+            dangerouslySetInnerHTML={{ __html: blogFound.blogDescription }}
+          />
+        </section>
+        <section className="flex flex-col w-[20%]  items-start justify-start  gap-4  ">
+          <TagsSection blogTagsFound={blogTagsFound} />
+        </section>
       </div>
-      <section className="flex flex-col w-[20%]  items-start justify-start  gap-4  ">
-        <TagsSection blogTagsFound={blogTagsFound} />
-      </section>
 
-      {/* <div className="w-full">
+      <div className="w-full flex-1">
         <h2 className="text-2xl font-semibold text-gray-900 mb-4">
           Discussions
         </h2>
@@ -100,7 +103,7 @@ const Blog = async ({ params }: { params: { blogId: string } }) => {
         ) : (
           <p className="text-gray-600">No discussions yet.</p>
         )}
-      </div> */}
+      </div>
     </main>
   );
 };

@@ -2,12 +2,14 @@ import Image from "next/image";
 import React from "react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/context/AuthContext";
 
 interface BlogHeader {
   blogTitle: string;
   profileUrl: string | null;
   username: string;
   createdAt: string;
+  authorId: string;
 }
 
 const BlogHeader = ({
@@ -15,7 +17,9 @@ const BlogHeader = ({
   profileUrl,
   username,
   createdAt,
+  authorId,
 }: BlogHeader) => {
+  const { user, loading, isAuthenticated } = useAuth();
   return (
     <div className="flex flex-col space-y-5 w-full items-start">
       <h1 className="text-4xl capitalize font-bold text-gray-900">
@@ -49,9 +53,11 @@ const BlogHeader = ({
             </p>
           </div>
         </div>
-        <Button className="px-6 py-4 bg-transparent rounded-full !cursor-pointer hover:bg-transparent hover:shadow-md border-black border flex items-center justify-center">
-          <span className="text-base text-black">Follow</span>
-        </Button>
+        {!loading && isAuthenticated && user && authorId !== user.id && (
+          <Button className="px-6 py-4 bg-transparent rounded-full !cursor-pointer hover:bg-transparent hover:shadow-md border-black border flex items-center justify-center">
+            <span className="text-base text-black">Follow</span>
+          </Button>
+        )}
       </div>
     </div>
   );
