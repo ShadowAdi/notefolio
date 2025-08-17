@@ -16,6 +16,7 @@ import PlayButton from "@/components/global/Blog/PlayButton";
 import ShareButton from "@/components/global/Blog/ShareButton";
 import { Badge } from "@/components/ui/badge";
 import TagsSection from "@/components/global/Blog/TagsSection";
+import BlogHeader from "@/components/global/Blog/BlogHeader";
 
 const Blog = async ({ params }: { params: { blogId: string } }) => {
   const response = await axios.get(
@@ -41,43 +42,12 @@ const Blog = async ({ params }: { params: { blogId: string } }) => {
   return (
     <main className="flex flex-row  gap-8 flex-1 items-start justify-between w-full max-w-6xl mx-auto px-4 py-8">
       <div className="flex flex-col flex-1 w-[80%] items-start space-y-8">
-        <div className="flex flex-col space-y-5 w-full items-start">
-          <h1 className="text-4xl capitalize font-bold text-gray-900">
-            {blogFound.blogTitle}
-          </h1>
-          <div className="flex items-center justify-between gap-4  w-full">
-            <div className="flex items-center  space-x-4">
-              <div className="relative w-10 h-10 rounded-full overflow-hidden">
-                {user.profileUrl ? (
-                  <Image
-                    src={user.profileUrl}
-                    alt={user.username}
-                    fill
-                    className="object-cover"
-                  />
-                ) : (
-                  <div
-                    className="w-full h-full bg-gray-300 flex items-center justify-center
-             text-gray-600 text-lg"
-                  >
-                    {user.username ? user.username[0].toUpperCase() : "U"}
-                  </div>
-                )}
-              </div>
-              <div>
-                <p className="text-lg font-semibold text-gray-900">
-                  {user.username || "Anonymous"}
-                </p>
-                <p className="text-sm text-gray-500">
-                  {format(new Date(blogFound.createdAt), "MMMM dd, yyyy")}
-                </p>
-              </div>
-            </div>
-            <Button className="px-6 py-4 bg-transparent rounded-full !cursor-pointer hover:bg-transparent hover:shadow-md border-black border flex items-center justify-center">
-              <span className="text-base text-black">Follow</span>
-            </Button>
-          </div>
-        </div>
+        <BlogHeader
+          blogTitle={blogFound.blogTitle}
+          createdAt={blogFound.createdAt}
+          profileUrl={user.profileUrl}
+          username={user.username}
+        />
 
         <div className="flex items-center justify-between w-full  border-t border-b border-t-gray-300 border-b-gray-300 py-3 ">
           <div className="flex items-center space-x-4 justify-between  ">
