@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { FaComment } from "react-icons/fa";
 import PlayButton from "@/components/global/Blog/PlayButton";
+import ShareButton from "@/components/global/Blog/ShareButton";
 
 const Blog = async ({ params }: { params: { blogId: string } }) => {
   const response = await axios.get(
@@ -88,9 +89,7 @@ const Blog = async ({ params }: { params: { blogId: string } }) => {
           </div>
         </div>
         <div className="flex items-center space-x-4 justify-between  ">
-          <div className="flex items-center cursor-pointer hover:bg-gray-200/30 rounded-full justify-center px-6 py-1 border border-gray-300">
-            <span className="text-base text-gray-700">Share</span>
-          </div>
+         <ShareButton title={blogFound.blogTitle}/>
           <PlayButton blogDescription={blogFound?.blogDescription} />
         </div>
       </div>
@@ -127,47 +126,7 @@ const Blog = async ({ params }: { params: { blogId: string } }) => {
         ))}
       </div>
 
-      {/* Upvote/Downvote Section */}
-      <div className="flex gap-4 items-center">
-        <div className="flex items-center gap-2">
-          <button className="flex items-center gap-1 text-gray-600 hover:text-green-600">
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M5 15l7-7 7 7"
-              />
-            </svg>
-            <span>{blogUpvote.count}</span>
-          </button>
-        </div>
-        <div className="flex items-center gap-2">
-          <button className="flex items-center gap-1 text-gray-600 hover:text-red-600">
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
-            <span>{blogDownvote.count}</span>
-          </button>
-        </div>
-      </div>
 
-      {/* Discussions Section */}
       <div className="w-full">
         <h2 className="text-2xl font-semibold text-gray-900 mb-4">
           Discussions
