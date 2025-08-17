@@ -17,6 +17,7 @@ import ShareButton from "@/components/global/Blog/ShareButton";
 import { Badge } from "@/components/ui/badge";
 import TagsSection from "@/components/global/Blog/TagsSection";
 import BlogHeader from "@/components/global/Blog/BlogHeader";
+import BlogInfo from "@/components/global/Blog/BlogInfo";
 
 const Blog = async ({ params }: { params: { blogId: string } }) => {
   const response = await axios.get(
@@ -49,23 +50,10 @@ const Blog = async ({ params }: { params: { blogId: string } }) => {
           username={user.username}
         />
 
-        <div className="flex items-center justify-between w-full  border-t border-b border-t-gray-300 border-b-gray-300 py-3 ">
-          <div className="flex items-center space-x-4 justify-between  ">
-            <div className="flex items-center cursor-pointer hover:bg-gray-200/30 rounded-full justify-center h-10 w-10 border border-gray-300">
-              <ArrowBigUp className="text-base  text-gray-400 " />
-            </div>
-            <div className="flex items-center cursor-pointer hover:bg-gray-200/30 rounded-full justify-center h-10 w-10 border border-gray-300">
-              <ArrowBigDown className="text-base  text-gray-400 " />
-            </div>
-            <div className="flex items-center cursor-pointer hover:bg-gray-200/30 rounded-full justify-center  h-10 w-10  border border-gray-300">
-              <FaComment className="text-base  text-gray-400 " />
-            </div>
-          </div>
-          <div className="flex items-center space-x-4 justify-between  ">
-            <ShareButton title={blogFound.blogTitle} />
-            <PlayButton blogDescription={blogFound?.blogDescription} />
-          </div>
-        </div>
+        <BlogInfo
+          blogDescription={blogFound?.blogDescription}
+          blogTitle={blogFound.blogTitle}
+        />
 
         {blogFound.blogCover ? (
           <div className="relative w-full h-96 rounded-lg overflow-hidden">
