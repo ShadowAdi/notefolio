@@ -15,17 +15,19 @@ export async function GET(
 ) {
   try {
     const id = params.id;
-    const blogFound = await db
+    const blogs = await db
       .select({
         id: BlogSchema.id,
         blogTitle: BlogSchema.blogTitle,
         blogDescription: BlogSchema.blogDescription,
         blogCover: BlogSchema.blogCover,
         authorId: BlogSchema.authorId,
+        createdAt: BlogSchema.createdAt,
+        updatedAt: BlogSchema.updatedAt,
       })
       .from(BlogSchema)
       .where(eq(BlogSchema.id, id));
-    if (!blogFound) {
+    if (blogs.length === 0) {
       return new Response(
         JSON.stringify({ success: false, message: `Blog Do Not Exist` }),
         {
@@ -33,6 +35,7 @@ export async function GET(
         }
       );
     }
+    const blogFound = blogs[0];
 
     const blogTagsFoundRaw = await db
       .select({
@@ -51,7 +54,7 @@ export async function GET(
         username: User.username,
       })
       .from(User)
-      .where(eq(User.id, blogFound[0].authorId));
+      .where(eq(User.id, blogFound.authorId));
 
     if (!blogAuthor) {
       return new Response(
@@ -66,11 +69,13 @@ export async function GET(
       .select({ count: sql<number>`count(*)` })
       .from(BlogUpvote)
       .where(eq(BlogUpvote.blogId, id));
+    const blogUpvote = blogUpvotes[0];
 
     const blogDownvotes = await db
       .select({ count: sql<number>`count(*)` })
       .from(BlogDownvote)
       .where(eq(BlogDownvote.blogId, id));
+    const blogDownvote = blogDownvotes[0];
 
     const discussions = await db
       .select({
@@ -99,12 +104,12 @@ export async function GET(
     return new Response(
       JSON.stringify({
         discussions,
-        blogDownvotes,
-        blogUpvotes,
+        blogDownvote,
+        blogUpvote,
         user,
         blogTagsFound,
         blogFound,
-        success:true
+        success: true,
       }),
       {
         status: 200,
