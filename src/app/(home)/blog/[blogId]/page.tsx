@@ -1,20 +1,7 @@
 import { SingleBlogResponseCombinedInterface } from "@/types/Blog/SingleBlog";
 import axios from "axios";
 import React from "react";
-import Image from "next/image";
 import { format } from "date-fns";
-import { Button } from "@/components/ui/button";
-import {
-  ArrowBigDown,
-  ArrowBigUp,
-  Ellipsis,
-  Play,
-  PlayCircle,
-} from "lucide-react";
-import { FaComment } from "react-icons/fa";
-import PlayButton from "@/components/global/Blog/PlayButton";
-import ShareButton from "@/components/global/Blog/ShareButton";
-import { Badge } from "@/components/ui/badge";
 import TagsSection from "@/components/global/Blog/TagsSection";
 import BlogHeader from "@/components/global/Blog/BlogHeader";
 import BlogInfo from "@/components/global/Blog/BlogInfo";
@@ -59,12 +46,11 @@ const Blog = async ({ params }: { params: { blogId: string } }) => {
 
           {blogFound.blogCover ? (
             <div className="relative w-full h-96 rounded-lg overflow-hidden">
-              <Image
+              <img
                 src={blogFound.blogCover}
                 alt={blogFound.blogTitle}
-                fill
                 className="object-cover"
-                priority
+                
               />
             </div>
           ) : (

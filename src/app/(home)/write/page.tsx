@@ -262,7 +262,7 @@ const Write = () => {
           value={blogTitle}
           type="text"
           placeholder="Add A Title..."
-          className="py-5 w-full outline-0 ring-0 focus-visible:ring-0 placeholder:text-neutral-400 text-black text-2xl"
+          className="py-5 w-full outline-0 ring-0 focus-visible:ring-0 placeholder:text-neutral-400 text-black text-4xl"
         />
         <div className="w-full h-full flex-1   relative">
           <EditorContent
@@ -323,7 +323,7 @@ const Write = () => {
             `,
             }}
           />
-          <div className="absolute top-6 right-6 flex items-center space-x-5 ">
+          <div className="absolute top-6 -right-14 flex items-center space-x-5 ">
             <Button
               onClick={() => editor?.chain().focus().undo().run()}
               disabled={!canUndo}

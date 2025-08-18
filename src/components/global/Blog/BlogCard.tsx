@@ -25,16 +25,17 @@ const BlogCard = ({ blog }: { blog: SingleBlogInterface }) => {
     <Link href={`/blog/${blog.id}`}>
       <Card
         key={blog.id}
-        className="group relative grid gap-y-2 cursor-pointer text-gray-800 overflow-hidden max-h-[420px] rounded-md shadow-md pt-0 hover:shadow-lg transition-shadow duration-300 bg-white hover:bg-gray-50"
+        className="group relative grid gap-y-2 cursor-pointer text-gray-800 
+             overflow-hidden rounded-md shadow-md pt-0 hover:shadow-lg 
+             transition-shadow duration-300 bg-white hover:bg-gray-50 h-[440px]  min-h-[440px] max-h-[440px]"
       >
         {blog?.blogCover ? (
           <div className="w-full h-48 overflow-hidden">
-            <Image
+            <img
               src={blog?.blogCover}
               alt={blog.blogTitle}
               height={400}
               width={600}
-              unoptimized={false}
               className="h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
             />
           </div>
@@ -44,31 +45,30 @@ const BlogCard = ({ blog }: { blog: SingleBlogInterface }) => {
           </div>
         )}
         <CardHeader className="px-4 py-2">
-          <h3 className="text-xl font-bold capitalize hover:underline decoration-blue-500 decoration-2 md:text-2xl transition-colors duration-200">
+          <h3 className="text-xl font-bold capitalize transition-colors duration-200 line-clamp-2">
             {blog.blogTitle}
           </h3>
         </CardHeader>
+
         <CardContent className="px-4 py-1">
           <p
-            className="text-sm text-gray-600 leading-relaxed"
+            className="text-sm text-gray-600 leading-relaxed line-clamp-3"
             dangerouslySetInnerHTML={{
               __html: truncate(blog.blogDescription, 120, { ellipsis: "..." }),
             }}
           />
         </CardContent>
-        <CardFooter className="px-4 pt-1 pb-4 flex flex-wrap items-center gap-2">
-          {blog?.tags &&
-            blog?.tags.length > 0 &&
-            blog.tags.slice(0, 5).map((tag, i) => (
-              <Badge
-                key={i}
-                className={`px-3 py-1 rounded-full text-white text-xs font-medium ${
-                  tagColors[i % tagColors.length]
-                } transition-colors duration-200`}
-              >
-                {tag}
-              </Badge>
-            ))}
+        <CardFooter className="px-4 pt-1 pb-4 flex flex-wrap items-center gap-2 mt-auto">
+          {blog?.tags?.slice(0, 3).map((tag, i) => (
+            <Badge
+              key={i}
+              className={`px-3 py-1 rounded-full text-white text-xs font-medium ${
+                tagColors[i % tagColors.length]
+              } transition-colors duration-200`}
+            >
+              {tag}
+            </Badge>
+          ))}
         </CardFooter>
       </Card>
     </Link>

@@ -139,7 +139,7 @@ const PublishModal = () => {
                     </FormControl>
                     <FormMessage />
                     {blogCover && !imgError && (
-                      <Image
+                      <img
                         src={blogCover}
                         onError={() => setImgError(true)}
                         alt="Cover Image"
@@ -186,24 +186,21 @@ const PublishModal = () => {
                         placeholder="tagName"
                       />
                     </FormControl>
-                    <div className="mt-3 grid grid-cols-[repeat(auto-fit,minmax(100px,1fr))] gap-2">
+                    <div className="mt-3 flex flex-row items-center  flex-wrap w-full gap-2">
                       {blogTags.length > 0 &&
                         blogTags.map((blog, i) => (
                           <Badge
                             key={i}
-                            className="px-3 py-2 flex items-center justify-between gap-2 rounded-md cursor-pointer bg-gray-800 text-white hover:bg-gray-700 transition-colors"
-                          >
-                            <span className="truncate">{blog}</span>
-                            <XIcon
-                              onClick={() => {
+                            onClick={() => {
                                 const updatedTags = blogTags.filter(
                                   (_, index) => index !== i
                                 );
                                 setBlogTags(updatedTags);
                                 form.setValue("tags", updatedTags);
                               }}
-                              className="h-4 w-4 text-gray-300 hover:text-red-400 transition-colors"
-                            />
+                            className="px-3 py-2 flex items-center justify-between gap-2 rounded-md cursor-pointer bg-gray-800 text-white hover:bg-gray-700 transition-colors"
+                          >
+                            <span className="truncate">{blog}</span>
                           </Badge>
                         ))}
                     </div>
