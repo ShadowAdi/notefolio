@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import React from "react";
 import PublishModal from "./write/PublishModal";
 import PublishEditModal from "../Blog/Edit/PublishEditModal";
+import Image from "next/image";
 
 const HomeNavbar = () => {
   const { user, isAuthenticated, loading } = useAuth();
@@ -34,13 +35,28 @@ const HomeNavbar = () => {
               Write
             </Link>
           )}
-          <Link
-            href={"/profile"}
-            className=" bg-slate-50 hover:bg-slate-100 transition-all duration-500 px-6  py-1.5 
-            text-xs font-medium text-black shadow-sm rounded-full"
-          >
-            {loading ? "Loading..." : isAuthenticated ? user?.username : "Yo"}
-          </Link>
+
+          {loading
+            ? "Loading..."
+            : isAuthenticated &&
+              user && (
+                <Link
+                  href={"/profile"}
+                  className="relative w-10 h-10 rounded-full overflow-hidden"
+                >
+                  {user.profileUrl ? (
+                    <img
+                      src={user.profileUrl}
+                      alt={user.profileUrl}
+                      className="object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gray-300 flex items-center justify-center text-gray-600 text-lg">
+                      {user.username ? user.username[0].toUpperCase() : "U"}
+                    </div>
+                  )}
+                </Link>
+              )}
         </div>
       </div>
     </header>
