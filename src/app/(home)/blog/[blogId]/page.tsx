@@ -37,6 +37,7 @@ const Blog = async ({ params }: { params: { blogId: string } }) => {
             profileUrl={user.profileUrl}
             username={user.username}
             authorId={blogFound.authorId}
+            blogId={params.blogId}
           />
 
           <BlogInfo
@@ -62,6 +63,7 @@ const Blog = async ({ params }: { params: { blogId: string } }) => {
           <div
             className="prose prose-lg max-w-none text-gray-800"
             dangerouslySetInnerHTML={{ __html: blogFound.blogDescription }}
+            
           />
         </section>
         <section className="flex flex-col w-[20%]  items-start justify-start  gap-4  ">

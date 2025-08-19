@@ -18,6 +18,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { DeleteBlog } from "@/app/actions/DeleteBlog";
+import { useRouter } from "next/navigation";
 
 interface BlogHeaderProps {
   blogTitle: string;
@@ -25,6 +27,7 @@ interface BlogHeaderProps {
   username: string;
   createdAt: string;
   authorId: string;
+  blogId: string;
 }
 
 const BlogHeader = ({
@@ -33,8 +36,10 @@ const BlogHeader = ({
   username,
   createdAt,
   authorId,
+  blogId,
 }: BlogHeaderProps) => {
-  const { user, loading, isAuthenticated } = useAuth();
+  const { user, loading, isAuthenticated, token } = useAuth();
+  const router = useRouter();
 
   const handleFollowClick = () => {
     if (!isAuthenticated) {
@@ -43,6 +48,34 @@ const BlogHeader = ({
     }
 
     toast.success(`Now following ${username}`);
+  };
+
+  const handleDeleteBlog = async () => {
+    try {
+      if (loading) {
+        return;
+      }
+      if (!isAuthenticated || !token) {
+        toast.error(`You are not Authenticated`);
+      }
+      if (!blogId) {
+        toast.error(`Blog Id Not Found`);
+      }
+      if (user && authorId !== user.id) {
+        toast.error(`You can only delete your blogs`);
+      }
+      const { success, error, message } = await DeleteBlog(blogId, token!);
+      if (success) {
+        toast.success(message);
+        router.push("/home");
+      } else {
+        console.error(`Failed to delete Blog: ${error}`);
+        toast.error(`Failed to delete Blog: ${error}`);
+      }
+    } catch (error) {
+      console.error(`Failed to delete Blog: ${error}`);
+      toast.error(`Failed to delete Blog: ${error}`);
+    }
   };
 
   return (
@@ -55,11 +88,7 @@ const BlogHeader = ({
         <div className="flex items-center space-x-4">
           <div className="relative w-10 h-10 rounded-full overflow-hidden">
             {profileUrl ? (
-              <img
-                src={profileUrl}
-                alt={username}
-                className="object-cover"
-              />
+              <img src={profileUrl} alt={username} className="object-cover" />
             ) : (
               <div className="w-full h-full bg-gray-300 flex items-center justify-center text-gray-600 text-lg">
                 {username ? username[0].toUpperCase() : "U"}
@@ -94,7 +123,13 @@ const BlogHeader = ({
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction>Yes, Delete</AlertDialogAction>
+                  <AlertDialogAction
+                    onClick={() => {
+                      handleDeleteBlog();
+                    }}
+                  >
+                    Yes, Delete
+                  </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>

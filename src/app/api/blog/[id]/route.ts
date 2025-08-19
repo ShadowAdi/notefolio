@@ -168,6 +168,10 @@ export async function DELETE(
       );
     }
 
+    await db.delete(Discussion).where(eq(Discussion.blogId, id));
+    await db.delete(BlogDownvote).where(eq(BlogDownvote.blogId, id));
+    await db.delete(BlogUpvote).where(eq(BlogUpvote.blogId, id));
+    await db.delete(tagTable).where(eq(tagTable.blogId, id));
     await db.delete(BlogSchema).where(eq(BlogSchema.id, id));
 
     return new Response(
