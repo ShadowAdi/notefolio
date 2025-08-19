@@ -18,7 +18,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { DeleteBlog } from "@/app/actions/DeleteBlog";
+import { DeleteBlog } from "@/actions/Blog/DeleteBlog";
 import { useRouter } from "next/navigation";
 
 interface BlogHeaderProps {
