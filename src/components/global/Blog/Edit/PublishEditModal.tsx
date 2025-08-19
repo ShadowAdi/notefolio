@@ -21,19 +21,16 @@ import {
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/context/AuthContext";
 import { WriteBlogContext } from "@/context/WriteBlogContext";
-import { blogFormSchema } from "@/zodSchema/blogFormSchema";
 import { publishBlogSchema } from "@/zodSchema/publishBlogSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import { XIcon } from "lucide-react";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
 
-const PublishModal = () => {
+const PublishEditModal = () => {
   const {
     blogTags,
     setBlogTags,
@@ -42,6 +39,8 @@ const PublishModal = () => {
     blogDescription,
     blogTitle,
   } = useContext(WriteBlogContext);
+  const pathname=usePathname()
+  const blogId=pathname.split("/")[2]
   const form = useForm<z.infer<typeof publishBlogSchema>>({
     resolver: zodResolver(publishBlogSchema),
     defaultValues: {
@@ -64,6 +63,9 @@ const PublishModal = () => {
       toast(`You are not Logged In`);
       router.push(`/auth/signin`);
     }
+    if (!blogId) {
+      toast(`Blog Id Is Not Provided`)
+    }
     setLoading(true);
     const payload = {
       blogTitle,
@@ -73,26 +75,26 @@ const PublishModal = () => {
       authorId: user?.id,
     };
     try {
-      const response = await axios.post(`/api/blog/`, payload, {
+      const response = await axios.patch(`/api/blog/${blogId}`, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       const data = await response.data;
       if (!data.success) {
-        toast(`Failed to publish Blog. ${data.error}`);
+        toast(`Failed to edit and publish Blog. ${data.error}`);
         form.setValue("blogCover", "");
         form.setValue("tags", []);
         setBlogCover("");
         setBlogTags([]);
       } else {
         form.reset();
-        toast.success(`Blog Published Successfully`);
-        router.push(`/home`);
+        toast.success(`Blog  Saved and Published Successfully`);
+        router.back();
       }
     } catch (error) {
-      console.error(`Failed to Published Blog: ${error}`);
-      toast.error(`Failed to Published Blog: ${error}`);
+      console.error(`Failed to edit Blog: ${error}`);
+      toast.error(`Failed to edit Blog: ${error}`);
       form.setValue("blogCover", "");
       form.setValue("tags", []);
       setBlogCover("");
@@ -105,7 +107,7 @@ const PublishModal = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="!cursor-pointer">Publish</Button>
+        <Button className="!cursor-pointer">Save and Publish</Button>
       </DialogTrigger>
       <DialogContent className="max-h-[90vh] overflow-y-auto max-w-[640px] no-scrollbar publishModal">
         <DialogHeader className="w-full">
@@ -192,12 +194,12 @@ const PublishModal = () => {
                           <Badge
                             key={i}
                             onClick={() => {
-                                const updatedTags = blogTags.filter(
-                                  (_, index) => index !== i
-                                );
-                                setBlogTags(updatedTags);
-                                form.setValue("tags", updatedTags);
-                              }}
+                              const updatedTags = blogTags.filter(
+                                (_, index) => index !== i
+                              );
+                              setBlogTags(updatedTags);
+                              form.setValue("tags", updatedTags);
+                            }}
                             className="px-3 py-2 flex items-center justify-between gap-2 rounded-md cursor-pointer bg-gray-800 text-white hover:bg-gray-700 transition-colors"
                           >
                             <span className="truncate">{blog}</span>
@@ -210,7 +212,7 @@ const PublishModal = () => {
                 )}
               />
               <Button type="submit" className="w-full !cursor-pointer">
-                {!loading && !userLoading ? "Publish" : "Loading..."}
+                {!loading && !userLoading ? "Save and Publish" : "Loading..."}
               </Button>
             </form>
           </Form>
@@ -220,4 +222,4 @@ const PublishModal = () => {
   );
 };
 
-export default PublishModal;
+export default PublishEditModal;

@@ -194,23 +194,25 @@ export async function DELETE(
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await verifyUser(request);
     if (!user) {
-      console.error(`Authenticated User Not Found`);
       return new Response(
         JSON.stringify({
           success: false,
           message: `You are not Authorized`,
-        })
+        }),
+        { status: 401 }
       );
     }
+
     const body = await request.json();
     const { blogTitle, blogDescription, blogCover, tags } = body;
 
-    const id = params.id;
+    const { id } = await context.params;
+
     const blogFound = await db
       .select({
         id: BlogSchema.id,
@@ -230,24 +232,16 @@ export async function PATCH(
       return new Response(
         JSON.stringify({
           success: false,
-          message: `Blog can be only deleted by Author`,
+          message: `Blog can only be edited by Author`,
         }),
-        {
-          status: 404,
-        }
+        { status: 403 }
       );
     }
 
     const updatedBlog: any = {};
-    if (blogTitle) {
-      updatedBlog[blogTitle] = blogTitle;
-    }
-    if (blogCover) {
-      updatedBlog[blogCover] = blogCover;
-    }
-    if (blogDescription) {
-      updatedBlog[blogDescription] = blogDescription;
-    }
+    if (blogTitle) updatedBlog.blogTitle = blogTitle;
+    if (blogCover) updatedBlog.blogCover = blogCover;
+    if (blogDescription) updatedBlog.blogDescription = blogDescription;
 
     await db.update(BlogSchema).set(updatedBlog).where(eq(BlogSchema.id, id));
 
@@ -262,11 +256,9 @@ export async function PATCH(
       JSON.stringify({
         success: true,
         message: `Blog Updated Successfully`,
-        blodId: id,
+        blogId: id,
       }),
-      {
-        status: 200,
-      }
+      { status: 200 }
     );
   } catch (error) {
     console.error(`Failed to update blog `, error);

@@ -1,5 +1,11 @@
 "use client";
-import React, { use, useCallback, useContext, useState } from "react";
+import React, {
+  use,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { BubbleMenu, FloatingMenu } from "@tiptap/react/menus";
@@ -33,10 +39,30 @@ import { FaYoutube } from "react-icons/fa";
 import { BulletList, ListItem, OrderedList } from "@tiptap/extension-list";
 import Image from "@tiptap/extension-image";
 import { WriteBlogContext } from "@/context/WriteBlogContext";
+import {
+  SingleBlogResponseInterface,
+  SingleBlogUserResponseInterface,
+} from "@/types/Blog/SingleBlog";
 
-const Write = () => {
-  const { blogTitle, blogDescription, setBlogDescription, setBlogTitle } =
-    useContext(WriteBlogContext);
+interface BlogEditComponent {
+  blogFound: SingleBlogResponseInterface;
+  user: SingleBlogUserResponseInterface;
+  blogTagsFound: string[];
+}
+
+const BlogEditComponent = ({
+  blogFound,
+  user,
+  blogTagsFound,
+}: BlogEditComponent) => {
+  const {
+    blogTitle,
+    blogDescription,
+    setBlogDescription,
+    setBlogTitle,
+    setBlogCover,
+    setBlogTags,
+  } = useContext(WriteBlogContext);
   const [openLink, setOpenLink] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
   const lowlight = createLowlight(all);
@@ -50,7 +76,7 @@ const Write = () => {
   const [imageHeight, setImageHeight] = useState(180);
 
   const editor = useEditor({
-    content: blogDescription,
+    content: blogDescription || blogFound.blogDescription,
     extensions: [
       StarterKit.configure({
         horizontalRule: false,
@@ -189,6 +215,23 @@ const Write = () => {
     },
   });
 
+  useEffect(() => {
+    if (editor && blogFound && blogFound.blogDescription) {
+      editor.commands.setContent(blogFound.blogDescription);
+      setBlogDescription(blogFound.blogDescription);
+      setBlogTitle(blogFound.blogTitle);
+      setBlogTags(blogTagsFound);
+      setBlogCover(blogFound?.blogCover || "");
+    }
+  }, [
+    editor,
+    blogFound,
+    setBlogDescription,
+    setBlogTitle,
+    setBlogCover,
+    setBlogTags,
+  ]);
+
   const addYoutubeVideo = useCallback(() => {
     if (youtubeUrl) {
       editor?.commands.setYoutubeVideo({
@@ -262,7 +305,7 @@ const Write = () => {
           value={blogTitle}
           type="text"
           placeholder="Add A Title..."
-         className="py-5 w-full outline-0 ring-0 focus-visible:ring-0 placeholder:text-neutral-400 text-black text-6xl font-bold"
+          className="py-5 w-full outline-0 ring-0 focus-visible:ring-0 placeholder:text-neutral-400 text-black text-6xl font-bold"
         />
         <div className="w-full h-full flex-1   relative">
           <EditorContent
@@ -277,50 +320,50 @@ const Write = () => {
           <style
             dangerouslySetInnerHTML={{
               __html: `
-              .ProseMirror h1 {
-                font-size: 1.875rem !important;
-                font-weight: bold !important;
-                line-height: 2.25rem !important;
-                margin: 1rem 0 !important;
-              }
-              .ProseMirror h2 {
-                font-size: 1.5rem !important;
-                font-weight: bold !important;
-                line-height: 2rem !important;
-                margin: 0.75rem 0 !important;
-              }
-              .ProseMirror h3 {
-                font-size: 1.25rem !important;
-                font-weight: bold !important;
-                line-height: 1.75rem !important;
-                margin: 0.5rem 0 !important;
-              }
-              .ProseMirror h4 {
-                font-size: 1.125rem !important;
-                font-weight: bold !important;
-                line-height: 1.625rem !important;
-                margin: 0.5rem 0 !important;
-              }
-              .ProseMirror h5 {
-                font-size: 1rem !important;
-                font-weight: bold !important;
-                line-height: 1.5rem !important;
-                margin: 0.25rem 0 !important;
-              }
-              .ProseMirror h6 {
-                font-size: 0.875rem !important;
-                font-weight: bold !important;
-                line-height: 1.25rem !important;
-                margin: 0.25rem 0 !important;
-              }
-              .ProseMirror p {
-                margin: 0.5rem 0 !important;
-                font-size: 1rem !important;
-                line-height: 1.5rem !important;
-              }
-              .ProseMirror ol { list-style-type: decimal !important; margin-left: 1.5rem !important; padding-left: 0 !important; }
-              .ProseMirror ol li { margin: 0.25rem 0 !important; }
-            `,
+                .ProseMirror h1 {
+                  font-size: 1.875rem !important;
+                  font-weight: bold !important;
+                  line-height: 2.25rem !important;
+                  margin: 1rem 0 !important;
+                }
+                .ProseMirror h2 {
+                  font-size: 1.5rem !important;
+                  font-weight: bold !important;
+                  line-height: 2rem !important;
+                  margin: 0.75rem 0 !important;
+                }
+                .ProseMirror h3 {
+                  font-size: 1.25rem !important;
+                  font-weight: bold !important;
+                  line-height: 1.75rem !important;
+                  margin: 0.5rem 0 !important;
+                }
+                .ProseMirror h4 {
+                  font-size: 1.125rem !important;
+                  font-weight: bold !important;
+                  line-height: 1.625rem !important;
+                  margin: 0.5rem 0 !important;
+                }
+                .ProseMirror h5 {
+                  font-size: 1rem !important;
+                  font-weight: bold !important;
+                  line-height: 1.5rem !important;
+                  margin: 0.25rem 0 !important;
+                }
+                .ProseMirror h6 {
+                  font-size: 0.875rem !important;
+                  font-weight: bold !important;
+                  line-height: 1.25rem !important;
+                  margin: 0.25rem 0 !important;
+                }
+                .ProseMirror p {
+                  margin: 0.5rem 0 !important;
+                  font-size: 1rem !important;
+                  line-height: 1.5rem !important;
+                }
+                .ProseMirror ol { list-style-type: decimal !important; margin-left: 1.5rem !important; padding-left: 0 !important; }
+                .ProseMirror ol li { margin: 0.25rem 0 !important; }
+              `,
             }}
           />
           <div className="absolute top-6 -right-14 flex items-center space-x-5 ">
@@ -529,9 +572,9 @@ const Write = () => {
                     setOpenLink((prev) => !prev);
                   }}
                   className={`flex h-8 w-8 items-center justify-center hover:bg-stone-700 p-2 text-base cursor-pointer rounded-md
-                 text-white bg-stone-950 ${
-                   editor.isActive("link") ? "bg-stone-700" : ""
-                 }`}
+                   text-white bg-stone-950 ${
+                     editor.isActive("link") ? "bg-stone-700" : ""
+                   }`}
                   type="button"
                 >
                   <LinkIcon size={16} stroke="white" />
@@ -627,7 +670,7 @@ const Write = () => {
                     setYoutubeOpenLink((prev) => !prev);
                   }}
                   className={`flex h-8 w-8 items-center justify-center hover:bg-stone-700 p-2 text-base cursor-pointer rounded-md
-                 text-white bg-stone-950 `}
+                   text-white bg-stone-950 `}
                   type="button"
                 >
                   <FaYoutube size={16} stroke="white" />
@@ -637,9 +680,9 @@ const Write = () => {
                     editor.chain().focus().toggleOrderedList().run();
                   }}
                   className={`flex h-8 w-8 items-center justify-center hover:bg-stone-700 p-2 text-base cursor-pointer rounded-md
-                 text-white bg-stone-950 ${
-                   editor.isActive("orderedList") ? "bg-stone-700" : ""
-                 }`}
+                   text-white bg-stone-950 ${
+                     editor.isActive("orderedList") ? "bg-stone-700" : ""
+                   }`}
                   type="button"
                 >
                   <ListOrderedIcon size={16} stroke="white" />
@@ -649,9 +692,9 @@ const Write = () => {
                     editor.chain().focus().toggleBulletList().run();
                   }}
                   className={`flex h-8 w-8 items-center justify-center hover:bg-stone-700 p-2 text-base cursor-pointer rounded-md
-                 text-white bg-stone-950 ${
-                   editor.isActive("bulletList") ? "bg-stone-700" : ""
-                 }`}
+                   text-white bg-stone-950 ${
+                     editor.isActive("bulletList") ? "bg-stone-700" : ""
+                   }`}
                   type="button"
                 >
                   <ListIcon size={16} stroke="white" />
@@ -665,7 +708,7 @@ const Write = () => {
                     setImageOpenLink(true);
                   }}
                   className={`flex h-8 w-8 items-center justify-center hover:bg-stone-700 p-2 text-base cursor-pointer rounded-md
-                 text-white bg-stone-950`}
+                   text-white bg-stone-950`}
                   type="button"
                 >
                   <ImageIcon size={16} stroke="white" />
@@ -863,9 +906,9 @@ const Write = () => {
                     setOpenLink((prev) => !prev);
                   }}
                   className={`flex h-8 w-8 items-center justify-center hover:bg-stone-700 p-2 text-base cursor-pointer rounded-md
-                 text-white bg-stone-950 ${
-                   editor.isActive("link") ? "bg-stone-700" : ""
-                 }`}
+                   text-white bg-stone-950 ${
+                     editor.isActive("link") ? "bg-stone-700" : ""
+                   }`}
                   type="button"
                 >
                   <LinkIcon size={16} stroke="white" />
@@ -961,7 +1004,7 @@ const Write = () => {
                     setYoutubeOpenLink((prev) => !prev);
                   }}
                   className={`flex h-8 w-8 items-center justify-center hover:bg-stone-700 p-2 text-base cursor-pointer rounded-md
-                 text-white bg-stone-950 `}
+                   text-white bg-stone-950 `}
                   type="button"
                 >
                   <FaYoutube size={16} stroke="white" />
@@ -971,9 +1014,9 @@ const Write = () => {
                     editor.chain().focus().toggleOrderedList().run();
                   }}
                   className={`flex h-8 w-8 items-center justify-center hover:bg-stone-700 p-2 text-base cursor-pointer rounded-md
-                 text-white bg-stone-950 ${
-                   editor.isActive("orderedList") ? "is-active" : ""
-                 }`}
+                   text-white bg-stone-950 ${
+                     editor.isActive("orderedList") ? "is-active" : ""
+                   }`}
                   type="button"
                 >
                   <ListOrderedIcon size={16} stroke="white" />
@@ -983,9 +1026,9 @@ const Write = () => {
                     editor.chain().focus().toggleBulletList().run();
                   }}
                   className={`flex h-8 w-8 items-center justify-center hover:bg-stone-700 p-2 text-base cursor-pointer rounded-md
-                 text-white bg-stone-950 ${
-                   editor.isActive("bulletList") ? "bg-stone-700" : ""
-                 }`}
+                   text-white bg-stone-950 ${
+                     editor.isActive("bulletList") ? "bg-stone-700" : ""
+                   }`}
                   type="button"
                 >
                   <ListIcon size={16} stroke="white" />
@@ -1011,4 +1054,4 @@ const Write = () => {
   );
 };
 
-export default Write;
+export default BlogEditComponent;

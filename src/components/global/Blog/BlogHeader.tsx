@@ -134,7 +134,12 @@ const BlogHeader = ({
               </AlertDialogContent>
             </AlertDialog>
 
-            <div className="flex items-center justify-center cursor-pointer bg-green-500 hover:bg-green-600 rounded-full h-10 w-10">
+            <div
+              onClick={() => {
+                router.push(`/blog/${blogId}/edit`);
+              }}
+              className="flex items-center justify-center cursor-pointer bg-green-500 hover:bg-green-600 rounded-full h-10 w-10"
+            >
               <EditIcon size={20} className="text-xs  text-white " />
             </div>
           </div>

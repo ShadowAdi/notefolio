@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 import PublishModal from "./write/PublishModal";
+import PublishEditModal from "../Blog/Edit/PublishEditModal";
 
 const HomeNavbar = () => {
   const { user, isAuthenticated, loading } = useAuth();
@@ -22,6 +23,8 @@ const HomeNavbar = () => {
         <div className="flex items-center space-x-5 flex-row">
           {pathname?.includes("/write") ? (
             <PublishModal />
+          ) : pathname.includes("/edit") ? (
+            <PublishEditModal />
           ) : (
             <Link
               href={"/write"}
