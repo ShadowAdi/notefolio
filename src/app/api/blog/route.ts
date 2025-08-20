@@ -1,5 +1,7 @@
 import { db } from "@/db/db";
 import { BlogSchema } from "@/schemas/Blog";
+import { BlogDownvote } from "@/schemas/BlogDownvote";
+import { BlogUpvote } from "@/schemas/BlogUpvote";
 import { tagTable } from "@/schemas/Tag";
 import { verifyUser } from "@/services/VerifyUser";
 import { eq, getTableColumns, ilike, or, sql } from "drizzle-orm";
@@ -99,9 +101,28 @@ export async function GET(request: Request) {
       .from(BlogSchema)
       .where(whereCondition || sql`TRUE`);
 
+    const blogUpvotes = await db
+      .select({
+        blogId: BlogUpvote.blogId,
+        count: sql<number>`COUNT(*)`,
+      })
+      .from(BlogUpvote)
+      .groupBy(BlogUpvote.blogId);
+
+    const BlogDownvotes = await db
+      .select({ blogId: BlogDownvote.blogId, count: sql<number>`COUNT(*)` })
+      .from(BlogDownvote)
+      .groupBy(BlogDownvote.blogId);
+
+    const blogWithVotes = blogs.map((b) => {
+      const ups = blogUpvotes.find((u) => u.blogId === b.id)?.count || 0;
+      const downs = BlogDownvotes.find((d) => d.blogId === b.id)?.count || 0;
+      return { ...b, upvotes: ups, downvotes: downs };
+    });
+
     return new Response(
       JSON.stringify({
-        data: blogs,
+        data: blogWithVotes,
         pagination: {
           total: Number(count),
           limit,
