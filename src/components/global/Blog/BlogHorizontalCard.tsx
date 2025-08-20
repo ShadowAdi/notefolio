@@ -13,7 +13,7 @@ import truncate from "truncate-html";
 
 const BlogHorizontalCard = ({ b }: { b: UserBlogResponseInterface }) => {
   return (
-    <Card className="flex flex-row items-center w-full max-w-3xl mx-auto border-none shadow-lg rounded-lg overflow-hidden">
+    <Card className="flex flex-row items-center w-full max-w-3xl border-none shadow-lg rounded-lg overflow-hidden bg-gray-100/40">
       <div className="flex-1 p-4">
         <CardHeader className="p-0 mb-2">
           <h2 className="text-xl font-bold text-gray-900 line-clamp-2">

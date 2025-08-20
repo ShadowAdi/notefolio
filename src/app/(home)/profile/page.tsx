@@ -9,13 +9,13 @@ import { UserBlogResponseInterface } from "@/types/Blog/UserBlogResponseInterfac
 import { Spinner } from "@/components/ui/Spinner";
 import BlogHorizontalCard from "@/components/global/Blog/BlogHorizontalCard";
 
-
 const Profile = () => {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<UserProfileInterface | null>(null);
   const [blogs, setBlogs] = useState<UserBlogResponseInterface[]>([]);
   const { isAuthenticated, loading: globalLoading, token } = useAuth();
   const router = useRouter();
+  const [tabs, setTabs] = useState<"Blogs" | "About" | "Newsletters">("Blogs");
 
   const GetUser = async () => {
     setLoading(true);
@@ -59,16 +59,37 @@ const Profile = () => {
   return (
     <main className="w-full min-h-[80vh] max-w-7xl py-6  px-8 flex justify-between items-start mx-auto space-x-6">
       <section className="flex-1 flex flex-col space-y-6 items-start h-full py-3">
-        {blogs && blogs.length > 0 && (
-          <section>
-            <ul>
-              {blogs.map((b, i) => (
-                <BlogHorizontalCard key={i} b={b} />
-              ))}
-            </ul>
-          </section>
-        )}
+        <ul className="flex flex-wrap space-x-4">
+          {(["Blogs", "About", "Newsletters"] as const).map((tab) => (
+            <li
+              key={tab}
+              onClick={() => setTabs(tab)}
+              className={`inline-block p-4 border-b-2 rounded-t-lg cursor-pointer transition-colors
+          ${
+            tabs === tab
+              ? "text-blue-600 border-blue-600 dark:text-blue-500 dark:border-blue-500"
+              : "border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+          }`}
+            >
+              {tab}
+            </li>
+          ))}
+        </ul>
+
+        <div className="flex w-full flex-1 items-start justify-start py-3">
+          {tabs === "Blogs" &&
+            blogs.map((blog, i) => <BlogHorizontalCard key={i} b={blog} />)}
+
+          {tabs === "Newsletters" && (
+            <div className="text-gray-500">No newsletters yet.</div>
+          )}
+
+          {tabs === "About" && (
+            <div className="text-gray-500">About section coming soon.</div>
+          )}
+        </div>
       </section>
+
       {user && (
         <div>
           <p>{user.username}</p>
