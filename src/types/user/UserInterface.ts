@@ -4,3 +4,9 @@ export interface UserInterface{
     email:string;
     profileUrl:string;
 }
+
+export interface UserProfileInterface extends UserInterface{
+    createdAt:string;
+    updatedAt:string;
+    bio:string
+}

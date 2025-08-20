@@ -156,7 +156,7 @@ export async function DELETE(
       );
     }
 
-    if (user.id !== blogFound[0].authorId) {
+    if (user?.id !== blogFound[0].authorId) {
       return new Response(
         JSON.stringify({
           success: false,

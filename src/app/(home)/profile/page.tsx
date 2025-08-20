@@ -1,9 +1,83 @@
-import React from 'react'
+"use client";
+import { GetUserAction } from "@/actions/User/User";
+import { useAuth } from "@/context/AuthContext";
+import withAuth from "@/protected/withAuth";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { UserProfileInterface } from "@/types/user/UserInterface";
+import { UserBlogResponseInterface } from "@/types/Blog/UserBlogResponseInterface";
+import { Spinner } from "@/components/ui/Spinner";
+import BlogHorizontalCard from "@/components/global/Blog/BlogHorizontalCard";
+
 
 const Profile = () => {
-  return (
-    <div>Profile</div>
-  )
-}
+  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState<UserProfileInterface | null>(null);
+  const [blogs, setBlogs] = useState<UserBlogResponseInterface[]>([]);
+  const { isAuthenticated, loading: globalLoading, token } = useAuth();
+  const router = useRouter();
 
-export default Profile
+  const GetUser = async () => {
+    setLoading(true);
+    try {
+      if (globalLoading) return;
+      if (!isAuthenticated || !token) {
+        router.push("/home");
+        return;
+      }
+
+      const res = await GetUserAction(token);
+
+      if (res.success) {
+        if (res.user) setUser(res.user);
+        if (res.blogs) setBlogs(res.blogs);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    GetUser();
+  }, [globalLoading, isAuthenticated, token]);
+
+  useEffect(() => {
+    if (blogs.length > 0) {
+      console.log("Blogs tags ", blogs[0]?.tags);
+    }
+  }, [blogs]);
+
+  if (loading || globalLoading)
+    return (
+      <section className="flex items-center justify-center w-full min-h-[80vh]">
+        <Spinner />
+      </section>
+    );
+
+  return (
+    <main className="w-full min-h-[80vh] max-w-7xl py-6  px-8 flex justify-between items-start mx-auto space-x-6">
+      <section className="flex-1 flex flex-col space-y-6 items-start h-full py-3">
+        {blogs && blogs.length > 0 && (
+          <section>
+            <ul>
+              {blogs.map((b, i) => (
+                <BlogHorizontalCard key={i} b={b} />
+              ))}
+            </ul>
+          </section>
+        )}
+      </section>
+      {user && (
+        <div>
+          <p>{user.username}</p>
+          <p>{user.email}</p>
+          <p>{user.bio}</p>
+        </div>
+      )}
+    </main>
+  );
+};
+
+export default withAuth(Profile);

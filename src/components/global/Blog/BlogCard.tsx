@@ -6,7 +6,6 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { SingleBlogInterface } from "@/types/Blog/Blog";
-import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import truncate from "truncate-html";

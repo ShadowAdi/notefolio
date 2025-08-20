@@ -12,7 +12,7 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const isBlogs = searchParams.get("isBlogs")?.trim() || "true";
     const sortBy = searchParams.get("sortBy")?.trim() || "createdAt";
-    const decoded: any = TokenExtract(request);
+    const decoded: any = await TokenExtract(request);
     if (!decoded.success) {
       return new Response(
         JSON.stringify({ success: false, error: decoded.error })
@@ -49,7 +49,8 @@ export async function GET(request: Request) {
         updatedAt: BlogSchema.updatedAt,
         upvotes: sql<number>`COUNT(DISTINCT ${BlogUpvote.blogId})`,
         downvotes: sql<number>`COUNT(DISTINCT ${BlogDownvote.blogId})`,
-        tags: sql<string[]>`array_agg(DISTINCT ${tagTable.blogId})`,
+        tags: sql<string[]>`array_agg(DISTINCT ${tagTable.tag})`,
+        authorId: BlogSchema.authorId,
       })
       .from(BlogSchema)
       .where(eq(BlogSchema.authorId, user.id))
@@ -58,10 +59,12 @@ export async function GET(request: Request) {
       .leftJoin(BlogDownvote, eq(BlogDownvote.blogId, BlogSchema.id))
       .groupBy(BlogSchema.id)
       .orderBy(desc(sortMap[sortBy] || BlogSchema.createdAt));
+    const { password, ...safeUser } = user;
     return new Response(
-      JSON.stringify({ success: true, blogs: userBlogs, user })
+      JSON.stringify({ success: true, blogs: userBlogs, user: safeUser })
     );
   } catch (error) {
+    console.error(`Failed in getting the data `, error);
     return new Response(JSON.stringify({ success: false, error }), {
       status: 401,
     });
