@@ -78,14 +78,29 @@ const Profile = () => {
 
         <div className="flex w-full flex-1 items-start justify-start py-3">
           {tabs === "Blogs" &&
-            blogs.map((blog, i) => <BlogHorizontalCard key={i} b={blog} />)}
-
+            (blogs.length > 0 ? (
+              blogs.map((blog, i) => <BlogHorizontalCard key={i} b={blog} />)
+            ) : (
+              <div className="w-full flex flex-col">
+                <h2 className="text-3xl font-semibold text-stone-900">
+                  No Blogs Found
+                </h2>
+              </div>
+            ))}
           {tabs === "Newsletters" && (
-            <div className="text-gray-500">No newsletters yet.</div>
+            <div className="w-full flex flex-col">
+              <h2 className="text-3xl font-semibold text-stone-900">
+                No Newsletters Found
+              </h2>
+            </div>
           )}
 
           {tabs === "About" && (
-            <div className="text-gray-500">About section coming soon.</div>
+            <div className="w-full flex flex-col">
+              <h2 className="text-3xl font-semibold text-stone-900">
+                No About Found
+              </h2>
+            </div>
           )}
         </div>
       </section>
