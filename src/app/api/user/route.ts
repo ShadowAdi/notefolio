@@ -132,11 +132,12 @@ export async function PATCH(request: Request) {
       );
     }
 
-    await db.update(User).set(updateData).where(eq(User.id, safeUser.id));
+    const upatedUser=await db.update(User).set(updateData).where(eq(User.id, safeUser.id)).returning()
 
     return new Response(
       JSON.stringify({
         success: true,
+        upatedUser
       })
     );
   } catch (error) {

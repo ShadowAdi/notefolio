@@ -9,14 +9,21 @@ import { UserBlogResponseInterface } from "@/types/Blog/UserBlogResponseInterfac
 import { Spinner } from "@/components/ui/Spinner";
 import BlogHorizontalCard from "@/components/global/Blog/BlogHorizontalCard";
 import Image from "next/image";
-import truncate from "truncate-html";
 import { Button } from "@/components/ui/button";
 import { FollowersInterface } from "@/types/Blog/Followers";
 import { FollowingsInterface } from "@/types/Blog/Followings";
 import UserProfileInline from "@/components/global/Profile/UserProfileInline";
-import EditorBio from "@/components/global/Profile/EditorBio";
 import axios from "axios";
 import { toast } from "sonner";
+import dynamic from "next/dynamic";
+
+const EditorBio = dynamic(
+  () => import("@/components/global/Profile/EditorBio"),
+  {
+    ssr: false,
+    loading: () => <p>Loading Editor ...</p>,
+  }
+);
 
 const Profile = () => {
   const [loading, setLoading] = useState(false);
@@ -59,6 +66,12 @@ const Profile = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (user?.bio) {
+      setBio(user.bio);
+    }
+  }, [user]);
 
   useEffect(() => {
     GetUser();
@@ -149,6 +162,11 @@ const Profile = () => {
                               },
                             }
                           );
+                          const data = await response.data;
+                          if (data.success) {
+                            toast.success(`Bio has Been Updated`);
+                            setUser(data.updatedUser);
+                          }
                         } catch (err) {
                           console.error("Failed to update bio", err);
                           toast.error(`Failed to update bio: ${err}`);
@@ -174,7 +192,10 @@ const Profile = () => {
                 <p className="text-lg ">
                   Share your story, your passions, and what makes you unique.
                 </p>
-                <Button className="px-6 py-7 bg-transparent rounded-full !cursor-pointer hover:bg-transparent hover:shadow-md border-black border flex items-center justify-center">
+                <Button
+                  onClick={() => setIsEditing(true)}
+                  className="px-6 py-7 bg-transparent rounded-full !cursor-pointer hover:bg-transparent hover:shadow-md border-black border flex items-center justify-center"
+                >
                   <span className="text-lg text-black">Start Writing</span>
                 </Button>
               </div>
