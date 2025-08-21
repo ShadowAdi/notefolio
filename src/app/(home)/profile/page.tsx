@@ -8,11 +8,23 @@ import { UserProfileInterface } from "@/types/user/UserInterface";
 import { UserBlogResponseInterface } from "@/types/Blog/UserBlogResponseInterface";
 import { Spinner } from "@/components/ui/Spinner";
 import BlogHorizontalCard from "@/components/global/Blog/BlogHorizontalCard";
+import Image from "next/image";
+import truncate from "truncate-html";
+import { Button } from "@/components/ui/button";
+import { FollowersInterface } from "@/types/Blog/Followers";
+import { FollowingsInterface } from "@/types/Blog/Followings";
+import UserProfileInline from "@/components/global/Profile/UserProfileInline";
 
 const Profile = () => {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<UserProfileInterface | null>(null);
   const [blogs, setBlogs] = useState<UserBlogResponseInterface[]>([]);
+  const [followersCount, setFollowersCount] = useState(0);
+  const [followingsCount, setFollowingsCount] = useState(0);
+  const [followers, setFollowers] = useState<FollowersInterface[] | null>(null);
+  const [followings, setFollowings] = useState<FollowingsInterface[] | null>(
+    null
+  );
   const { isAuthenticated, loading: globalLoading, token } = useAuth();
   const router = useRouter();
   const [tabs, setTabs] = useState<"Blogs" | "About" | "Newsletters">("Blogs");
@@ -31,6 +43,10 @@ const Profile = () => {
       if (res.success) {
         if (res.user) setUser(res.user);
         if (res.blogs) setBlogs(res.blogs);
+        if (res.followersCount) setFollowersCount(res.followersCount);
+        if (res.followingsCount) setFollowersCount(res.followingsCount);
+        if (res.followers) setFollowers(res.followers);
+        if (res.followings) setFollowings(res.followings);
       }
     } catch (err) {
       console.error(err);
@@ -58,9 +74,9 @@ const Profile = () => {
 
   return (
     <main className="w-full min-h-[80vh] max-w-7xl py-6  px-8 flex justify-between items-start mx-auto space-x-6">
-      <section className="flex-1 flex flex-col space-y-6 items-start h-full py-3">
+      <section className="flex-1 flex border-r pr-7 border-r-gray-300 h-full min-h-[80vh] flex-col space-y-6 items-start  py-3">
         <ul className="flex flex-wrap space-x-4">
-          {(["Blogs", "About", "Newsletters"] as const).map((tab) => (
+          {(["Blogs", "Newsletters", "About"] as const).map((tab) => (
             <li
               key={tab}
               onClick={() => setTabs(tab)}
@@ -76,7 +92,7 @@ const Profile = () => {
           ))}
         </ul>
 
-        <div className="flex w-full flex-1 items-start justify-start py-3">
+        <div className="flex w-full flex-1 px-4 items-start justify-start py-3">
           {tabs === "Blogs" &&
             (blogs.length > 0 ? (
               blogs.map((blog, i) => <BlogHorizontalCard key={i} b={blog} />)
@@ -95,22 +111,96 @@ const Profile = () => {
             </div>
           )}
 
-          {tabs === "About" && (
-            <div className="w-full flex flex-col">
-              <h2 className="text-3xl font-semibold text-stone-900">
-                No About Found
-              </h2>
-            </div>
-          )}
+          {tabs === "About" &&
+            (user && user?.bio ? (
+              <div className="w-full flex flex-col  h-full items-start  justify-center">
+                <div className="p-0 mb-3">
+                  <p
+                    className="text-xl text-stone-950 leading-relaxed line-clamp-3"
+                    dangerouslySetInnerHTML={{
+                      __html: truncate(user.bio, 120, {
+                        ellipsis: "...",
+                      }),
+                    }}
+                  />
+                </div>
+                <div className="flex w-full items-end justify-end">
+                  <Button className="px-6 py-4 bg-transparent rounded-full !cursor-pointer hover:bg-transparent hover:shadow-md border-black border flex items-center justify-center">
+                    <span className="text-lg text-black">Edit</span>
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="w-full bg-gray-200/60 flex items-center flex-col space-y-3 justify-center py-6 min-h-[40vh] ">
+                <h2 className="text-2xl font-semibold text-black">
+                  Tell the world about Yourself
+                </h2>
+                <p className="text-lg ">
+                  Share your story, your passions, and what makes you unique.
+                </p>
+                <Button className="px-6 py-7 bg-transparent rounded-full !cursor-pointer hover:bg-transparent hover:shadow-md border-black border flex items-center justify-center">
+                  <span className="text-lg text-black">Start Writing</span>
+                </Button>
+              </div>
+            ))}
         </div>
       </section>
 
       {user && (
-        <div>
-          <p>{user.username}</p>
-          <p>{user.email}</p>
-          <p>{user.bio}</p>
-        </div>
+        <section className="flex-[0.3] pl-2 flex space-y-6 flex-col py-5 items-start">
+          {user.profileUrl ? (
+            <Image
+              src={user.profileUrl}
+              alt={user.username}
+              className="rounded-full h-[150px] w-[150px] object-cover"
+              height={150}
+              width={150}
+            />
+          ) : (
+            <div className="rounded-full h-[150px] w-[150px] flex items-center justify-center bg-gray-300">
+              <span className="text-6xl flex items-center justify-center font-semibold text-black">
+                {user.username && user.username[0]}
+              </span>
+            </div>
+          )}
+          <h2 className="text-3xl font-bold capitalize text-black">
+            {user.username}
+          </h2>
+          <div className="flex flex-col w-full py-5 items-start my-3 space-y-4 border-t border-t-gray-400  ">
+            <h5 className="text-lg font-semibold text-black">
+              {followersCount} Followers
+            </h5>
+            <div className="flex flex-col items-start space-y-3">
+              {followers &&
+                followers.length > 0 &&
+                followers?.map((follower, i) => (
+                  <UserProfileInline
+                    id={follower.id}
+                    profileUrl={follower.profileUrl}
+                    username={follower.username}
+                    key={i}
+                  />
+                ))}
+            </div>
+          </div>
+          <div className="flex flex-col w-full py-5 items-start my-3 space-y-4 border-t border-t-gray-400  ">
+            <h5 className="text-lg font-semibold text-black">
+              {followingsCount} Followings
+            </h5>
+            <div className="flex flex-col items-start space-y-3">
+              {followings &&
+                followings.length > 0 &&
+                followings?.map((following, i) => (
+                  <UserProfileInline
+                    id={following.id}
+                    profileUrl={following.profileUrl}
+                    username={following.username}
+                    key={i}
+                  />
+                ))}
+            </div>
+          </div>
+        </section>
       )}
     </main>
   );

@@ -1,3 +1,5 @@
+import { FollowersInterface } from "@/types/Blog/Followers";
+import { FollowingsInterface } from "@/types/Blog/Followings";
 import { UserBlogResponseInterface } from "@/types/Blog/UserBlogResponseInterface";
 import { UserProfileInterface } from "@/types/user/UserInterface";
 import axios from "axios";
@@ -7,6 +9,10 @@ export type GetUserResponse =
       success: true;
       blogs?: UserBlogResponseInterface[];
       user?: UserProfileInterface;
+      followersCount: number;
+      followingsCount: number;
+      followings?: FollowingsInterface[];
+      followers?: FollowersInterface[];
     }
   | {
       success: false;
@@ -22,7 +28,6 @@ export const GetUserAction = async (
         Authorization: `Bearer ${token}`,
       },
     });
-    const data = await response.data;
     return {
       success: true,
       ...response.data,
