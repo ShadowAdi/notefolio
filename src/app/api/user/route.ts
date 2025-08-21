@@ -6,6 +6,7 @@ import { BlogUpvote } from "@/schemas/BlogUpvote";
 import { Followers } from "@/schemas/Followers";
 import { tagTable } from "@/schemas/Tag";
 import { User } from "@/schemas/User";
+import { verifyUser } from "@/services/VerifyUser";
 import { desc, eq, sql } from "drizzle-orm";
 
 export async function GET(request: Request) {
@@ -98,6 +99,48 @@ export async function GET(request: Request) {
     );
   } catch (error) {
     console.error(`Failed in getting the data `, error);
+    return new Response(JSON.stringify({ success: false, error }), {
+      status: 401,
+    });
+  }
+}
+
+export async function PATCH(request: Request) {
+  try {
+    const body = await request.json();
+    const { bio, username, profileUrl } = body;
+
+    const safeUser = await verifyUser(request);
+    if (!safeUser.id) {
+      return new Response(JSON.stringify({ success: false }), {
+        status: 401,
+        statusText: `User not authenticated`,
+      });
+    }
+
+    const updateData: Record<string, any> = {};
+    if (bio !== undefined) updateData.bio = bio;
+    if (username !== undefined) updateData.username = username;
+    if (profileUrl !== undefined) updateData.profileUrl = profileUrl;
+
+    if (Object.keys(updateData).length === 0) {
+      return new Response(
+        JSON.stringify({ success: false, message: "Nothing to update" }),
+        {
+          status: 400,
+        }
+      );
+    }
+
+    await db.update(User).set(updateData).where(eq(User.id, safeUser.id));
+
+    return new Response(
+      JSON.stringify({
+        success: true,
+      })
+    );
+  } catch (error) {
+    console.error(`Failed in updating the user `, error);
     return new Response(JSON.stringify({ success: false, error }), {
       status: 401,
     });

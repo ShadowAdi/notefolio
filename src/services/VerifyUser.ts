@@ -18,5 +18,5 @@ export async function verifyUser(request: Request) {
   if (!user) throw new Error("User not found");
 
   const { password, createdAt, updatedAt, bio, ...safeUser } = user;
-  return safeUser; // always return user object
+  return safeUser;
 }

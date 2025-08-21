@@ -14,6 +14,9 @@ import { Button } from "@/components/ui/button";
 import { FollowersInterface } from "@/types/Blog/Followers";
 import { FollowingsInterface } from "@/types/Blog/Followings";
 import UserProfileInline from "@/components/global/Profile/UserProfileInline";
+import EditorBio from "@/components/global/Profile/EditorBio";
+import axios from "axios";
+import { toast } from "sonner";
 
 const Profile = () => {
   const [loading, setLoading] = useState(false);
@@ -28,6 +31,8 @@ const Profile = () => {
   const { isAuthenticated, loading: globalLoading, token } = useAuth();
   const router = useRouter();
   const [tabs, setTabs] = useState<"Blogs" | "About" | "Newsletters">("Blogs");
+  const [isEditing, setIsEditing] = useState(false);
+  const [bio, setBio] = useState(user?.bio);
 
   const GetUser = async () => {
     setLoading(true);
@@ -114,19 +119,50 @@ const Profile = () => {
           {tabs === "About" &&
             (user && user?.bio ? (
               <div className="w-full flex flex-col  h-full items-start  justify-center">
-                <div className="p-0 mb-3">
-                  <p
-                    className="text-xl text-stone-950 leading-relaxed line-clamp-3"
-                    dangerouslySetInnerHTML={{
-                      __html: truncate(user.bio, 120, {
-                        ellipsis: "...",
-                      }),
-                    }}
+                {isEditing ? (
+                  <EditorBio
+                    isEditing={isEditing}
+                    bio={user.bio}
+                    onChange={(newBio) => setBio(newBio)}
                   />
-                </div>
+                ) : (
+                  <div className="p-0 mb-3">
+                    <p
+                      className="text-xl text-stone-950 leading-relaxed line-clamp-3"
+                      dangerouslySetInnerHTML={{
+                        __html: bio!,
+                      }}
+                    />
+                  </div>
+                )}
                 <div className="flex w-full items-end justify-end">
-                  <Button className="px-6 py-4 bg-transparent rounded-full !cursor-pointer hover:bg-transparent hover:shadow-md border-black border flex items-center justify-center">
-                    <span className="text-lg text-black">Edit</span>
+                  <Button
+                    onClick={async () => {
+                      if (isEditing) {
+                        try {
+                          const response = await axios.patch(
+                            "/api/user",
+                            { bio },
+                            {
+                              headers: {
+                                Authorization: `Bearer ${token}`,
+                              },
+                            }
+                          );
+                        } catch (err) {
+                          console.error("Failed to update bio", err);
+                          toast.error(`Failed to update bio: ${err}`);
+                        }
+                      }
+                      setIsEditing(!isEditing);
+                    }}
+                    className="px-6 py-4 bg-transparent rounded-full !cursor-pointer hover:bg-transparent hover:shadow-md border-black border flex items-center justify-center"
+                  >
+                    {isEditing ? (
+                      <span className="text-lg text-black">Save</span>
+                    ) : (
+                      <span className="text-lg text-black">Edit</span>
+                    )}
                   </Button>
                 </div>
               </div>
