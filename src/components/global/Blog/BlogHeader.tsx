@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { DeleteBlog } from "@/actions/Blog/DeleteBlog";
 import { useRouter } from "next/navigation";
+import { FollowAction, UnFollowAction } from "@/actions/User/User";
 
 interface BlogHeaderProps {
   blogTitle: string;
@@ -28,6 +29,7 @@ interface BlogHeaderProps {
   createdAt: string;
   authorId: string;
   blogId: string;
+  followers: string[];
 }
 
 const BlogHeader = ({
@@ -37,17 +39,62 @@ const BlogHeader = ({
   createdAt,
   authorId,
   blogId,
+  followers,
 }: BlogHeaderProps) => {
   const { user, loading, isAuthenticated, token } = useAuth();
   const router = useRouter();
+  const [isFollowing, setIsFollowing] = useState(false);
 
-  const handleFollowClick = () => {
+  useEffect(() => {
+    if (!loading && isAuthenticated && user && followers) {
+      const followerValue = followers.find(
+        (follower, _) => follower === user?.id
+      );
+      if (!followerValue) {
+        setIsFollowing(false);
+      } else {
+        setIsFollowing(true);
+      }
+    }
+  }, [isAuthenticated, loading, user, followers]);
+
+  const handleFollowClick = async () => {
+    if (loading) {
+      return;
+    }
     if (!isAuthenticated) {
       toast.info("Please log in to follow this author.");
       return;
     }
-
-    toast.success(`Now following ${username}`);
+    if (user && token) {
+      const response = await FollowAction(authorId, token);
+      if (response?.success) {
+        toast.success(`Started Following Author`);
+        setIsFollowing(true);
+      } else {
+        toast.error(`Failed to follow an author`);
+        setIsFollowing(false);
+      }
+    }
+  };
+  const handleUnFollowClick = async () => {
+    if (loading) {
+      return;
+    }
+    if (!isAuthenticated) {
+      toast.info("Please log in to follow this author.");
+      return;
+    }
+    if (user && token) {
+      const response = await UnFollowAction(authorId, token);
+      if (response?.success) {
+        toast.success(`Started UnFollowing Author`);
+        setIsFollowing(true);
+      } else {
+        toast.error(`Failed to unfollow an author`);
+        setIsFollowing(false);
+      }
+    }
   };
 
   const handleDeleteBlog = async () => {
@@ -147,10 +194,19 @@ const BlogHeader = ({
 
         {!loading && authorId !== user?.id && (
           <Button
-            onClick={handleFollowClick}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (isFollowing) {
+                handleUnFollowClick();
+              } else {
+                handleFollowClick();
+              }
+            }}
             className="px-6 py-4 bg-transparent rounded-full !cursor-pointer hover:bg-transparent hover:shadow-md border-black border flex items-center justify-center"
           >
-            <span className="text-base text-black">Follow</span>
+            <span className="text-base text-black">
+              {isFollowing ? "UnFollow" : "Follow"}
+            </span>
           </Button>
         )}
       </div>

@@ -40,3 +40,46 @@ export const GetUserAction = async (
     };
   }
 };
+
+export const FollowAction = async (otherUserId: string, token: string) => {
+  try {
+    const response = await axios.post(
+      `http://localhost:3000/api/user/follow/${otherUserId}`,
+      null,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    const data = await response.data;
+    return data;
+  } catch (error) {
+    console.error(`Failed to follow user: ${error}`);
+    return {
+      error,
+      success: false,
+    };
+  }
+};
+
+export const UnFollowAction = async (otherUserId: string, token: string) => {
+  try {
+    const response = await axios.delete(
+      `http://localhost:3000/api/user/unfollow/${otherUserId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    const data = await response.data;
+    return data;
+  } catch (error) {
+    console.error(`Failed to unfollow user: ${error}`);
+    return {
+      error,
+      success: false,
+    };
+  }
+};

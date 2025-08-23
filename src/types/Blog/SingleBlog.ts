@@ -23,6 +23,7 @@ export interface SingleBlogUserResponseInterface {
   profileUrl: string;
   email: string;
   username: string;
+  followers: string[];
 }
 
 export interface SingleBlogUserDiscussionsResponseInterface {

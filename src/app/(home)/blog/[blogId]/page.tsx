@@ -6,10 +6,10 @@ import TagsSection from "@/components/global/Blog/TagsSection";
 import BlogHeader from "@/components/global/Blog/BlogHeader";
 import BlogInfo from "@/components/global/Blog/BlogInfo";
 
-const Blog = async ({ params }: { params: { blogId: string } }) => {
-  const response = await axios.get(
-    `http://localhost:3000/api/blog/${params.blogId}`
-  );
+const Blog = async ({ params }: { params: Promise<{ blogId: string }> }) => {
+  const { blogId } = await params;
+
+  const response = await axios.get(`http://localhost:3000/api/blog/${blogId}`);
   if (response.status !== 200) {
     throw new Error(`Failed to get Blog`);
   }
@@ -17,7 +17,6 @@ const Blog = async ({ params }: { params: { blogId: string } }) => {
   if (!data.success) {
     throw new Error(`Failed to get the blog: ${data.error}`);
   }
-
   const {
     blogFound,
     blogUpvote,
@@ -37,7 +36,8 @@ const Blog = async ({ params }: { params: { blogId: string } }) => {
             profileUrl={user.profileUrl}
             username={user.username}
             authorId={blogFound.authorId}
-            blogId={params.blogId}
+            blogId={blogId}
+            followers={user.followers}
           />
 
           <BlogInfo
@@ -51,7 +51,6 @@ const Blog = async ({ params }: { params: { blogId: string } }) => {
                 src={blogFound.blogCover}
                 alt={blogFound.blogTitle}
                 className="object-cover"
-                
               />
             </div>
           ) : (
@@ -63,7 +62,6 @@ const Blog = async ({ params }: { params: { blogId: string } }) => {
           <div
             className="prose prose-lg max-w-none text-gray-800"
             dangerouslySetInnerHTML={{ __html: blogFound.blogDescription }}
-            
           />
         </section>
         <section className="flex flex-col w-[20%]  items-start justify-start  gap-4  ">

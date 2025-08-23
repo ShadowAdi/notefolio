@@ -6,7 +6,7 @@ import { and, eq } from "drizzle-orm";
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     const safeUser = await verifyUser(request);
@@ -16,15 +16,16 @@ export async function POST(
         statusText: `User not authenticated`,
       });
     }
-    const id = params.id;
+    console.log("safe User ", safeUser);
+
+    const { id } = await context.params;
     if (!id) {
       return new Response(
-        JSON.stringify({ success: false, message: `User Id is needed.` }),
-        {
-          status: 400,
-        }
+        JSON.stringify({ success: false, message: "User Id is needed." }),
+        { status: 400 }
       );
     }
+
     if (id === safeUser.id) {
       return new Response(
         JSON.stringify({
@@ -47,11 +48,13 @@ export async function POST(
         }
       );
     }
+    console.log("User exist ", isUserExist);
 
     await db
       .insert(Followers)
       .values({ followerId: safeUser.id, followingId: id })
       .onConflictDoNothing();
+
     return new Response(
       JSON.stringify({ success: true, message: "User Followed Successfully." }),
       { status: 200 }

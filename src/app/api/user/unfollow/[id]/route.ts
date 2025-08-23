@@ -6,7 +6,7 @@ import { and, eq } from "drizzle-orm";
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     const safeUser = await verifyUser(request);
@@ -16,7 +16,8 @@ export async function DELETE(
         statusText: `User not authenticated`,
       });
     }
-    const id = params.id;
+    const { params } = context;
+    const id = await params.id;
     if (!id) {
       return new Response(
         JSON.stringify({ success: false, message: `User Id is needed.` }),

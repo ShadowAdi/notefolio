@@ -11,10 +11,16 @@ import { eq, sql } from "drizzle-orm";
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = params.id;
+    const { id } = await context.params;
+    if (!id) {
+      return new Response(
+        JSON.stringify({ success: false, message: "Blog Id is needed." }),
+        { status: 400 }
+      );
+    }
     const blogs = await db
       .select({
         id: BlogSchema.id,
