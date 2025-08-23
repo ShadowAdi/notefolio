@@ -77,11 +77,6 @@ const Profile = () => {
     GetUser();
   }, [globalLoading, isAuthenticated, token]);
 
-  useEffect(() => {
-    if (blogs.length > 0) {
-      console.log("Blogs tags ", blogs[0]?.tags);
-    }
-  }, [blogs]);
 
   if (loading || globalLoading)
     return (
