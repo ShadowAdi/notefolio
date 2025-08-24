@@ -40,7 +40,7 @@ export interface SingleBlogResponseCombinedInterface {
   blogUpvote: SingleBlogUpvotesResponseInterface;
   user: SingleBlogUserResponseInterface;
   blogTagsFound: string[];
-  discussions: SingleBlogUserDiscussionsResponseInterface;
+  discussions: SingleBlogUserDiscussionsResponseInterface[];
   success: boolean;
   error: any;
 }
