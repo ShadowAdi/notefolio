@@ -5,6 +5,8 @@ import { format } from "date-fns";
 import TagsSection from "@/components/global/Blog/TagsSection";
 import BlogHeader from "@/components/global/Blog/BlogHeader";
 import BlogInfo from "@/components/global/Blog/BlogInfo";
+import "highlight.js/styles/github-dark.css";
+import BlogDescriptionEditor from "@/components/global/Blog/BlogDescriptionEditor";
 
 const Blog = async ({ params }: { params: Promise<{ blogId: string }> }) => {
   const { blogId } = await params;
@@ -27,9 +29,9 @@ const Blog = async ({ params }: { params: Promise<{ blogId: string }> }) => {
   } = data;
 
   return (
-    <main className="flex flex-col  gap-8 flex-1 items-start justify-between w-full max-w-6xl mx-auto px-4 py-8">
-      <div className="flex flex-row  gap-8 flex-1 items-start justify-between w-full  mx-auto">
-        <section className="flex flex-col flex-1 w-[80%] items-start space-y-8">
+    <main className="flex flex-col  gap-8 flex-1 items-start justify-between w-full max-w-6xl mx-auto px-4 py-8 overflow-x-hidden">
+      <div className="flex flex-row   gap-4 flex-1 items-start justify-between w-full  mx-auto">
+        <section className="flex flex-col flex-1 w-[80%]  items-start space-y-8">
           <BlogHeader
             blogTitle={blogFound.blogTitle}
             createdAt={blogFound.createdAt}
@@ -62,10 +64,7 @@ const Blog = async ({ params }: { params: Promise<{ blogId: string }> }) => {
             </div>
           )}
 
-          <div
-            className="prose prose-lg max-w-none text-gray-800"
-            dangerouslySetInnerHTML={{ __html: blogFound.blogDescription }}
-          />
+          <BlogDescriptionEditor blogDescription={blogFound.blogDescription} />
         </section>
         <section className="flex flex-col w-[20%]  items-start justify-start  gap-4  ">
           <TagsSection blogTagsFound={blogTagsFound} />
