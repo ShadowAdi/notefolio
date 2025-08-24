@@ -44,25 +44,23 @@ const BlogHorizontalCard = ({ b }: { b: UserBlogResponseInterface }) => {
               );
             })}
           </div>
-          <div className="flex space-x-2 items-center">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="flex items-center space-x-1"
+          <div className="flex space-x-6 items-center">
+            <div
+             
+              className="flex items-center space-x-1 cursor-default"
               aria-label="Upvote"
             >
               <ArrowUp className="w-4 h-4" />
               <span>{b.upvotes}</span>
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="flex items-center space-x-1"
+            </div>
+            <div
+           
+              className="flex items-center space-x-1 cursor-default"
               aria-label="Downvote"
             >
               <ArrowDown className="w-4 h-4" />
               <span>{b.downvotes}</span>
-            </Button>
+            </div>
           </div>
         </CardFooter>
       </div>

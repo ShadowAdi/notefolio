@@ -16,6 +16,35 @@ import UserProfileInline from "@/components/global/Profile/UserProfileInline";
 import axios from "axios";
 import { toast } from "sonner";
 import dynamic from "next/dynamic";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { AlertDialogAction } from "@radix-ui/react-alert-dialog";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 const EditorBio = dynamic(
   () => import("@/components/global/Profile/EditorBio"),
@@ -40,6 +69,8 @@ const Profile = () => {
   const [tabs, setTabs] = useState<"Blogs" | "About" | "Newsletters">("Blogs");
   const [isEditing, setIsEditing] = useState(false);
   const [bio, setBio] = useState(user?.bio);
+  const [editProfile, setEditProfile] = useState("");
+  const [imgError, setImgError] = useState(false);
 
   const GetUser = async () => {
     setLoading(true);
@@ -70,6 +101,12 @@ const Profile = () => {
   useEffect(() => {
     if (user?.bio) {
       setBio(user.bio);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (user && user.profileUrl) {
+      setEditProfile(user.profileUrl);
     }
   }, [user]);
 
@@ -200,19 +237,247 @@ const Profile = () => {
       {user && (
         <section className="flex-[0.3] pl-2 flex space-y-6 flex-col py-5 items-start">
           {user.profileUrl ? (
-            <Image
-              src={user.profileUrl}
-              alt={user.username}
-              className="rounded-full h-[150px] w-[150px] object-cover"
-              height={150}
-              width={150}
-            />
+            <ContextMenu>
+              <ContextMenuTrigger>
+                <Image
+                  src={user.profileUrl}
+                  alt={user.username}
+                  className="rounded-full h-[150px] w-[150px] object-cover"
+                  height={150}
+                  width={150}
+                />
+              </ContextMenuTrigger>
+              <ContextMenuContent>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <ContextMenuItem
+                      onSelect={(e) => {
+                        e.preventDefault();
+                      }}
+                      className="cursor-pointer"
+                    >
+                      Delete Profile
+                    </ContextMenuItem>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        Are you absolutely sure?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action cannot be undone. This will permanently
+                        delete your account and remove your data from our
+                        servers.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction asChild>
+                        <Button
+                          onClick={async () => {
+                            try {
+                              const response = await axios.patch(
+                                "/api/user",
+                                { profileUrl: null },
+                                {
+                                  headers: {
+                                    Authorization: `Bearer ${token}`,
+                                  },
+                                }
+                              );
+                              const data = await response.data;
+                              if (data.success) {
+                                toast.success(`Profile has Been removed`);
+                                setUser(data.updatedUser);
+                                GetUser();
+                              }
+                            } catch (err) {
+                              console.error("Failed to remove profile", err);
+                              toast.error(`Failed to remove profile: ${err}`);
+                            }
+                          }}
+                          className="bg-red-700 hover:bg-red-800 cursor-pointer text-white"
+                        >
+                          Sure
+                        </Button>
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+
+                <Dialog>
+                  <form>
+                    <DialogTrigger asChild>
+                      <ContextMenuItem
+                        onSelect={(e) => {
+                          e.preventDefault();
+                        }}
+                        className="cursor-pointer"
+                      >
+                        Update Profile
+                      </ContextMenuItem>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>Update profile</DialogTitle>
+                      </DialogHeader>
+                      <div className="grid gap-4 mt-4">
+                        <div className="flex flex-col space-y-2">
+                          <Label htmlFor="profileUrl">Profile</Label>{" "}
+                          <Input
+                            onChange={(e) => {
+                              setEditProfile(e.target.value);
+                            }}
+                            value={editProfile}
+                            type="url"
+                            placeholder="https://image.com"
+                          />
+                          {editProfile && !imgError && (
+                            <Image
+                              src={editProfile}
+                              onError={() => setImgError(true)}
+                              alt="Profile Preview"
+                              height={300}
+                              width={600}
+                              className="mt-3 rounded-md border object-cover w-full max-h-[300px]"
+                            />
+                          )}
+                          {imgError && (
+                            <p className="text-sm text-red-500 mt-2">
+                              Couldn't load image from the provided URL.
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <DialogClose asChild>
+                          <Button variant="outline">Cancel</Button>
+                        </DialogClose>
+                        <Button
+                          onClick={async () => {
+                            try {
+                              const response = await axios.patch(
+                                "/api/user",
+                                { profileUrl: editProfile },
+                                {
+                                  headers: {
+                                    Authorization: `Bearer ${token}`,
+                                  },
+                                }
+                              );
+                              const data = await response.data;
+                              setEditProfile("");
+                              if (data.success) {
+                                toast.success(`Profile has Been Updated`);
+                                setUser(data.updatedUser);
+                                GetUser();
+                              }
+                            } catch (err) {
+                              console.error("Failed to update Profile", err);
+                              toast.error(`Failed to update Profile: ${err}`);
+                            }
+                          }}
+                          type="submit"
+                        >
+                          Save changes
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </form>
+                </Dialog>
+              </ContextMenuContent>
+            </ContextMenu>
           ) : (
-            <div className="rounded-full h-[150px] w-[150px] flex items-center justify-center bg-gray-300">
-              <span className="text-6xl flex items-center justify-center font-semibold text-black">
-                {user.username && user.username[0]}
-              </span>
-            </div>
+            <ContextMenu>
+              <ContextMenuTrigger>
+                <div className="rounded-full h-[150px] w-[150px] flex items-center justify-center bg-gray-300">
+                  <span className="text-6xl flex items-center justify-center font-semibold text-black">
+                    {user.username && user.username[0]}
+                  </span>
+                </div>
+              </ContextMenuTrigger>
+              <ContextMenuContent>
+                <Dialog>
+                  <form>
+                    <DialogTrigger asChild>
+                      <ContextMenuItem
+                        onSelect={(e) => {
+                          e.preventDefault();
+                        }}
+                        className="cursor-pointer"
+                      >
+                        Update Profile
+                      </ContextMenuItem>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>Update profile</DialogTitle>
+                      </DialogHeader>
+                      <div className="grid gap-4 mt-4">
+                        <div className="flex flex-col space-y-2">
+                          <Label htmlFor="profileUrl">Profile</Label>{" "}
+                          <Input
+                            onChange={(e) => {
+                              setEditProfile(e.target.value);
+                            }}
+                            value={editProfile}
+                            type="url"
+                            placeholder="https://image.com"
+                          />
+                          {editProfile && !imgError && (
+                            <Image
+                              src={editProfile}
+                              onError={() => setImgError(true)}
+                              alt="Profile Preview"
+                              height={300}
+                              width={600}
+                              className="mt-3 rounded-md border object-cover w-full max-h-[300px]"
+                            />
+                          )}
+                          {imgError && (
+                            <p className="text-sm text-red-500 mt-2">
+                              Couldn't load image from the provided URL.
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <DialogClose asChild>
+                          <Button variant="outline">Cancel</Button>
+                        </DialogClose>
+                        <Button
+                          onClick={async () => {
+                            try {
+                              const response = await axios.patch(
+                                "/api/user",
+                                { profileUrl: editProfile },
+                                {
+                                  headers: {
+                                    Authorization: `Bearer ${token}`,
+                                  },
+                                }
+                              );
+                              const data = await response.data;
+                              if (data.success) {
+                                toast.success(`Profile has Been Updated`);
+                                setUser(data.updatedUser);
+                                GetUser();
+                              }
+                            } catch (err) {
+                              console.error("Failed to update Profile", err);
+                              toast.error(`Failed to update Profile: ${err}`);
+                            }
+                          }}
+                          type="submit"
+                        >
+                          Save changes
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </form>
+                </Dialog>
+              </ContextMenuContent>
+            </ContextMenu>
           )}
           <h2 className="text-3xl font-bold capitalize text-black">
             {user.username}
