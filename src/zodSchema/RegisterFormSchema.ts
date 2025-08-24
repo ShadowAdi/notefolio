@@ -5,5 +5,4 @@ export const registerFormSchema = z.object({
   email: z.string(),
   password: z.string(),
   profileUrl: z.string().optional(),
-  bio: z.string(),
 });

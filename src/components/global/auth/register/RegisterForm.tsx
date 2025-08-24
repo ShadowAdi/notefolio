@@ -28,7 +28,6 @@ const RegisterForm = ({ heading, buttonText }: RegisterInterfaceType) => {
     resolver: zodResolver(registerFormSchema),
     defaultValues: {
       username: "",
-      bio: "",
       email: "",
       password: "",
       profileUrl: "",
@@ -182,25 +181,6 @@ const RegisterForm = ({ heading, buttonText }: RegisterInterfaceType) => {
               </FormItem>
             )}
           />
-
-          <FormField
-            control={form.control}
-            name="bio"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Bio</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="Add a short bio..."
-                    className="min-h-[100px]"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
           <Button type="submit" className="w-full !cursor-pointer">
             {!loading ? buttonText : "Loading..."}
           </Button>
