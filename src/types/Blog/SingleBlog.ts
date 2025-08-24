@@ -13,10 +13,10 @@ export interface SingleBlogResponseInterface {
   followers: SingleBlogUserFollowersResponseInterface[];
 }
 export interface SingleBlogDownvotesResponseInterface {
-  count: string;
+  count: number;
 }
 export interface SingleBlogUpvotesResponseInterface {
-  count: string;
+  count: number;
 }
 export interface SingleBlogUserResponseInterface {
   id: string;

@@ -1,0 +1,89 @@
+import { db } from "@/db/db";
+import { BlogSchema } from "@/schemas/Blog";
+import { BlogDownvote } from "@/schemas/BlogDownvote";
+import { verifyUser } from "@/services/VerifyUser";
+import { and, eq } from "drizzle-orm";
+
+export async function DELETE(
+  request: Request,
+  context: { params: Promise<{ id: string }> }
+) {
+  try {
+    const user = await verifyUser(request);
+    if (!user) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: `You are not Authorized`,
+        }),
+        { status: 401 }
+      );
+    }
+    const { id } = await context.params;
+    if (!id) {
+      return new Response(
+        JSON.stringify({ success: false, message: "Blog Id is needed." }),
+        { status: 400 }
+      );
+    }
+    const blogs = await db
+      .select({
+        id: BlogSchema.id,
+        blogTitle: BlogSchema.blogTitle,
+        authorId: BlogSchema.authorId,
+        createdAt: BlogSchema.createdAt,
+        updatedAt: BlogSchema.updatedAt,
+      })
+      .from(BlogSchema)
+      .where(eq(BlogSchema.id, id));
+    if (blogs.length === 0) {
+      return new Response(
+        JSON.stringify({ success: false, message: `Blog Do Not Exist` }),
+        {
+          status: 404,
+        }
+      );
+    }
+
+    const blogFound = blogs[0];
+    const downvotedBlogExists = await db
+      .select()
+      .from(BlogDownvote)
+      .where(
+        and(eq(BlogDownvote.blogId, blogFound.id), eq(BlogDownvote.userId, user.id))
+      );
+    if (downvotedBlogExists.length !== 0) {
+      await db
+        .delete(BlogDownvote)
+        .where(
+          and(
+            eq(BlogDownvote.blogId, blogFound.id),
+            eq(BlogDownvote.userId, user.id)
+          )
+        );
+      return new Response(
+        JSON.stringify({ success: true, message: "Downvote has been removed" }),
+        {
+          status: 200,
+        }
+      );
+    } else {
+      await db.insert(BlogDownvote).values({
+        blogId: blogFound.id,
+        userId: user.id,
+      });
+      return new Response(
+        JSON.stringify({ success: true, message: "Blog has been downvoted" }),
+        {
+          status: 200,
+        }
+      );
+    }
+  } catch (error) {
+    console.error(`Failed to Downvote blog `, error);
+    return new Response(
+      JSON.stringify({ success: false, error: String(error) }),
+      { status: 500 }
+    );
+  }
+}

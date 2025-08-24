@@ -12,6 +12,7 @@ import React from "react";
 import truncate from "truncate-html";
 
 const BlogHorizontalCard = ({ b }: { b: UserBlogResponseInterface }) => {
+  console.log("Blog ",b)
   return (
     <Card className="flex flex-row items-center w-full max-w-3xl border-none shadow-lg rounded-lg overflow-hidden bg-gray-100/40">
       <div className="flex-1 p-4">

@@ -43,6 +43,9 @@ const Blog = async ({ params }: { params: Promise<{ blogId: string }> }) => {
           <BlogInfo
             blogDescription={blogFound?.blogDescription}
             blogTitle={blogFound.blogTitle}
+            downvotes={blogDownvote.count}
+            upvotes={blogUpvote.count}
+            blogId={blogId}
           />
 
           {blogFound.blogCover ? (
