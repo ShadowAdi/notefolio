@@ -21,7 +21,7 @@ export async function POST(request: Request) {
     });
   }
   try {
-    const users = await db.select().from(User).where(eq(User.email, email));
+    const users = await db.select().from(User).where(eq(User.email, email.toLowerCase()));
     const user = users[0];
 
     if (!user) {

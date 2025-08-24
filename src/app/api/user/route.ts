@@ -35,7 +35,7 @@ export async function GET(request: Request) {
         profileUrl: User.profileUrl,
       })
       .from(Followers)
-      .innerJoin(User, eq(Followers.followerId, User.id))
+      .innerJoin(User, eq(User.id, Followers.followerId))
       .where(eq(Followers.followingId, user.id));
 
     const followings = await db
@@ -45,11 +45,14 @@ export async function GET(request: Request) {
         profileUrl: User.profileUrl,
       })
       .from(Followers)
-      .innerJoin(User, eq(Followers.followingId, User.id))
-      .where(eq(Followers.followerId, User.id));
+      .innerJoin(User, eq(User.id, Followers.followingId))
+      .where(eq(Followers.followerId, user.id));
 
     const followersCount = followers.length;
     const followingsCount = followings.length;
+
+    console.log("follower count ", followersCount);
+    console.log("followingsCount ", followingsCount);
 
     if (isBlogs === "false") {
       const { password, ...safeUser } = user;
@@ -86,6 +89,18 @@ export async function GET(request: Request) {
       .groupBy(BlogSchema.id)
       .orderBy(desc(sortMap[sortBy] || BlogSchema.createdAt));
     const { password, ...safeUser } = user;
+    console.log(
+      "Followers raw:",
+      await db
+        .select()
+        .from(Followers)
+        .where(eq(Followers.followingId, user.id))
+    );
+    console.log(
+      "Followings raw:",
+      await db.select().from(Followers).where(eq(Followers.followerId, user.id))
+    );
+
     return new Response(
       JSON.stringify({
         success: true,
@@ -132,12 +147,16 @@ export async function PATCH(request: Request) {
       );
     }
 
-    const upatedUser=await db.update(User).set(updateData).where(eq(User.id, safeUser.id)).returning()
+    const upatedUser = await db
+      .update(User)
+      .set(updateData)
+      .where(eq(User.id, safeUser.id))
+      .returning();
 
     return new Response(
       JSON.stringify({
         success: true,
-        upatedUser
+        upatedUser,
       })
     );
   } catch (error) {

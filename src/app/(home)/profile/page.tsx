@@ -56,7 +56,7 @@ const Profile = () => {
         if (res.user) setUser(res.user);
         if (res.blogs) setBlogs(res.blogs);
         if (res.followersCount) setFollowersCount(res.followersCount);
-        if (res.followingsCount) setFollowersCount(res.followingsCount);
+        if (res.followingsCount) setFollowingsCount(res.followingsCount);
         if (res.followers) setFollowers(res.followers);
         if (res.followings) setFollowings(res.followings);
       }
@@ -76,7 +76,6 @@ const Profile = () => {
   useEffect(() => {
     GetUser();
   }, [globalLoading, isAuthenticated, token]);
-
 
   if (loading || globalLoading)
     return (
@@ -239,7 +238,7 @@ const Profile = () => {
             <h5 className="text-lg font-semibold text-black">
               {followingsCount} Followings
             </h5>
-            <div className="flex flex-col items-start space-y-3">
+            <div className="flex flex-col items-start space-y-3 w-full">
               {followings &&
                 followings.length > 0 &&
                 followings?.map((following, i) => (

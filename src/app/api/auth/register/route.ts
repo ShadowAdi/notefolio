@@ -16,7 +16,7 @@ export async function POST(request: Request) {
     const users = await db
       .select()
       .from(User)
-      .where(eq(User.email, email.lower()));
+      .where(eq(User.email, email.toLowerCase()));
     const isUserExist = users[0];
     if (isUserExist) {
       return new Response(JSON.stringify({ success: false }), {
@@ -28,8 +28,8 @@ export async function POST(request: Request) {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = {
       id: crypto.randomUUID(),
-      username: username.lower(),
-      email: email.lower(),
+      username: username.toLowerCase(),
+      email: email.toLowerCase(),
       password: hashedPassword,
       profileUrl,
       createdAt: new Date(),
