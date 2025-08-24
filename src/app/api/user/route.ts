@@ -51,8 +51,6 @@ export async function GET(request: Request) {
     const followersCount = followers.length;
     const followingsCount = followings.length;
 
-    console.log("follower count ", followersCount);
-    console.log("followingsCount ", followingsCount);
 
     if (isBlogs === "false") {
       const { password, ...safeUser } = user;
@@ -89,17 +87,6 @@ export async function GET(request: Request) {
       .groupBy(BlogSchema.id)
       .orderBy(desc(sortMap[sortBy] || BlogSchema.createdAt));
     const { password, ...safeUser } = user;
-    console.log(
-      "Followers raw:",
-      await db
-        .select()
-        .from(Followers)
-        .where(eq(Followers.followingId, user.id))
-    );
-    console.log(
-      "Followings raw:",
-      await db.select().from(Followers).where(eq(Followers.followerId, user.id))
-    );
 
     return new Response(
       JSON.stringify({

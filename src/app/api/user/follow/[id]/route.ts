@@ -16,7 +16,6 @@ export async function POST(
         statusText: `User not authenticated`,
       });
     }
-    console.log("safe User ", safeUser);
 
     const { id } = await context.params;
     if (!id) {
@@ -48,7 +47,6 @@ export async function POST(
         }
       );
     }
-    console.log("User exist ", isUserExist);
 
     await db
       .insert(Followers)
