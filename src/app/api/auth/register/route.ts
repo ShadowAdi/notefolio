@@ -13,7 +13,10 @@ export async function POST(request: Request) {
     });
   }
   try {
-    const users = await db.select().from(User).where(eq(User.email, email));
+    const users = await db
+      .select()
+      .from(User)
+      .where(eq(User.email, email.lower()));
     const isUserExist = users[0];
     if (isUserExist) {
       return new Response(JSON.stringify({ success: false }), {
@@ -25,8 +28,8 @@ export async function POST(request: Request) {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = {
       id: crypto.randomUUID(),
-      username,
-      email,
+      username: username.lower(),
+      email: email.lower(),
       password: hashedPassword,
       profileUrl,
       bio,
