@@ -7,6 +7,9 @@ import BlogHeader from "@/components/global/Blog/BlogHeader";
 import BlogInfo from "@/components/global/Blog/BlogInfo";
 import "highlight.js/styles/github-dark.css";
 import BlogDescriptionEditor from "@/components/global/Blog/BlogDescriptionEditor";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import Discussion from "@/components/global/Blog/Discussion";
 
 const Blog = async ({ params }: { params: Promise<{ blogId: string }> }) => {
   const { blogId } = await params;
@@ -73,9 +76,8 @@ const Blog = async ({ params }: { params: Promise<{ blogId: string }> }) => {
       </div>
 
       <div className="w-full flex-1 border-t border-t-gray-400 pt-4">
-        <h2 className="text-3xl font-bold text-gray-900 mb-4">
-          Discussions
-        </h2>
+        <h2 className="text-3xl font-bold text-gray-900 mb-4">Discussions</h2>
+        <Discussion />
         {Array.isArray(discussions) && discussions.length > 0 ? (
           discussions.map((discussion) => (
             <div
