@@ -71,6 +71,8 @@ const Profile = () => {
   const [bio, setBio] = useState(user?.bio);
   const [editProfile, setEditProfile] = useState("");
   const [imgError, setImgError] = useState(false);
+  const [isUsernameEditActive, setIsUsernameEditActive] = useState(false);
+  const [editUsername, setEditUsername] = useState("");
 
   const GetUser = async () => {
     setLoading(true);
@@ -102,9 +104,9 @@ const Profile = () => {
     if (user?.bio) {
       setBio(user.bio);
     }
-  }, [user]);
-
-  useEffect(() => {
+    if (user?.username) {
+      setEditUsername(user.username);
+    }
     if (user && user.profileUrl) {
       setEditProfile(user.profileUrl);
     }
@@ -196,7 +198,7 @@ const Profile = () => {
                           const data = await response.data;
                           if (data.success) {
                             toast.success(`Bio has Been Updated`);
-                            setUser(data.updatedUser);
+                            GetUser()
                           }
                         } catch (err) {
                           console.error("Failed to update bio", err);
@@ -479,9 +481,55 @@ const Profile = () => {
               </ContextMenuContent>
             </ContextMenu>
           )}
-          <h2 className="text-3xl font-bold capitalize text-black">
-            {user.username}
-          </h2>
+          {isUsernameEditActive && user.username ? (
+            <div className="flex flex-col space-y-2">
+              <Label className="text-xs text-black ">Edit Username</Label>
+              <Input
+                type="text"
+                placeholder="Username"
+                className="text-xl placeholder:text-2xl py-3"
+                value={editUsername}
+                onChange={(e) => {
+                  setEditUsername(e.target.value);
+                }}
+                onKeyDown={async (e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    try {
+                      const response = await axios.patch(
+                        "/api/user",
+                        { username: editUsername },
+                        {
+                          headers: {
+                            Authorization: `Bearer ${token}`,
+                          },
+                        }
+                      );
+                      const data = await response.data;
+                      if (data.success) {
+                        toast.success(`Profile has Been Updated`);
+                        setUser(data.updatedUser);
+                        setIsUsernameEditActive(false)
+                        GetUser();
+                      }
+                    } catch (err) {
+                      console.error("Failed to update Profile", err);
+                      toast.error(`Failed to update Profile: ${err}`);
+                    }
+                  }
+                }}
+              />
+            </div>
+          ) : (
+            <h2
+              onDoubleClick={() => {
+                setIsUsernameEditActive(true);
+              }}
+              className="text-3xl font-bold capitalize text-black"
+            >
+              {user.username}
+            </h2>
+          )}
           <div className="flex flex-col w-full py-5 items-start my-3 space-y-4 border-t border-t-gray-400  ">
             <h5 className="text-lg font-semibold text-black">
               {followersCount} Followers
