@@ -72,8 +72,8 @@ const Blog = async ({ params }: { params: Promise<{ blogId: string }> }) => {
         </section>
       </div>
 
-      <div className="w-full flex-1">
-        <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+      <div className="w-full flex-1 border-t border-t-gray-400 pt-4">
+        <h2 className="text-3xl font-bold text-gray-900 mb-4">
           Discussions
         </h2>
         {Array.isArray(discussions) && discussions.length > 0 ? (
