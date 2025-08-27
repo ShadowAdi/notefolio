@@ -14,6 +14,11 @@ import { DownvoteBlogAction } from "@/actions/Blog/DownvoteBlog";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
 import axios from "axios";
+import {
+  SingleBlogDownvotesResponseInterface,
+  SingleBlogResponseCombinedInterface,
+  SingleBlogUpvotesResponseInterface,
+} from "@/types/Blog/SingleBlog";
 
 const BlogInfo = ({
   blogTitle,
@@ -21,18 +26,20 @@ const BlogInfo = ({
   downvotes: initialDownvotes,
   upvotes: initialUpvotes,
   blogId,
-  discussionCount
+  discussionCount,
 }: {
   blogTitle: string;
   blogDescription: string | null;
-  upvotes: number;
-  downvotes: number;
+  upvotes: SingleBlogUpvotesResponseInterface[];
+  downvotes: SingleBlogDownvotesResponseInterface[];
   blogId: string;
-  discussionCount:number
+  discussionCount: number;
 }) => {
-  const { isAuthenticated, loading, token } = useAuth();
-  const [upvotes, setUpvotes] = useState(initialUpvotes);
-  const [downvotes, setDownvotes] = useState(initialDownvotes);
+  const { isAuthenticated, loading, token, user } = useAuth();
+  const [upvotes, setUpvotes] =
+    useState<SingleBlogUpvotesResponseInterface[]>(initialUpvotes);
+  const [downvotes, setDownvotes] =
+    useState<SingleBlogDownvotesResponseInterface[]>(initialDownvotes);
 
   const refetchBlogData = useCallback(async () => {
     try {
@@ -40,12 +47,12 @@ const BlogInfo = ({
       if (response.status !== 200) {
         throw new Error("Failed to fetch blog data");
       }
-      const data = response.data;
+      const data: SingleBlogResponseCombinedInterface = response.data;
       if (!data.success) {
         throw new Error(`Failed to get the blog: ${data.error}`);
       }
-      setUpvotes(data.blogUpvote.count);
-      setDownvotes(data.blogDownvote.count);
+      setUpvotes(data.blogUpvotes);
+      setDownvotes(data.blogDownvotes);
     } catch (error) {
       console.error(`Failed to refetch blog data: ${error}`);
       toast.error(`Failed to refresh blog data`);
@@ -113,11 +120,19 @@ const BlogInfo = ({
               onClick={UpvoteBlog}
               className="flex items-center space-x-1 cursor-pointer hover:bg-gray-200/30 rounded-full justify-center h-12 w-12 border border-gray-300"
             >
-              <ArrowBigUp className="text-sm text-gray-400" />
+              <ArrowBigUp
+                className={`text-sm
+                ${
+                  upvotes.some((u) => u.userId === user?.id)
+                    ? "fill-stone-800"
+                    : " text-gray-400"
+                }
+                 `}
+              />
             </div>
           </TooltipTrigger>
           <TooltipContent>
-            <p className="text-base text-gray-200">{upvotes} UpVotes</p>
+            <p className="text-base text-gray-200">{upvotes.length} UpVotes</p>
           </TooltipContent>
         </Tooltip>
 
@@ -127,11 +142,21 @@ const BlogInfo = ({
               onClick={DownvoteBlog}
               className="flex items-center space-x-1 cursor-pointer hover:bg-gray-200/30 rounded-full justify-center h-12 w-12 border border-gray-300"
             >
-              <ArrowBigDown className="text-sm text-gray-400" />
+              <ArrowBigDown
+                className={`text-sm
+                ${
+                  downvotes.some((u) => u.userId === user?.id)
+                    ? "fill-stone-800"
+                    : " text-gray-400"
+                }
+                 `}
+              />
             </div>
           </TooltipTrigger>
           <TooltipContent>
-            <p className="text-base text-gray-200">{downvotes} Downvotes</p>
+            <p className="text-base text-gray-200">
+              {downvotes.length} Downvotes
+            </p>
           </TooltipContent>
         </Tooltip>
 
@@ -142,7 +167,9 @@ const BlogInfo = ({
             </div>
           </TooltipTrigger>
           <TooltipContent>
-            <p className="text-base text-gray-200">{discussionCount} Comments</p>
+            <p className="text-base text-gray-200">
+              {discussionCount} Comments
+            </p>
           </TooltipContent>
         </Tooltip>
       </div>

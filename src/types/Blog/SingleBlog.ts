@@ -13,10 +13,14 @@ export interface SingleBlogResponseInterface {
   followers: SingleBlogUserFollowersResponseInterface[];
 }
 export interface SingleBlogDownvotesResponseInterface {
-  count: number;
+  id: string;
+  blogId: string;
+  userId: string;
 }
 export interface SingleBlogUpvotesResponseInterface {
-  count: number;
+  id: string;
+  blogId: string;
+  userId: string;
 }
 export interface SingleBlogUserResponseInterface {
   id: string;
@@ -36,8 +40,8 @@ export interface SingleBlogUserDiscussionsResponseInterface {
 
 export interface SingleBlogResponseCombinedInterface {
   blogFound: SingleBlogResponseInterface;
-  blogDownvote: SingleBlogDownvotesResponseInterface;
-  blogUpvote: SingleBlogUpvotesResponseInterface;
+  blogDownvotes: SingleBlogDownvotesResponseInterface[];
+  blogUpvotes: SingleBlogUpvotesResponseInterface[];
   user: SingleBlogUserResponseInterface;
   blogTagsFound: string[];
   discussionsCount: number;

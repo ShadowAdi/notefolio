@@ -72,16 +72,14 @@ export async function GET(
     }
 
     const blogUpvotes = await db
-      .select({ count: sql<number>`count(*)` })
+      .select()
       .from(BlogUpvote)
       .where(eq(BlogUpvote.blogId, id));
-    const blogUpvote = blogUpvotes[0];
 
     const blogDownvotes = await db
-      .select({ count: sql<number>`count(*)` })
+      .select()
       .from(BlogDownvote)
       .where(eq(BlogDownvote.blogId, id));
-    const blogDownvote = blogDownvotes[0];
 
     const discussions = await db
       .select({
@@ -107,11 +105,15 @@ export async function GET(
       followers,
     };
 
+  console.log("upvotes ",blogUpvotes)
+    console.log("down ",blogDownvotes)
+
+
     return new Response(
       JSON.stringify({
-        discussionsCount:discussions.length,
-        blogDownvote,
-        blogUpvote,
+        discussionsCount: discussions.length,
+        blogDownvotes,
+        blogUpvotes,
         user,
         blogTagsFound,
         blogFound,

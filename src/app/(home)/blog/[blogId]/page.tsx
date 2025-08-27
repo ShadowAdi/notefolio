@@ -8,8 +8,8 @@ import "highlight.js/styles/github-dark.css";
 import BlogDescriptionEditor from "@/components/global/Blog/BlogDescriptionEditor";
 import Discussions from "@/components/global/Blog/Discussions";
 
-const Blog = async ({ params }: { params: Promise<{ blogId: string }> }) => {
-  const { blogId } = await params;
+const Blog = async (context: { params: Promise<{ blogId: string }> }) => {
+  const { blogId } = await context.params;
 
   const response = await axios.get(`http://localhost:3000/api/blog/${blogId}`);
   if (response.status !== 200) {
@@ -22,8 +22,8 @@ const Blog = async ({ params }: { params: Promise<{ blogId: string }> }) => {
   const {
     discussionsCount,
     blogFound,
-    blogUpvote,
-    blogDownvote,
+    blogUpvotes,
+    blogDownvotes,
     user,
     blogTagsFound,
   } = data;
@@ -45,8 +45,8 @@ const Blog = async ({ params }: { params: Promise<{ blogId: string }> }) => {
           <BlogInfo
             blogDescription={blogFound?.blogDescription}
             blogTitle={blogFound.blogTitle}
-            downvotes={blogDownvote.count}
-            upvotes={blogUpvote.count}
+            downvotes={blogDownvotes}
+            upvotes={blogUpvotes}
             blogId={blogId}
             discussionCount={discussionsCount}
           />

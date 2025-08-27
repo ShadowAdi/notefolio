@@ -534,7 +534,7 @@ const Profile = () => {
             <h5 className="text-lg font-semibold text-black">
               {followersCount} Followers
             </h5>
-            <div className="flex flex-col items-start space-y-3">
+            <div className="flex flex-col items-start space-y-3 w-full">
               {followers &&
                 followers.length > 0 &&
                 followers?.map((follower, i) => (
