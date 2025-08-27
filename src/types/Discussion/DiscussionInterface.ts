@@ -5,8 +5,9 @@ export interface DisscussionInterfaceType {
   createdAt: string;
   id: string;
   description: string;
+  profileUrl: string;
+  username: string;
 }
-
 
 export interface DisscussionCreateInterfaceType {
   description: string;

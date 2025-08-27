@@ -109,7 +109,7 @@ export async function GET(
 
     return new Response(
       JSON.stringify({
-        discussions,
+        discussionsCount:discussions.length,
         blogDownvote,
         blogUpvote,
         user,

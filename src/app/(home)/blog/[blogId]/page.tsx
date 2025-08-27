@@ -1,15 +1,13 @@
 import { SingleBlogResponseCombinedInterface } from "@/types/Blog/SingleBlog";
 import axios from "axios";
 import React from "react";
-import { format } from "date-fns";
 import TagsSection from "@/components/global/Blog/TagsSection";
 import BlogHeader from "@/components/global/Blog/BlogHeader";
 import BlogInfo from "@/components/global/Blog/BlogInfo";
 import "highlight.js/styles/github-dark.css";
 import BlogDescriptionEditor from "@/components/global/Blog/BlogDescriptionEditor";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
 import Discussion from "@/components/global/Blog/Discussion";
+import Discussions from "@/components/global/Blog/Discussions";
 
 const Blog = async ({ params }: { params: Promise<{ blogId: string }> }) => {
   const { blogId } = await params;
@@ -23,11 +21,11 @@ const Blog = async ({ params }: { params: Promise<{ blogId: string }> }) => {
     throw new Error(`Failed to get the blog: ${data.error}`);
   }
   const {
+    discussionsCount,
     blogFound,
     blogUpvote,
     blogDownvote,
     user,
-    discussions,
     blogTagsFound,
   } = data;
 
@@ -51,7 +49,7 @@ const Blog = async ({ params }: { params: Promise<{ blogId: string }> }) => {
             downvotes={blogDownvote.count}
             upvotes={blogUpvote.count}
             blogId={blogId}
-            discussionCount={discussions.length}
+            discussionCount={discussionsCount}
           />
 
           {blogFound.blogCover ? (
@@ -77,23 +75,8 @@ const Blog = async ({ params }: { params: Promise<{ blogId: string }> }) => {
 
       <div className="w-full flex-1 border-t border-t-gray-400 pt-4">
         <h2 className="text-3xl font-bold text-gray-900 mb-4">Discussions</h2>
-        <Discussion />
-        {Array.isArray(discussions) && discussions.length > 0 ? (
-          discussions.map((discussion) => (
-            <div
-              key={discussion.id}
-              className="p-4 mb-4 bg-white border border-gray-200 rounded-lg"
-            >
-              <p className="text-gray-800">{discussion.description}</p>
-              <p className="text-sm text-gray-500 mt-2">
-                Commented on{" "}
-                {format(new Date(discussion.createdAt), "MMMM dd, yyyy")}
-              </p>
-            </div>
-          ))
-        ) : (
-          <p className="text-gray-600">No discussions yet.</p>
-        )}
+        <Discussion blogId={blogId} />
+        <Discussions blogId={blogId} />
       </div>
     </main>
   );

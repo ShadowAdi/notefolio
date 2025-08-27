@@ -1,6 +1,7 @@
 import { db } from "@/db/db";
 import { BlogSchema } from "@/schemas/Blog";
 import { Discussion } from "@/schemas/Disscussions";
+import { User } from "@/schemas/User";
 import { verifyUser } from "@/services/VerifyUser";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
@@ -20,8 +21,17 @@ export async function GET(
     }
 
     const discussions = await db
-      .select()
+      .select({
+        description: Discussion.description,
+        id: Discussion.id,
+        blogId: Discussion.blogId,
+        userId: Discussion.userId,
+        createdAt: Discussion.createdAt,
+        username: User.username,
+        profileUrl: User.profileUrl,
+      })
       .from(Discussion)
+      .leftJoin(User, eq(Discussion.userId, User.id))
       .where(eq(Discussion.blogId, blogId));
 
     return new Response(
@@ -79,10 +89,15 @@ export async function POST(
     const body = await request.json();
     const { description } = body;
     if (!description) {
-      return new Response(JSON.stringify({ success: false }), {
-        status: 400,
-        statusText: `discussion is not provided`,
-      });
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: "discussion is not provided",
+        }),
+        {
+          status: 400,
+        }
+      );
     }
 
     const discussionId = uuidv4();

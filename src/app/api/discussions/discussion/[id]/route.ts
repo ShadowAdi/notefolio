@@ -127,11 +127,21 @@ export async function DELETE(
       );
     }
 
-    await db.delete(Discussion).where(eq(Discussion.blogId, id));
+    const result = await db.delete(Discussion).where(eq(Discussion.id, id));
+    if (result.rowCount === 0) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "Discussion not found",
+        }),
+        { status: 404 }
+      );
+    }
+
     return new Response(
       JSON.stringify({
         success: true,
-        message: `Discussion deleted Successfully`,
+        message: "Discussion deleted successfully",
       }),
       { status: 200 }
     );
