@@ -6,7 +6,6 @@ import BlogHeader from "@/components/global/Blog/BlogHeader";
 import BlogInfo from "@/components/global/Blog/BlogInfo";
 import "highlight.js/styles/github-dark.css";
 import BlogDescriptionEditor from "@/components/global/Blog/BlogDescriptionEditor";
-import Discussion from "@/components/global/Blog/Discussion";
 import Discussions from "@/components/global/Blog/Discussions";
 
 const Blog = async ({ params }: { params: Promise<{ blogId: string }> }) => {
@@ -75,7 +74,6 @@ const Blog = async ({ params }: { params: Promise<{ blogId: string }> }) => {
 
       <div className="w-full flex-1 border-t border-t-gray-400 pt-4">
         <h2 className="text-3xl font-bold text-gray-900 mb-4">Discussions</h2>
-        <Discussion blogId={blogId} />
         <Discussions blogId={blogId} />
       </div>
     </main>

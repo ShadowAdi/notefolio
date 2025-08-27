@@ -14,9 +14,11 @@ import { toast } from "sonner";
 const DiscussionTrigger = ({
   discussionId,
   discussinUserId,
+  fetchDiscussions,
 }: {
   discussionId: string;
   discussinUserId: string;
+  fetchDiscussions: () => void;
 }) => {
   const { isAuthenticated, loading: globalLoading, token, user } = useAuth();
   const handleDelete = async () => {
@@ -37,6 +39,7 @@ const DiscussionTrigger = ({
       );
       if (success) {
         toast.success(message);
+        fetchDiscussions();
       } else {
         console.error(`Failed to delete discussion ${error}`);
         toast.error(`Failed to delete discussion ${error}`);
@@ -59,7 +62,7 @@ const DiscussionTrigger = ({
         <DropdownMenuItem
           className="cursor-pointer flex items-center justify-center"
           onClick={(e) => {
-            e.preventDefault()
+            e.preventDefault();
             handleDelete();
           }}
         >
