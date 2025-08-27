@@ -9,7 +9,10 @@ import { toast } from "sonner";
 import { format } from "date-fns";
 import DiscussionTrigger from "../discussion/DiscussionTrigger";
 import { DisscussionInterfaceType } from "@/types/Discussion/DiscussionInterface";
-import { CreateDiscussionAction } from "@/actions/Discussion/DiscussionAction";
+import {
+  CreateDiscussionAction,
+  UpdateDiscussionAction,
+} from "@/actions/Discussion/DiscussionAction";
 import Link from "next/link";
 
 const Discussions = ({ blogId }: { blogId: string }) => {
@@ -19,6 +22,7 @@ const Discussions = ({ blogId }: { blogId: string }) => {
   const [discussions, setDiscussions] = useState<DisscussionInterfaceType[]>(
     []
   );
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   const fetchDiscussions = async () => {
     try {
@@ -39,7 +43,7 @@ const Discussions = ({ blogId }: { blogId: string }) => {
   }, [blogId]);
 
   const handleCreate = async () => {
-    if (globalLoading) return;
+    if (globalLoading || !discussionText.trim()) return;
     setLoading(true);
 
     if (!isAuthenticated || !token) {
@@ -49,7 +53,7 @@ const Discussions = ({ blogId }: { blogId: string }) => {
     }
 
     const { success, discussion, error, message } =
-      await CreateDiscussionAction(discussionText, token, blogId);
+      await CreateDiscussionAction(discussionText.trim(), token, blogId);
 
     if (success) {
       toast.success(message);
@@ -60,6 +64,36 @@ const Discussions = ({ blogId }: { blogId: string }) => {
     }
 
     setLoading(false);
+  };
+
+  const handleUpdate = async (discussionId: string) => {
+    if (globalLoading || !discussionText.trim()) return;
+    if (!isAuthenticated || !token) {
+      toast.error("Please login to update the discussion");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { success, error, message } = await UpdateDiscussionAction(
+        discussionText,
+        token,
+        discussionId
+      );
+      if (success) {
+        toast.success(message);
+        setDiscussionText("");
+        setEditingId(null); // Exit edit mode
+        fetchDiscussions();
+      } else {
+        toast.error(error || message);
+      }
+    } catch (err: any) {
+      console.error("Update error:", err.message);
+      toast.error("Failed to update discussion");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -74,18 +108,21 @@ const Discussions = ({ blogId }: { blogId: string }) => {
         <div className="flex w-full items-end justify-end space-x-4">
           <Button
             disabled={loading}
-            onClick={() => setDiscussionText("")}
+            onClick={() => {
+              setDiscussionText("");
+              setEditingId(null);
+            }}
             variant="outline"
             className="px-5 text-base"
           >
             Cancel
           </Button>
           <Button
-            disabled={loading}
-            onClick={handleCreate}
+            disabled={loading || !discussionText.trim()}
+            onClick={editingId ? () => handleUpdate(editingId) : handleCreate}
             className="px-5 text-base"
           >
-            {loading ? "Loading..." : "Send"}
+            {loading ? "Loading..." : editingId ? "Update" : "Send"}{" "}
           </Button>
         </div>
       </div>
@@ -123,8 +160,12 @@ const Discussions = ({ blogId }: { blogId: string }) => {
                 </div>
                 <DiscussionTrigger
                   discussionId={discussion.id}
-                  discussinUserId={discussion.userId}
+                  discussionUserId={discussion.userId}
                   fetchDiscussions={fetchDiscussions}
+                  onEdit={() => {
+                    setEditingId(discussion.id);
+                    setDiscussionText(discussion.description);
+                  }}
                 />
               </div>
               <p className="text-gray-800">{discussion.description}</p>

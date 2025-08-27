@@ -64,7 +64,7 @@ export async function PATCH(
     const updatedDiscussion = await db
       .update(Discussion)
       .set(updatedDiscussionData)
-      .where(eq(Discussion.blogId, id))
+      .where(eq(Discussion.id, id))
       .returning();
     return new Response(
       JSON.stringify({

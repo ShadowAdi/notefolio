@@ -13,12 +13,14 @@ import { toast } from "sonner";
 
 const DiscussionTrigger = ({
   discussionId,
-  discussinUserId,
+  discussionUserId,
   fetchDiscussions,
+  onEdit,
 }: {
   discussionId: string;
-  discussinUserId: string;
+  discussionUserId: string;
   fetchDiscussions: () => void;
+  onEdit: () => void;
 }) => {
   const { isAuthenticated, loading: globalLoading, token, user } = useAuth();
   const handleDelete = async () => {
@@ -28,7 +30,7 @@ const DiscussionTrigger = ({
     if (!isAuthenticated || !token || !user) {
       toast.error(`User Not Authenticated`);
     }
-    if (user && user?.id !== discussinUserId) {
+    if (user && user?.id !== discussionUserId) {
       toast.error(`User Not Authenticated`);
     }
 
@@ -56,7 +58,13 @@ const DiscussionTrigger = ({
         <EllipsisVertical className="text-base cursor-pointer text-gray-600" />
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuItem className="cursor-pointer flex items-center justify-center">
+        <DropdownMenuItem
+          onClick={(e) => {
+            e.preventDefault();
+            onEdit();
+          }}
+          className="cursor-pointer flex items-center justify-center"
+        >
           Edit
         </DropdownMenuItem>
         <DropdownMenuItem

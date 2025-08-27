@@ -10,11 +10,13 @@ CREATE TABLE "blog" (
 );
 --> statement-breakpoint
 CREATE TABLE "blogDownvote" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"blog_id" uuid NOT NULL,
 	"user_id" uuid NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "blogUpvote" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"blog_id" uuid NOT NULL,
 	"user_id" uuid NOT NULL
 );
@@ -35,6 +37,7 @@ CREATE TABLE "followers" (
 );
 --> statement-breakpoint
 CREATE TABLE "blogTags" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"blogId" uuid NOT NULL,
 	"tag" text NOT NULL
 );

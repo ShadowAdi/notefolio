@@ -1,15 +1,13 @@
-import { pgTable,uuid } from "drizzle-orm/pg-core";
+import { pgTable, uuid } from "drizzle-orm/pg-core";
 import { BlogSchema } from "./Blog";
 import { User } from "./User";
 
-export const BlogDownvote = pgTable(
-  "blogDownvote",
-  {
-    blogId: uuid("blog_id")
-      .notNull()
-      .references(() => BlogSchema.id),
-    userId: uuid("user_id")
-      .notNull()
-      .references(() => User.id),
-  }
-);
+export const BlogDownvote = pgTable("blogDownvote", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  blogId: uuid("blog_id")
+    .notNull()
+    .references(() => BlogSchema.id),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => User.id),
+});

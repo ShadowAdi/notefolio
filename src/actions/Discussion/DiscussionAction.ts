@@ -103,3 +103,43 @@ export const DeleteDiscussionAction = async (
     };
   }
 };
+
+
+export const UpdateDiscussionAction = async (
+  description: string,
+  token: string,
+  discussionId: string
+) => {
+  try {
+    const response = await axios.patch(
+      `http://localhost:3000/api/discussions/discussion/${discussionId}`,
+      { description },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    const data = await response.data;
+    const { success, message, error, discussion } = data;
+    if (success) {
+      return {
+        message,
+        discussion,
+        success: true,
+      };
+    } else {
+      return {
+        error,
+        message,
+        success: false,
+      };
+    }
+  } catch (error) {
+    console.error(`Failed to update discussion: ${error}`);
+    return {
+      error: error,
+      success: false,
+    };
+  }
+};

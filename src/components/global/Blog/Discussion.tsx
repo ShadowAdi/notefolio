@@ -1,6 +1,7 @@
 "use client";
 import { CreateDiscussionAction } from "@/actions/Discussion/DiscussionAction";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/Spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/context/AuthContext";
 import React, { useState } from "react";
@@ -61,7 +62,7 @@ const Discussion = ({ blogId }: { blogId: string }) => {
           }}
           className="px-5 text-base"
         >
-          {loading ? "Loading..." : "Send"}
+          {loading ? "Loading..." : "Send..."}
         </Button>
       </div>
     </div>
