@@ -30,13 +30,10 @@ const RegisterForm = ({ heading, buttonText }: RegisterInterfaceType) => {
       username: "",
       email: "",
       password: "",
-      profileUrl: "",
     },
   });
 
-  const profileUrl = form.watch("profileUrl");
   const [showPassword, setShowPassword] = useState(false);
-  const [imgError, setImgError] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -89,38 +86,32 @@ const RegisterForm = ({ heading, buttonText }: RegisterInterfaceType) => {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="username"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Username</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Aditya" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="email"
-                      placeholder="adi@gmail.com"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+          <FormField
+            control={form.control}
+            name="username"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Username</FormLabel>
+                <FormControl>
+                  <Input placeholder="Aditya" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input type="email" placeholder="adi@gmail.com" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           <FormField
             control={form.control}
@@ -149,38 +140,6 @@ const RegisterForm = ({ heading, buttonText }: RegisterInterfaceType) => {
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="profileUrl"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Profile Image URL</FormLabel>
-                <FormControl>
-                  <Input
-                    type="url"
-                    placeholder="https://image.com"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-                {profileUrl && !imgError && (
-                  <Image
-                    src={profileUrl}
-                    onError={() => setImgError(true)}
-                    alt="Profile Preview"
-                    height={300}
-                    width={600}
-                    className="mt-3 rounded-md border object-cover w-full max-h-[300px]"
-                  />
-                )}
-                {imgError && (
-                  <p className="text-sm text-red-500 mt-2">
-                    Couldn't load image from the provided URL.
-                  </p>
-                )}
-              </FormItem>
-            )}
-          />
           <Button type="submit" className="w-full !cursor-pointer">
             {!loading ? buttonText : "Loading..."}
           </Button>

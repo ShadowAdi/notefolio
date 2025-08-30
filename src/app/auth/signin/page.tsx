@@ -22,7 +22,7 @@ const Signin = ({
   
   return (
     <main className="flex w-full h-screen flex-1 items-center justify-between flex-col md:flex-row relative">
-      <section className="w-full py-6 md:w-[60%] h-full  flex items-center justify-center">
+      <section className="w-full md:w-[60%] h-full  flex items-center justify-center">
         <div className="flex flex-col items-center gap-10 w-full max-w-md px-4">
           <FormHeader logo={logo} />
           <LoginForm buttonText={buttonText} heading={heading} />
