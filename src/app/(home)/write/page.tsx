@@ -162,7 +162,7 @@ const Write = () => {
       Image.configure({
         inline: true,
         HTMLAttributes: {
-          class: "object-cover my-2", // Removed fixed dimensions
+          class: "object-cover my-2",
         },
       }),
     ],
@@ -257,16 +257,14 @@ const Write = () => {
   return (
     <main className="flex flex-col gap-4 flex-1 items-center h-screen ">
       <div className="flex flex-col h-full flex-1 relative  items-center max-w-2xl w-full">
-        <input
+        <textarea
           onChange={(e) => setBlogTitle(e.currentTarget.value)}
           value={blogTitle}
-          type="text"
           placeholder="Add A Title..."
-         className="py-5 w-full outline-0 ring-0 focus-visible:ring-0 placeholder:text-neutral-400 text-black text-6xl font-bold"
+         className="py-2 w-full outline-0 ring-0 focus-visible:ring-0 placeholder:text-neutral-400 text-black text-4xl font-bold"
         />
         <div className="w-full h-full flex-1   relative">
           <EditorContent
-            placeholder="Start Writing..."
             className="list-disc list-inside flex-1 min-h-[400px] w-full h-full overflow-y-auto ProseMirror scrollbar-transparent_tiptap placeholder:text-black"
             style={{
               whiteSpace: "pre-line",

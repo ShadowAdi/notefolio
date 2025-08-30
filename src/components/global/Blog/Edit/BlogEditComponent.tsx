@@ -300,12 +300,11 @@ const BlogEditComponent = ({
   return (
     <main className="flex flex-col gap-4 flex-1 items-center h-screen ">
       <div className="flex flex-col h-full flex-1 relative  items-center max-w-2xl w-full">
-        <input
+        <textarea
           onChange={(e) => setBlogTitle(e.currentTarget.value)}
           value={blogTitle}
-          type="text"
           placeholder="Add A Title..."
-          className="py-5 w-full outline-0 ring-0 focus-visible:ring-0 placeholder:text-neutral-400 text-black text-6xl font-bold"
+          className="py-2 w-full outline-0 ring-0 focus-visible:ring-0 placeholder:text-neutral-400 text-black text-4xl font-bold"
         />
         <div className="w-full h-full flex-1   relative">
           <EditorContent
