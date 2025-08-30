@@ -105,7 +105,7 @@ const PublishModal = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="!cursor-pointer">Publish</Button>
+        <Button className="!cursor-pointer text-base ">Publish</Button>
       </DialogTrigger>
       <DialogContent className="max-h-[90vh] overflow-y-auto max-w-[640px] no-scrollbar publishModal">
         <DialogHeader className="w-full">

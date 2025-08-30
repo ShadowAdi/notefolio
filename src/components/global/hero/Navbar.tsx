@@ -8,7 +8,7 @@ const Navbar = () => {
         <div className="flex items-center justify-between">
           <div className="md:flex md:items-center md:gap-12">
             <Link className="block text-black cursor-pointer" href="/">
-              <span className="text-black text-xl underline font-bold">
+              <span className="text-black text-2xl underline font-bold">
                 Notefolio
               </span>
             </Link>
