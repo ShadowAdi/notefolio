@@ -16,8 +16,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea";
-import Image from "next/image";
 import { Eye, EyeClosed } from "lucide-react";
 import axios from "axios";
 import { useRouter } from "next/navigation";

@@ -49,9 +49,20 @@ CREATE TABLE "User" (
 	"profileUrl" text DEFAULT '',
 	"password" varchar NOT NULL,
 	"bio" text,
+	"isEmailVerified" boolean DEFAULT false,
 	"createdAt" timestamp DEFAULT now(),
 	"updated_at" timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	CONSTRAINT "User_email_unique" UNIQUE("email")
+);
+--> statement-breakpoint
+CREATE TABLE "Verification" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"otp" varchar NOT NULL,
+	"userId" uuid NOT NULL,
+	"expiresIn" timestamp NOT NULL,
+	"createdAt" timestamp DEFAULT now(),
+	"updated_at" timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	CONSTRAINT "Verification_otp_unique" UNIQUE("otp")
 );
 --> statement-breakpoint
 ALTER TABLE "blog" ADD CONSTRAINT "blog_authorId_User_id_fk" FOREIGN KEY ("authorId") REFERENCES "public"."User"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
@@ -63,4 +74,5 @@ ALTER TABLE "discussion" ADD CONSTRAINT "discussion_blodId_blog_id_fk" FOREIGN K
 ALTER TABLE "discussion" ADD CONSTRAINT "discussion_authordId_User_id_fk" FOREIGN KEY ("authordId") REFERENCES "public"."User"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "followers" ADD CONSTRAINT "followers_followerId_User_id_fk" FOREIGN KEY ("followerId") REFERENCES "public"."User"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "followers" ADD CONSTRAINT "followers_followingId_User_id_fk" FOREIGN KEY ("followingId") REFERENCES "public"."User"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "blogTags" ADD CONSTRAINT "blogTags_blogId_blog_id_fk" FOREIGN KEY ("blogId") REFERENCES "public"."blog"("id") ON DELETE no action ON UPDATE no action;
+ALTER TABLE "blogTags" ADD CONSTRAINT "blogTags_blogId_blog_id_fk" FOREIGN KEY ("blogId") REFERENCES "public"."blog"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "Verification" ADD CONSTRAINT "Verification_userId_User_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."User"("id") ON DELETE no action ON UPDATE no action;
