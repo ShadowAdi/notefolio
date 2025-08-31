@@ -2,7 +2,6 @@ import { db } from "@/db/db";
 import { BlogSchema } from "@/schemas/Blog";
 import { BlogDownvote } from "@/schemas/BlogDownvote";
 import { BlogUpvote } from "@/schemas/BlogUpvote";
-import { tagTable } from "@/schemas/Tag";
 import { eq, sql } from "drizzle-orm";
 
 export async function GET(
