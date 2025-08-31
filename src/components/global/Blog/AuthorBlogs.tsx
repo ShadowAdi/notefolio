@@ -38,7 +38,7 @@ const AuthorBlogs = async ({ blogId }: { blogId: string }) => {
                 <h1 className="text-base line-clamp-2 font-semibold">
                   {authorBlog.blogTitle}
                 </h1>
-                {/* <div className="flex flex-row flex-wrap space-x-4 ">
+                <div className="flex flex-row flex-wrap space-x-4 ">
                   <div
                     className="flex items-center space-x-1 cursor-default"
                     aria-label="Upvote"
@@ -53,7 +53,7 @@ const AuthorBlogs = async ({ blogId }: { blogId: string }) => {
                     <ArrowDown className="w-4 h-4" />
                     <span>{authorBlog.downvotes}</span>
                   </div>
-                </div> */}
+                </div>
               </div>
             </div>
           </Link>
