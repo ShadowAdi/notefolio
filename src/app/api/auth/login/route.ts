@@ -31,6 +31,13 @@ export async function POST(request: Request) {
       });
     }
 
+    if (!user.isEmailVerified) {
+     return new Response(JSON.stringify({ success: false }), {
+        status: 400,
+        statusText: `User with email: ${email} is not verified. First Verify Yourself`,
+      }); 
+    }
+
     const isPasswordMatch = await bcrypt.compare(password, user.password);
     if (!isPasswordMatch) {
       return new Response(

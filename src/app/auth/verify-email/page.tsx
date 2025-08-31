@@ -20,7 +20,7 @@ const VerifyEmail = ({
         <div className="flex flex-col items-center gap-10 w-full max-w-md px-4">
           <FormHeader logo={logo} />
           <VerifyEmailForm buttonText={buttonText} heading={heading} />
-          <FormBottom linkText={"Signin"} text={signupText} url={signupUrl} />
+          <FormBottom linkText={"Click"} text={signupText} url={signupUrl} />
         </div>
       </section>
       <section className="w-[0%] md:w-[40%] h-[0] md:h-full">

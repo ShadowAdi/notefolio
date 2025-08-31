@@ -3,7 +3,6 @@ import { RegisterInterfaceType } from "@/types/auth/register/RegisterType";
 import { verifyEmailFormSchema } from "@/zodSchema/verifyEmailSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -18,6 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useRouter } from "next/navigation";
 
 const VerifyEmailForm = ({ heading, buttonText }: RegisterInterfaceType) => {
   const form = useForm<z.infer<typeof verifyEmailFormSchema>>({
@@ -87,7 +87,7 @@ const VerifyEmailForm = ({ heading, buttonText }: RegisterInterfaceType) => {
             name="otp"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel>OTP</FormLabel>
                 <FormControl>
                   <Input type="text" placeholder="000000" {...field} />
                 </FormControl>

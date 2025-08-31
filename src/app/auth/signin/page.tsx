@@ -18,15 +18,23 @@ const Signin = ({
   buttonText = "Login Account",
   signupText = "Dont have an account?",
   signupUrl = "http://localhost:3000/auth/signup",
+  verifyEmailUrl = "http://localhost:3000/auth/verify-email",
 }) => {
-  
   return (
     <main className="flex w-full h-screen flex-1 items-center justify-between flex-col md:flex-row relative">
       <section className="w-full md:w-[60%] h-full  flex items-center justify-center">
         <div className="flex flex-col items-center gap-10 w-full max-w-md px-4">
           <FormHeader logo={logo} />
           <LoginForm buttonText={buttonText} heading={heading} />
+          <div className="flex flex-col space-y-2">
           <FormBottom linkText={"Signup"} text={signupText} url={signupUrl} />
+          <FormBottom
+            linkText={"Verify"}
+            text={"Email Not Verified?"}
+            url={verifyEmailUrl}
+          />
+
+          </div>
         </div>
       </section>
       <section className="w-[0%] md:w-[40%] h-[0] md:h-full">
