@@ -43,7 +43,7 @@ const RegisterForm = ({ heading, buttonText }: RegisterInterfaceType) => {
         case 201:
           form.reset();
           toast.success(response.data.message);
-          router.push("/auth/signin");
+          router.push("/auth/verify-email");
           break;
         case 500:
           form.reset();
