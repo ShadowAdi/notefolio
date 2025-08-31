@@ -7,6 +7,7 @@ import BlogInfo from "@/components/global/Blog/BlogInfo";
 import "highlight.js/styles/github-dark.css";
 import BlogDescriptionEditor from "@/components/global/Blog/BlogDescriptionEditor";
 import Discussions from "@/components/global/Blog/Discussions";
+import AuthorBlogs from "@/components/global/Blog/AuthorBlogs";
 
 const Blog = async (context: { params: Promise<{ blogId: string }> }) => {
   const { blogId } = await context.params;
@@ -64,8 +65,9 @@ const Blog = async (context: { params: Promise<{ blogId: string }> }) => {
 
           <BlogDescriptionEditor blogDescription={blogFound.blogDescription} />
         </section>
-        <section className="flex flex-col w-[20%]  items-start justify-start  gap-4  ">
+        <section className="flex flex-col w-[20%]  items-start justify-start  gap-4 space-y-8  ">
           <TagsSection blogTagsFound={blogTagsFound} />
+          <AuthorBlogs blogId={blogId} />
         </section>
       </div>
 
