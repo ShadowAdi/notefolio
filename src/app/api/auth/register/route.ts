@@ -1,8 +1,10 @@
 import { db } from "@/db/db";
 import { User } from "@/schemas/User";
+import { Verification } from "@/schemas/Verification";
 import bcrypt from "bcrypt";
 import { eq } from "drizzle-orm";
-
+import crypto from "crypto";
+import { sendVerificationEmail } from "@/config/email-verification/email";
 export async function POST(request: Request) {
   const body = await request.json();
   const { username, email, password, profileUrl } = body;
@@ -25,7 +27,9 @@ export async function POST(request: Request) {
       });
     }
 
+    const otp = String(crypto.randomInt(100000, 1000000));
     const hashedPassword = await bcrypt.hash(password, 10);
+    const expiresIn = new Date(Date.now() + 15 * 60 * 1000);
     const user = {
       id: crypto.randomUUID(),
       username: username.toLowerCase(),
@@ -36,8 +40,21 @@ export async function POST(request: Request) {
       updatedAt: new Date(),
     };
     await db.insert(User).values({ ...user });
+
+    await db.insert(Verification).values({
+      userId: user.id,
+      otp: otp,
+      expiresIn: expiresIn,
+      createdAt: new Date(),
+    });
+
+    await sendVerificationEmail(user.email, otp);
+
     return new Response(
-      JSON.stringify({ success: true, message: `User Created Successfully` }),
+      JSON.stringify({
+        success: true,
+        message: `User Created Successfully. Please Check Your Mail`,
+      }),
       {
         status: 201,
       }
