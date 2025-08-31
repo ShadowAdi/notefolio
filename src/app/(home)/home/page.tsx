@@ -4,9 +4,6 @@ import React from "react";
 
 const Home = async () => {
   const response = await axios.get(`http://localhost:3000/api/blog`);
-  if (response.status !== 200) {
-    throw new Error(`Failed to fetch all Blogs`);
-  }
   const result = await response.data;
   const {data}=result
 

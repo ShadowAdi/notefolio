@@ -12,9 +12,6 @@ const Blog = async (context: { params: Promise<{ blogId: string }> }) => {
   const { blogId } = await context.params;
 
   const response = await axios.get(`http://localhost:3000/api/blog/${blogId}`);
-  if (response.status !== 200) {
-    throw new Error(`Failed to get Blog`);
-  }
   const data: SingleBlogResponseCombinedInterface = await response.data;
   if (!data.success) {
     throw new Error(`Failed to get the blog: ${data.error}`);
