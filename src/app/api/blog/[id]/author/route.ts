@@ -31,7 +31,7 @@ export async function GET(
     }
     const blogFound = blogs[0];
 
-    const authorBlogs=await db
+    const authorBlogs = await db
       .select({
         blogTitle: BlogSchema.blogTitle,
         blogCover: BlogSchema.blogCover,
@@ -41,15 +41,20 @@ export async function GET(
         authorId: BlogSchema.authorId,
       })
       .from(BlogSchema)
-      .leftJoin(BlogUpvote, eq(BlogUpvote.blogId, id))
-      .leftJoin(BlogDownvote, eq(BlogDownvote.blogId, id))
-      .where(eq(BlogSchema.authorId, blogFound.authorId));
-    return new Response(JSON.stringify({
-      success:true,
-      authorBlogs
-    }),{
-      status:200
-    })
+      .leftJoin(BlogUpvote, eq(BlogUpvote.blogId, BlogSchema.id))
+      .leftJoin(BlogDownvote, eq(BlogDownvote.blogId, BlogSchema.id))
+      .where(eq(BlogSchema.authorId, blogFound.authorId))
+      .groupBy(BlogSchema.id);
+    const authorBlogsRaw=authorBlogs.filter((authorBlog) => authorBlog.id !== id);
+    return new Response(
+      JSON.stringify({
+        success: true,
+        authorBlogs:authorBlogsRaw,
+      }),
+      {
+        status: 200,
+      }
+    );
   } catch (error) {
     console.log(`Failed to get blogs for author ${error}`);
     return new Response(

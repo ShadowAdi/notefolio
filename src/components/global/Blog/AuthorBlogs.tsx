@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge";
 import { AuthorBlogInterface } from "@/types/Blog/AuthorBlog";
 import axios from "axios";
 import { ArrowDown, ArrowUp } from "lucide-react";
@@ -15,16 +14,17 @@ const AuthorBlogs = async ({ blogId }: { blogId: string }) => {
     throw new Error(`Failed to get the author blogs: ${data.error}`);
   }
 
+  if (data.authorBlogs.length<=0) {
+    return
+  }
+
   return (
     <div className="flex flex-col space-y-4  w-full items-start">
       <h2 className="text-[28px] font-bold line-clamp-1">More By Author</h2>
       <div className="flex flex-col space-y-2 w-full ">
         {data.authorBlogs.map((authorBlog) => (
-          <Link href={`/blog/${authorBlog.id}`}>
-            <div
-              key={authorBlog.id}
-              className="flex flex-col py-0    space-y-1 min-h-[100px] justify-between "
-            >
+          <Link href={`/blog/${authorBlog.id}`} key={authorBlog.id}>
+            <div className="flex flex-col py-0    space-y-1 min-h-[100px] justify-between ">
               <div className="relative  flex-1  h-full overflow-hidden rounded-md ">
                 <Image
                   src={authorBlog.blogCover}
@@ -38,7 +38,7 @@ const AuthorBlogs = async ({ blogId }: { blogId: string }) => {
                 <h1 className="text-base line-clamp-2 font-semibold">
                   {authorBlog.blogTitle}
                 </h1>
-                <div className="flex flex-row flex-wrap space-x-4 ">
+                {/* <div className="flex flex-row flex-wrap space-x-4 ">
                   <div
                     className="flex items-center space-x-1 cursor-default"
                     aria-label="Upvote"
@@ -53,7 +53,7 @@ const AuthorBlogs = async ({ blogId }: { blogId: string }) => {
                     <ArrowDown className="w-4 h-4" />
                     <span>{authorBlog.downvotes}</span>
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
           </Link>
