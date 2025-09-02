@@ -1,5 +1,5 @@
 "use client";
-import { ArrowBigDown, ArrowBigUp } from "lucide-react";
+import { ArrowBigDown, ArrowBigUp, Bookmark } from "lucide-react";
 import React, { useState, useCallback } from "react";
 import { FaComment } from "react-icons/fa";
 import ShareButton from "./ShareButton";
@@ -18,6 +18,7 @@ import {
   SingleBlogDownvotesResponseInterface,
   SingleBlogResponseCombinedInterface,
   SingleBlogUpvotesResponseInterface,
+  UserIds,
 } from "@/types/Blog/SingleBlog";
 
 const BlogInfo = ({
@@ -27,6 +28,7 @@ const BlogInfo = ({
   upvotes: initialUpvotes,
   blogId,
   discussionCount,
+  savedIds,
 }: {
   blogTitle: string;
   blogDescription: string | null;
@@ -34,6 +36,7 @@ const BlogInfo = ({
   downvotes: SingleBlogDownvotesResponseInterface[];
   blogId: string;
   discussionCount: number;
+  savedIds: UserIds[];
 }) => {
   const { isAuthenticated, loading, token, user } = useAuth();
   const [upvotes, setUpvotes] =
@@ -174,6 +177,40 @@ const BlogInfo = ({
         </Tooltip>
       </div>
       <div className="flex items-center space-x-4 justify-between">
+        <div
+          onClick={async () => {
+            const response = await axios.post(
+              `http://localhost:3000/api/saved/${blogId}`,
+              null,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+            const data = await response.data;
+            if (data.success) {
+              toast.success(data.message);
+            } else {
+              toast.error(`Failed to save Blog ${data.error}`);
+              console.error(`Failed to save Blog ${data.error}`);
+            }
+          }}
+          className="flex items-center cursor-pointer hover:bg-gray-200/30 rounded-full justify-center h-12 w-12 border border-gray-300"
+        >
+          <Bookmark
+            className={`text-sm ${
+              savedIds &&
+              user &&
+              user.id &&
+              savedIds.map((saveId) =>
+                saveId.userIds === user?.id
+                  ? "fill-stone-800"
+                  : " text-gray-400"
+              )
+            }`}
+          />
+        </div>
         <ShareButton title={blogTitle} />
         <PlayButton blogDescription={blogDescription!} />
       </div>

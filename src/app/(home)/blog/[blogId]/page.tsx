@@ -24,7 +24,14 @@ const Blog = async (context: { params: Promise<{ blogId: string }> }) => {
     blogDownvotes,
     user,
     blogTagsFound,
+    savedIds,
+    error,
+    success,
   } = data;
+
+  if (!success) {
+    throw new Error(error || `Failed to get the blog`);
+  }
 
   return (
     <main className="flex flex-col  gap-8 flex-1 items-start justify-between w-full max-w-6xl mx-auto px-4 py-8 overflow-x-hidden">
@@ -47,6 +54,7 @@ const Blog = async (context: { params: Promise<{ blogId: string }> }) => {
             upvotes={blogUpvotes}
             blogId={blogId}
             discussionCount={discussionsCount}
+            savedIds={savedIds}
           />
 
           {blogFound.blogCover ? (

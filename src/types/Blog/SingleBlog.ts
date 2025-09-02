@@ -38,6 +38,10 @@ export interface SingleBlogUserDiscussionsResponseInterface {
   createdAt: string;
 }
 
+
+export interface UserIds{
+  userIds:string
+}
 export interface SingleBlogResponseCombinedInterface {
   blogFound: SingleBlogResponseInterface;
   blogDownvotes: SingleBlogDownvotesResponseInterface[];
@@ -46,5 +50,6 @@ export interface SingleBlogResponseCombinedInterface {
   blogTagsFound: string[];
   discussionsCount: number;
   success: boolean;
+  savedIds:UserIds[];
   error: any;
 }

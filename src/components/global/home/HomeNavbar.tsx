@@ -83,6 +83,14 @@ const HomeNavbar = () => {
                   >
                     My Account
                   </DropdownMenuLabel>
+                  <DropdownMenuLabel
+                    className="cursor-pointer hover:bg-gray-100"
+                    onClick={() => {
+                      router.push("/saved");
+                    }}
+                  >
+                    Saved
+                  </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     className="cursor-pointer"

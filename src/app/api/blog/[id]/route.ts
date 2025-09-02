@@ -4,10 +4,11 @@ import { BlogDownvote } from "@/schemas/BlogDownvote";
 import { BlogUpvote } from "@/schemas/BlogUpvote";
 import { Discussion } from "@/schemas/Disscussions";
 import { Followers } from "@/schemas/Followers";
+import { SavedBlog } from "@/schemas/SavedBlog";
 import { tagTable } from "@/schemas/Tag";
 import { User } from "@/schemas/User";
 import { verifyUser } from "@/services/VerifyUser";
-import { eq, sql } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 
 export async function GET(
   request: Request,
@@ -49,6 +50,13 @@ export async function GET(
       })
       .from(tagTable)
       .where(eq(tagTable.blogId, id));
+
+    const savedIds = await db
+      .select({
+        userIds: SavedBlog.userId,
+      })
+      .from(SavedBlog)
+      .where(eq(SavedBlog.blogId, id));
 
     const blogTagsFound = blogTagsFoundRaw.map((tag) => tag.tag);
 
@@ -105,10 +113,6 @@ export async function GET(
       followers,
     };
 
-  console.log("upvotes ",blogUpvotes)
-    console.log("down ",blogDownvotes)
-
-
     return new Response(
       JSON.stringify({
         discussionsCount: discussions.length,
@@ -117,6 +121,7 @@ export async function GET(
         user,
         blogTagsFound,
         blogFound,
+        savedIds,
         success: true,
       }),
       {

@@ -1,3 +1,4 @@
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -6,6 +7,7 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { SingleBlogInterface } from "@/types/Blog/Blog";
+import { format } from "date-fns";
 import Link from "next/link";
 import React from "react";
 import truncate from "truncate-html";
@@ -20,16 +22,17 @@ const tagColors = [
 ];
 
 const BlogCard = ({ blog }: { blog: SingleBlogInterface }) => {
+  console.log("Blog ", blog);
   return (
     <Link href={`/blog/${blog.id}`}>
       <Card
         key={blog.id}
-        className="group relative grid gap-y-2 cursor-pointer text-gray-800 
-             overflow-hidden rounded-md shadow-md pt-0 hover:shadow-lg 
-             transition-shadow duration-300 bg-white hover:bg-gray-50 h-[440px]  min-h-[440px] max-h-[440px]"
+        className="group relative flex flex-row-reverse cursor-pointer text-gray-800 
+             overflow-hidden rounded-md shadow-md py-0 hover:shadow-lg 
+             transition-shadow duration-300 bg-white hover:bg-gray-50 h-[240px]     "
       >
         {blog?.blogCover ? (
-          <div className="w-full h-48 overflow-hidden">
+          <div className="w-1/2 flex-1/2 h-full overflow-hidden">
             <img
               src={blog?.blogCover}
               alt={blog.blogTitle}
@@ -43,32 +46,57 @@ const BlogCard = ({ blog }: { blog: SingleBlogInterface }) => {
             <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300" />
           </div>
         )}
-        <CardHeader className="px-4 py-2">
-          <h3 className="text-xl font-bold capitalize transition-colors duration-200 line-clamp-2">
-            {blog.blogTitle}
-          </h3>
-        </CardHeader>
+        <div className="flex flex-col w-1/2 flex-1/2">
+          <CardHeader className="px-4 py-2">
+            <h3 className="text-lg font-bold capitalize transition-colors duration-200 line-clamp-2">
+              {blog.blogTitle}
+            </h3>
+          </CardHeader>
 
-        <CardContent className="px-4 py-1">
-          <p
-            className="text-sm text-gray-600 leading-relaxed line-clamp-3"
-            dangerouslySetInnerHTML={{
-              __html: truncate(blog.blogDescription, 120, { ellipsis: "..." }),
-            }}
-          />
-        </CardContent>
-        <CardFooter className="px-4 pt-1 pb-4 flex flex-wrap items-center gap-2 mt-auto">
-          {blog?.tags?.slice(0, 3).map((tag, i) => (
-            <Badge
-              key={i}
-              className={`px-3 py-1 rounded-full text-white text-xs font-medium ${
-                tagColors[i % tagColors.length]
-              } transition-colors duration-200`}
-            >
-              {tag}
-            </Badge>
-          ))}
-        </CardFooter>
+          <CardContent className="px-4 py-1 flex flex-col  space-y-2">
+            <p
+              className="text-xs text-gray-600 leading-relaxed line-clamp-3"
+              dangerouslySetInnerHTML={{
+                __html: truncate(blog.blogDescription, 120, {
+                  ellipsis: "...",
+                }),
+              }}
+            />
+            <div className="flex flex-row flex-wrap items-center gap-2">
+              {blog?.tags?.slice(0, 3).map((tag, i) => (
+                <Badge
+                  key={i}
+                  className={`px-3 py-1 rounded-full text-white text-[10px] font-medium ${
+                    tagColors[i % tagColors.length]
+                  } transition-colors duration-200`}
+                >
+                  {tag}
+                </Badge>
+              ))}
+            </div>
+          </CardContent>
+          <CardFooter className="px-2 pt-1 pb-2  flex  flex-wrap items-center gap-2 mt-auto">
+            {blog.profileUrl ? (
+              <img
+                src={blog.profileUrl}
+                alt={blog.profileUrl}
+                className="object-cover w-8 rounded-full h-8"
+              />
+            ) : (
+              <div className="w-8 rounded-full h-8 bg-gray-300 flex items-center justify-center text-gray-600 text-sm">
+                {blog.username ? blog.username[0].toUpperCase() : "U"}
+              </div>
+            )}
+            <div className="flex flex-col  items-start space-y-0.5 ">
+              <span className="text-sm capitalize font-semibold text-black">
+                {blog.username}
+              </span>
+              <span className="text-[10px] text-black/80">
+                Created At {format(blog.createdAt, "yyyy-LLL-d")}
+              </span>
+            </div>
+          </CardFooter>
+        </div>
       </Card>
     </Link>
   );

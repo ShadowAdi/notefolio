@@ -3,6 +3,7 @@ import { BlogSchema } from "@/schemas/Blog";
 import { BlogDownvote } from "@/schemas/BlogDownvote";
 import { BlogUpvote } from "@/schemas/BlogUpvote";
 import { tagTable } from "@/schemas/Tag";
+import { User } from "@/schemas/User";
 import { verifyUser } from "@/services/VerifyUser";
 import { eq, getTableColumns, ilike, or, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
@@ -88,10 +89,13 @@ export async function GET(request: Request) {
         tags: sql<
           string[]
         >`coalesce(array_agg(${tagTable.tag}),'{}'::text[])`.as("tags"),
+        username: User.username,
+        profileUrl: User.profileUrl,
       })
       .from(BlogSchema)
       .leftJoin(tagTable, eq(BlogSchema.id, tagTable.blogId))
-      .groupBy(BlogSchema.id)
+      .leftJoin(User, eq(BlogSchema.authorId, User.id))
+      .groupBy(BlogSchema.id,User.id)
       .where(whereCondition || sql`TRUE`)
       .limit(limit)
       .offset(offset);
@@ -136,9 +140,14 @@ export async function GET(request: Request) {
     );
   } catch (error) {
     console.error(`Failed to get all blogs `, error);
-    return new Response(JSON.stringify({ success: false, error }), {
-      status: 500,
-      statusText: `Internal Server Error ${error}`,
-    });
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: `Internal Server Error ${error}`,
+      }),
+      {
+        status: 500,
+      }
+    );
   }
 }

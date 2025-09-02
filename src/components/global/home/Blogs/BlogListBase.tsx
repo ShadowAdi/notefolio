@@ -8,7 +8,7 @@ import Link from "next/link";
 
 const BlogListBase = ({ data }: { data: SingleBlogInterface[] }) => {
   return (
-    <section className="w-full flex-1 h-full py-4 max-w-6xl grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-8 px-5">
+    <section className="w-full flex-1 h-full py-4 max-w-xl grid items-center justify-center grid-cols-1 gap-8 px-5">
       {data && data.length > 0 ? (
         data.map((d, i) => <BlogCard blog={d} key={i} />)
       ) : (

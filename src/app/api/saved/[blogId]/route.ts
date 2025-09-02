@@ -6,15 +6,21 @@ import { eq } from "drizzle-orm";
 
 export async function POST(
   request: Request,
-  context: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ blogId: string }> }
 ) {
   try {
     const safeUser = await verifyUser(request);
-    if (safeUser instanceof Response) {
-      return safeUser;
+    if (!safeUser) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: `You are not Authorized`,
+        }),
+        { status: 401 }
+      );
     }
-    const { id } = await context.params;
-    if (!id) {
+    const { blogId } = await context.params;
+    if (!blogId) {
       return new Response(
         JSON.stringify({ success: false, message: "Blog Id is needed." }),
         { status: 400 }
@@ -24,7 +30,7 @@ export async function POST(
     const blogs = await db
       .select()
       .from(BlogSchema)
-      .where(eq(BlogSchema.id, id));
+      .where(eq(BlogSchema.id, blogId));
     if (blogs.length === 0) {
       return new Response(
         JSON.stringify({ success: false, message: `Blog Do Not Exist` }),
@@ -36,7 +42,7 @@ export async function POST(
     const blogFound = blogs[0];
     await db
       .insert(SavedBlog)
-      .values({ blogId: blogFound.id, userId: id, savedAt: new Date() });
+      .values({ blogId: blogFound.id, userId: safeUser.id, savedAt: new Date() });
     return new Response(
       JSON.stringify({ success: true, message: `Blog has been saved` }),
       {

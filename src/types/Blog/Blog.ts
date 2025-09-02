@@ -7,4 +7,6 @@ export interface SingleBlogInterface {
   createdAt: string;
   updatedAt: string;
   id: string;
+  username:string;
+  profileUrl:string;
 }
