@@ -66,7 +66,6 @@ export async function POST(request: Request) {
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    console.log("searchparams ",searchParams)
     const limit = parseInt(searchParams.get("limit") || "5", 10);
     const page = parseInt(searchParams.get("page") || "1", 10);
     const search = searchParams.get("search")?.trim() || "";
@@ -75,7 +74,6 @@ export async function GET(request: Request) {
       .split(",")
       .map((tag) => tag.trim())
       .filter((tag) => tag.length > 0);
-    console.log("tagsArray ",tagsArray)
     const offset = (page - 1) * limit;
     let whereCondition: SQL<boolean> = sql`TRUE`;
     if (search || tagsArray.length > 0) {
@@ -103,7 +101,6 @@ export async function GET(request: Request) {
 
       whereCondition = or(...conditions) as SQL<boolean>;
     }
-    console.log("where condition ",whereCondition)
     const blogs = await db
       .select({
         ...getTableColumns(BlogSchema),

@@ -35,13 +35,11 @@ const SearchComponent = ({
     setTagsArray(tagsArray.filter((_, i) => i !== index));
   };
 
-  // 🔄 Sync tagsArray with URL when user navigates/back/forward
   useEffect(() => {
     const currentTags = searchParams.get("tags");
     setTagsArray(currentTags ? currentTags.split(",") : []);
   }, [searchParams]);
 
-  // 🔄 Update URL when searchInput/tagsArray changes
   useEffect(() => {
     const timeout = setTimeout(() => {
       const params = new URLSearchParams(searchParams.toString());
