@@ -20,7 +20,6 @@ export async function POST(
       );
     }
     const { blogId } = await context.params;
-    console.log("Blog Id ", blogId);
     if (!blogId) {
       return new Response(
         JSON.stringify({ success: false, message: "Blog Id is needed." }),

@@ -64,7 +64,7 @@ const Profile = () => {
   const [followings, setFollowings] = useState<FollowingsInterface[] | null>(
     null
   );
-  const { isAuthenticated, loading: globalLoading, token } = useAuth();
+  const { isAuthenticated, loading: globalLoading, token, logout } = useAuth();
   const router = useRouter();
   const [tabs, setTabs] = useState<"Blogs" | "About" | "Newsletters">("Blogs");
   const [isEditing, setIsEditing] = useState(false);
@@ -73,6 +73,7 @@ const Profile = () => {
   const [imgError, setImgError] = useState(false);
   const [isUsernameEditActive, setIsUsernameEditActive] = useState(false);
   const [editUsername, setEditUsername] = useState("");
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const GetUser = async () => {
     setLoading(true);
@@ -97,6 +98,33 @@ const Profile = () => {
       console.error(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const DeleteButton = async () => {
+    setDeleteLoading(true);
+    if (!isAuthenticated || !token) {
+      return;
+    }
+    try {
+      const response = await axios.delete(`api/auth/user/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = response.data;
+      if (data.success) {
+        toast.success(`User Deleted Successfully`);
+        logout();
+        router.push("/auth/signin");
+      } else {
+        toast.error(`Failed to delete user: ${data.error}`);
+      }
+    } catch (error) {
+      console.error(`Failed to delete account: ${error}`);
+      toast.error(`Failed to delete account: ${error}`);
+    } finally {
+      setDeleteLoading(false);
     }
   };
 
@@ -125,7 +153,7 @@ const Profile = () => {
 
   return (
     <main className="w-full min-h-[80vh] max-w-7xl py-6  px-8 flex justify-between items-start mx-auto space-x-6">
-      <section className="flex-1 flex border-r pr-7 border-r-gray-300 h-full min-h-[80vh] flex-col space-y-6 items-start  py-3">
+      <section className="flex-1 flex   h-full min-h-[80vh] flex-col space-y-6 items-start  py-3">
         <ul className="flex flex-wrap space-x-4">
           {(["Blogs", "Newsletters", "About"] as const).map((tab) => (
             <li
@@ -237,7 +265,7 @@ const Profile = () => {
       </section>
 
       {user && (
-        <section className="flex-[0.3] pl-2 flex space-y-6 flex-col py-5 items-start">
+        <section className="flex-[0.3] border-l pl-7 border-l-gray-300 flex space-y-6 flex-col py-5 items-start">
           {user.profileUrl ? (
             <ContextMenu>
               <ContextMenuTrigger>
@@ -563,6 +591,14 @@ const Profile = () => {
                   />
                 ))}
             </div>
+          </div>
+          <div className="flex flex-col w-full py-5 items-start my-3 space-y-4 border-t border-t-gray-400  ">
+            <Button
+              onClick={DeleteButton}
+              className="bg-red-600 cursor-pointer hover:bg-red-700 text-white rounded-lg text-base"
+            >
+              {deleteLoading ? "Deleting..." : "Delete Account"}
+            </Button>
           </div>
         </section>
       )}
