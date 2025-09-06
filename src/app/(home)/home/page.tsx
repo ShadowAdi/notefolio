@@ -31,9 +31,7 @@ const Home = async ({
       tags,
     },
   });
-  const { data, pagination } = response.data;
-  const currentPage = Number(pagination.page);
-  const totalPages = Number(pagination.totalPages);
+  const { data } = response.data;
 
   return (
     <main className="flex flex-col gap-4 flex-1 items-center h-screen ">

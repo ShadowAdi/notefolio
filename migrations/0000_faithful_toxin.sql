@@ -1,9 +1,12 @@
+CREATE TYPE "blog_status" AS ENUM ('published', 'draft');
+
 CREATE TABLE "blog" (
 	"id" uuid PRIMARY KEY NOT NULL,
 	"blogTitle" text NOT NULL,
 	"blogDescription" text NOT NULL,
 	"blogCover" text NOT NULL,
 	"authorId" uuid NOT NULL,
+	"status" "blog_status" DEFAULT 'draft',
 	"createdAt" timestamp DEFAULT now(),
 	"updated_at" timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	CONSTRAINT "blog_blogTitle_unique" UNIQUE("blogTitle")
@@ -34,6 +37,13 @@ CREATE TABLE "followers" (
 	"followerId" uuid NOT NULL,
 	"followingId" uuid NOT NULL,
 	CONSTRAINT "followers_followerId_followingId_pk" PRIMARY KEY("followerId","followingId")
+);
+--> statement-breakpoint
+CREATE TABLE "saved" (
+	"userId" uuid NOT NULL,
+	"blogId" uuid NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"saved_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "blogTags" (
@@ -74,5 +84,7 @@ ALTER TABLE "discussion" ADD CONSTRAINT "discussion_blodId_blog_id_fk" FOREIGN K
 ALTER TABLE "discussion" ADD CONSTRAINT "discussion_authordId_User_id_fk" FOREIGN KEY ("authordId") REFERENCES "public"."User"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "followers" ADD CONSTRAINT "followers_followerId_User_id_fk" FOREIGN KEY ("followerId") REFERENCES "public"."User"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "followers" ADD CONSTRAINT "followers_followingId_User_id_fk" FOREIGN KEY ("followingId") REFERENCES "public"."User"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "saved" ADD CONSTRAINT "saved_userId_User_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."User"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "saved" ADD CONSTRAINT "saved_blogId_blog_id_fk" FOREIGN KEY ("blogId") REFERENCES "public"."blog"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "blogTags" ADD CONSTRAINT "blogTags_blogId_blog_id_fk" FOREIGN KEY ("blogId") REFERENCES "public"."blog"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "Verification" ADD CONSTRAINT "Verification_userId_User_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."User"("id") ON DELETE no action ON UPDATE no action;

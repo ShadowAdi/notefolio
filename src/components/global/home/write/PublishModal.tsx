@@ -19,6 +19,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 import { useAuth } from "@/context/AuthContext";
 import { WriteBlogContext } from "@/context/WriteBlogContext";
 import { blogFormSchema } from "@/zodSchema/blogFormSchema";
@@ -41,11 +42,14 @@ const PublishModal = () => {
     setBlogCover,
     blogDescription,
     blogTitle,
+    isPublished,
+    setIsPublished,
   } = useContext(WriteBlogContext);
   const form = useForm<z.infer<typeof publishBlogSchema>>({
     resolver: zodResolver(publishBlogSchema),
     defaultValues: {
       blogCover: blogCover || "",
+      isPublished: false,
       tags: blogTags || [],
     },
   });
@@ -192,12 +196,12 @@ const PublishModal = () => {
                           <Badge
                             key={i}
                             onClick={() => {
-                                const updatedTags = blogTags.filter(
-                                  (_, index) => index !== i
-                                );
-                                setBlogTags(updatedTags);
-                                form.setValue("tags", updatedTags);
-                              }}
+                              const updatedTags = blogTags.filter(
+                                (_, index) => index !== i
+                              );
+                              setBlogTags(updatedTags);
+                              form.setValue("tags", updatedTags);
+                            }}
                             className="px-3 py-2 flex items-center justify-between gap-2 rounded-md cursor-pointer bg-gray-800 text-white hover:bg-gray-700 transition-colors"
                           >
                             <span className="truncate">{blog}</span>
@@ -205,6 +209,28 @@ const PublishModal = () => {
                         ))}
                     </div>
 
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="isPublished"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col items-start space-y-1 ">
+                    <div>
+                      <FormLabel>Publish</FormLabel>
+                      <FormDescription>
+                        Either Publish your blog or we are going to save as
+                        Draft for now.
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}

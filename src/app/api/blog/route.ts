@@ -96,7 +96,6 @@ export async function GET(request: Request) {
       )
     ` as SQL<boolean>
         );
-      console.log("conditions ",conditions)
       }
 
       whereCondition = or(...conditions) as SQL<boolean>;

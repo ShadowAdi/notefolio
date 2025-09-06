@@ -16,6 +16,8 @@ export const WriteBlogContext = createContext<{
   setBlogCover: Dispatch<React.SetStateAction<string>>;
   blogTags: string[];
   setBlogTags: Dispatch<React.SetStateAction<string[]>>;
+  isPublished:boolean;
+  setIsPublished:Dispatch<React.SetStateAction<boolean>>
 }>({
   blogTitle: "",
   setBlogTitle: () => {},
@@ -25,6 +27,8 @@ export const WriteBlogContext = createContext<{
   setBlogCover: () => {},
   blogTags: [],
   setBlogTags: () => {},
+  isPublished:false,
+  setIsPublished:()=>{}
 });
 
 export const WriteContextProvider = ({ children }: { children: ReactNode }) => {
@@ -32,6 +36,7 @@ export const WriteContextProvider = ({ children }: { children: ReactNode }) => {
   const [blogDescription, setBlogDescription] = useState("");
   const [blogCover, setBlogCover] = useState("");
   const [blogTags, setBlogTags] = useState<string[]>([]);
+  const [isPublished, setIsPublished] = useState(false)
 
   return (
     <WriteBlogContext.Provider
@@ -44,6 +49,8 @@ export const WriteContextProvider = ({ children }: { children: ReactNode }) => {
         setBlogCover,
         blogTags,
         setBlogTags,
+        isPublished,
+        setIsPublished
       }}
     >
       {children}
