@@ -46,7 +46,14 @@ const Saved = () => {
           <Spinner />
         </div>
       ) : (
-        <BlogListBase data={savedBlogs} key={"Blogs"} />
+        savedBlogs.length > 0 && (
+          <BlogListBase data={savedBlogs} key={"Blogs"} isSaved={false} />
+        )
+      )}
+      {savedBlogs && savedBlogs.length === 0 && (
+        <h1 className="text-xl font-semibold text-stone-900 ">
+          No Saved Blogs
+        </h1>
       )}
     </main>
   );
