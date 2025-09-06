@@ -47,7 +47,7 @@ const Saved = () => {
         </div>
       ) : (
         savedBlogs.length > 0 && (
-          <BlogListBase data={savedBlogs} key={"Blogs"} isSaved={false} />
+          <BlogListBase data={savedBlogs} key={"Blogs"} isSaved={true} />
         )
       )}
       {savedBlogs && savedBlogs.length === 0 && (

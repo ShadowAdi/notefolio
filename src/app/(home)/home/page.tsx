@@ -38,7 +38,7 @@ const Home = async ({
   return (
     <main className="flex flex-col gap-4 flex-1 items-center h-screen ">
       <SearchComponent limit={limit} page={page} search={search} tags={tags} />
-      <BlogListBase data={data} key={"Blogs"} />
+      <BlogListBase data={data} key={"Blogs"}  />
       {/* <Pagination className="pb-6">
         <PaginationContent>
           <PaginationItem>
