@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Button } from "../ui/button";
 
 const SearchComponent = ({
   limit,
@@ -40,10 +41,9 @@ const SearchComponent = ({
     setTagsArray(currentTags ? currentTags.split(",") : []);
   }, [searchParams]);
 
+  const params = new URLSearchParams(searchParams.toString());
   useEffect(() => {
     const timeout = setTimeout(() => {
-      const params = new URLSearchParams(searchParams.toString());
-
       if (searchInput) {
         params.set("search", searchInput);
       } else {
@@ -68,7 +68,6 @@ const SearchComponent = ({
   return (
     <div className="mx-auto max-w-4xl w-full px-4 sm:px-6 lg:px-8 py-4">
       <div className="flex flex-col sm:flex-row gap-4">
-        {/* Search input */}
         <div className="relative flex-1">
           <Input
             className="w-full py-3 px-4 text-base bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder-gray-400"
@@ -76,24 +75,9 @@ const SearchComponent = ({
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
           />
-          <svg
-            className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1116.65 16.65z"
-            />
-          </svg>
         </div>
 
-        {/* Tags input */}
-        <div className="relative flex-1">
+        <div className="relative flex-1  flex flex-col space-y-4 justify-between items-start">
           <Input
             className="w-full py-3 px-4 text-base bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder-gray-400"
             placeholder="Enter Tags (press Enter to add)..."
@@ -101,20 +85,6 @@ const SearchComponent = ({
             onChange={(e) => setTagsInput(e.target.value)}
             onKeyDown={handleKeyDown}
           />
-          <svg
-            className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M7 7h10v10H7zM4 10h16M10 4v16"
-            />
-          </svg>
 
           {/* Active tags */}
           <div className="mt-2 flex flex-wrap gap-2">
@@ -135,6 +105,17 @@ const SearchComponent = ({
             ))}
           </div>
         </div>
+        <Button
+          onClick={() => {
+            setTagsArray([]);
+            setSearchInput("");
+            setTagsInput("");
+            router.push("/home"); 
+          }}
+          className="bg-stone-900 hover:bg-stone-950 py-3 px-6 rounded-full cursor-pointer"
+        >
+          Reset
+        </Button>
       </div>
     </div>
   );
