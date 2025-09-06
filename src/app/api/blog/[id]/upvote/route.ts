@@ -1,5 +1,6 @@
 import { db } from "@/db/db";
 import { BlogSchema } from "@/schemas/Blog";
+import { BlogDownvote } from "@/schemas/BlogDownvote";
 import { BlogUpvote } from "@/schemas/BlogUpvote";
 import { verifyUser } from "@/services/VerifyUser";
 import { and, eq } from "drizzle-orm";
@@ -29,10 +30,7 @@ export async function POST(
     const blogs = await db
       .select({
         id: BlogSchema.id,
-        blogTitle: BlogSchema.blogTitle,
         authorId: BlogSchema.authorId,
-        createdAt: BlogSchema.createdAt,
-        updatedAt: BlogSchema.updatedAt,
       })
       .from(BlogSchema)
       .where(eq(BlogSchema.id, id));
@@ -52,6 +50,25 @@ export async function POST(
       .where(
         and(eq(BlogUpvote.blogId, blogFound.id), eq(BlogUpvote.userId, user.id))
       );
+    const downvotedBlogExists = await db
+      .select()
+      .from(BlogDownvote)
+      .where(
+        and(
+          eq(BlogDownvote.blogId, blogFound.id),
+          eq(BlogDownvote.userId, user.id)
+        )
+      );
+    if (downvotedBlogExists.length !== 0) {
+      await db
+        .delete(BlogDownvote)
+        .where(
+          and(
+            eq(BlogDownvote.blogId, blogFound.id),
+            eq(BlogDownvote.userId, user.id)
+          )
+        );
+    }
     if (upvotedBlogExists.length !== 0) {
       await db
         .delete(BlogUpvote)

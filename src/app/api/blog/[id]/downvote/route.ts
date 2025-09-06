@@ -1,6 +1,7 @@
 import { db } from "@/db/db";
 import { BlogSchema } from "@/schemas/Blog";
 import { BlogDownvote } from "@/schemas/BlogDownvote";
+import { BlogUpvote } from "@/schemas/BlogUpvote";
 import { verifyUser } from "@/services/VerifyUser";
 import { and, eq } from "drizzle-orm";
 
@@ -46,11 +47,32 @@ export async function DELETE(
     }
 
     const blogFound = blogs[0];
+    const upvotedBlogExists = await db
+      .select()
+      .from(BlogUpvote)
+      .where(
+        and(eq(BlogUpvote.blogId, blogFound.id), eq(BlogUpvote.userId, user.id))
+      );
+
+    if (upvotedBlogExists.length !== 0) {
+      await db
+        .delete(BlogUpvote)
+        .where(
+          and(
+            eq(BlogUpvote.blogId, blogFound.id),
+            eq(BlogUpvote.userId, user.id)
+          )
+        );
+    }
+
     const downvotedBlogExists = await db
       .select()
       .from(BlogDownvote)
       .where(
-        and(eq(BlogDownvote.blogId, blogFound.id), eq(BlogDownvote.userId, user.id))
+        and(
+          eq(BlogDownvote.blogId, blogFound.id),
+          eq(BlogDownvote.userId, user.id)
+        )
       );
     if (downvotedBlogExists.length !== 0) {
       await db
