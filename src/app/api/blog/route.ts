@@ -5,7 +5,7 @@ import { BlogUpvote } from "@/schemas/BlogUpvote";
 import { tagTable } from "@/schemas/Tag";
 import { User } from "@/schemas/User";
 import { verifyUser } from "@/services/VerifyUser";
-import { eq, getTableColumns, ilike, or, sql } from "drizzle-orm";
+import { eq, getTableColumns, ilike, or, SQL, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
 
@@ -66,23 +66,44 @@ export async function POST(request: Request) {
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
+    console.log("searchparams ",searchParams)
     const limit = parseInt(searchParams.get("limit") || "5", 10);
     const page = parseInt(searchParams.get("page") || "1", 10);
     const search = searchParams.get("search")?.trim() || "";
-
+    const tags = searchParams.get("tags")?.trim() || "";
+    const tagsArray = tags
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter((tag) => tag.length > 0);
+    console.log("tagsArray ",tagsArray)
     const offset = (page - 1) * limit;
-    const whereCondition = search
-      ? or(
-          ilike(BlogSchema.blogTitle, `%${search}%`),
+    let whereCondition: SQL<boolean> = sql`TRUE`;
+    if (search || tagsArray.length > 0) {
+      const conditions: SQL<boolean>[] = [];
+
+      if (search) {
+        conditions.push(
+          ilike(BlogSchema.blogTitle, `%${search}%`) as SQL<boolean>
+        );
+      }
+
+      if (tagsArray.length > 0) {
+        conditions.push(
           sql`
       EXISTS(
-        SELECT 1 FROM ${tagTable}
-        WHERE ${tagTable.blogId}=${BlogSchema.id}
-        AND ${tagTable.tag} ilike ${`%${search}%`}
-      ) `
-        )
-      : undefined;
+        SELECT 1
+        FROM ${tagTable}
+        WHERE ${tagTable.blogId} = ${BlogSchema.id}
+        AND ${tagTable.tag} IN (${sql.join(tagsArray, sql`, `)})
+      )
+    ` as SQL<boolean>
+        );
+      console.log("conditions ",conditions)
+      }
 
+      whereCondition = or(...conditions) as SQL<boolean>;
+    }
+    console.log("where condition ",whereCondition)
     const blogs = await db
       .select({
         ...getTableColumns(BlogSchema),
@@ -95,7 +116,7 @@ export async function GET(request: Request) {
       .from(BlogSchema)
       .leftJoin(tagTable, eq(BlogSchema.id, tagTable.blogId))
       .leftJoin(User, eq(BlogSchema.authorId, User.id))
-      .groupBy(BlogSchema.id,User.id)
+      .groupBy(BlogSchema.id, User.id)
       .where(whereCondition || sql`TRUE`)
       .limit(limit)
       .offset(offset);

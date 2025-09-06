@@ -143,7 +143,7 @@ const Profile = () => {
           ))}
         </ul>
 
-        <div className="flex w-full flex-1 px-4 items-start justify-start py-3">
+        <div className="flex w-full flex-1 px-4 flex-col items-start justify-start py-3">
           {tabs === "Blogs" &&
             (blogs.length > 0 ? (
               blogs.map((blog, i) => <BlogHorizontalCard key={i} b={blog} />)
@@ -198,7 +198,7 @@ const Profile = () => {
                           const data = await response.data;
                           if (data.success) {
                             toast.success(`Bio has Been Updated`);
-                            GetUser()
+                            GetUser();
                           }
                         } catch (err) {
                           console.error("Failed to update bio", err);
@@ -509,7 +509,7 @@ const Profile = () => {
                       if (data.success) {
                         toast.success(`Profile has Been Updated`);
                         setUser(data.updatedUser);
-                        setIsUsernameEditActive(false)
+                        setIsUsernameEditActive(false);
                         GetUser();
                       }
                     } catch (err) {
