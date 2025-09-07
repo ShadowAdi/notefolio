@@ -22,7 +22,6 @@ const tagColors = [
 ];
 
 const BlogCard = ({ blog }: { blog: SingleBlogInterface }) => {
-  console.log("Blog ", blog);
   return (
     <Link href={`/blog/${blog.id}`}>
       <Card
@@ -55,7 +54,7 @@ const BlogCard = ({ blog }: { blog: SingleBlogInterface }) => {
 
           <CardContent className="px-4 py-1 flex flex-col  space-y-2">
             <p
-              className="text-xs text-gray-600 leading-relaxed line-clamp-3"
+              className="text-xs text-gray-600 leading-relaxed line-clamp-2"
               dangerouslySetInnerHTML={{
                 __html: truncate(blog.blogDescription, 120, {
                   ellipsis: "...",
@@ -66,7 +65,7 @@ const BlogCard = ({ blog }: { blog: SingleBlogInterface }) => {
               {blog?.tags?.slice(0, 3).map((tag, i) => (
                 <Badge
                   key={i}
-                  className={`px-3 py-1 rounded-full text-white text-[10px] font-medium ${
+                  className={`px-3 py-1 rounded-full text-white text-[8px] font-medium ${
                     tagColors[i % tagColors.length]
                   } transition-colors duration-200`}
                 >

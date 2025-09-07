@@ -15,12 +15,24 @@ export async function POST(request: Request) {
     return safeUser;
   }
   const body = await request.json();
-  const { blogTitle, blogDescription, blogCover, tags } = body;
+  const {
+    blogTitle,
+    blogDescription,
+    blogCover,
+    tags,
+    status: statusBody,
+  } = body;
   if (!blogTitle || !blogDescription || !blogCover) {
     return new Response(JSON.stringify({ success: false }), {
       status: 400,
       statusText: `Necessary Details are not provided`,
     });
+  }
+  let status:"published"|"draft";
+  if (statusBody) {
+    status = "published";
+  } else {
+    status = "draft";
   }
   if (!safeUser.id) {
     return new Response(JSON.stringify({ success: false }), {
@@ -39,6 +51,7 @@ export async function POST(request: Request) {
         blogCover,
         authorId: safeUser.id,
         createdAt: new Date(),
+        status:status
       })
       .returning();
     if (tags && tags.length > 0) {

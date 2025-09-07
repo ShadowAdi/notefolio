@@ -75,6 +75,7 @@ const PublishModal = () => {
       tags: values.tags,
       blogCover: values.blogCover,
       authorId: user?.id,
+      status: values.isPublished,
     };
     try {
       const response = await axios.post(`/api/blog/`, payload, {
@@ -162,6 +163,29 @@ const PublishModal = () => {
               />
               <FormField
                 control={form.control}
+                name="isPublished"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col items-start space-y-1 ">
+                    <div>
+                      <FormLabel>Publish</FormLabel>
+                      <FormDescription>
+                        Either Publish your blog or we are going to save as
+                        Draft for now.
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        className="cursor-pointer"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
                 name="tags"
                 render={() => (
                   <FormItem>
@@ -209,28 +233,6 @@ const PublishModal = () => {
                         ))}
                     </div>
 
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="isPublished"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col items-start space-y-1 ">
-                    <div>
-                      <FormLabel>Publish</FormLabel>
-                      <FormDescription>
-                        Either Publish your blog or we are going to save as
-                        Draft for now.
-                      </FormDescription>
-                    </div>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
