@@ -1,5 +1,3 @@
-CREATE TYPE "blog_status" AS ENUM ('published', 'draft');
-
 CREATE TABLE "blog" (
 	"id" uuid PRIMARY KEY NOT NULL,
 	"blogTitle" text NOT NULL,

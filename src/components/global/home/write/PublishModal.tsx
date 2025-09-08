@@ -44,6 +44,8 @@ const PublishModal = () => {
     blogTitle,
     isPublished,
     setIsPublished,
+    blogId,
+    setBlogId,
   } = useContext(WriteBlogContext);
   const form = useForm<z.infer<typeof publishBlogSchema>>({
     resolver: zodResolver(publishBlogSchema),
@@ -78,7 +80,7 @@ const PublishModal = () => {
       status: values.isPublished,
     };
     try {
-      const response = await axios.post(`/api/blog/`, payload, {
+      const response = await axios.patch(`/api/blog/published/${blogId}`, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -102,6 +104,9 @@ const PublishModal = () => {
       form.setValue("tags", []);
       setBlogCover("");
       setBlogTags([]);
+      form.setValue("isPublished",false)
+      setBlogId("")
+      setIsPublished(false)
     } finally {
       setLoading(false);
     }
@@ -175,8 +180,11 @@ const PublishModal = () => {
                     </div>
                     <FormControl>
                       <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
+                        checked={isPublished}
+                        onCheckedChange={(checked) => {
+                          field.onChange(checked);
+                          setIsPublished(checked);
+                        }}
                         className="cursor-pointer"
                       />
                     </FormControl>

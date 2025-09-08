@@ -23,9 +23,8 @@ export async function POST(request: Request) {
     status: statusBody,
   } = body;
   if (!blogTitle || !blogDescription || !blogCover) {
-    return new Response(JSON.stringify({ success: false }), {
+    return new Response(JSON.stringify({ success: false,message:`Necessary Details are not provided` }), {
       status: 400,
-      statusText: `Necessary Details are not provided`,
     });
   }
   let status:"published"|"draft";

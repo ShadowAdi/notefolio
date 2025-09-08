@@ -33,10 +33,20 @@ import { FaYoutube } from "react-icons/fa";
 import { BulletList, ListItem, OrderedList } from "@tiptap/extension-list";
 import Image from "@tiptap/extension-image";
 import { WriteBlogContext } from "@/context/WriteBlogContext";
+import { saveDraft } from "@/actions/Blog/DraftBlog";
+import { useAuth } from "@/context/AuthContext";
+import { toast } from "sonner";
+import withAuth from "@/protected/withAuth";
 
 const Write = () => {
-  const { blogTitle, blogDescription, setBlogDescription, setBlogTitle } =
-    useContext(WriteBlogContext);
+  const {
+    blogTitle,
+    blogDescription,
+    setBlogDescription,
+    setBlogTitle,
+    setBlogId,
+  } = useContext(WriteBlogContext);
+  const { token, isAuthenticated, loading: authLoading } = useAuth();
   const [openLink, setOpenLink] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
   const lowlight = createLowlight(all);
@@ -48,7 +58,9 @@ const Write = () => {
   const [imageUrl, setImageUrl] = useState("");
   const [imageWidth, setImageWidth] = useState(320);
   const [imageHeight, setImageHeight] = useState(180);
-
+  const [saveStatus, setSaveStatus] = useState<
+    "idle" | "saving" | "saved" | "error"
+  >("idle");
   const editor = useEditor({
     content: blogDescription,
     extensions: [
@@ -168,8 +180,19 @@ const Write = () => {
     ],
     editable: true,
     immediatelyRender: false,
-    onUpdate({ editor }) {
+    async onUpdate({ editor }) {
       setBlogDescription(editor.getHTML());
+      if (!token || authLoading) return;
+      setSaveStatus("saving");
+      const data = await saveDraft(token, blogTitle, editor.getHTML());
+      if (data?.success) {
+        setBlogId(data.blogId);
+        setSaveStatus("saved");
+        toast.success("Draft saved successfully");
+      } else {
+        setSaveStatus("error");
+        toast.error(`Failed to save draft: ${data?.error}`);
+      }
     },
     editorProps: {
       attributes: {
@@ -258,10 +281,28 @@ const Write = () => {
     <main className="flex flex-col gap-4 flex-1 items-center h-screen ">
       <div className="flex flex-col h-full flex-1 relative  items-center max-w-2xl w-full">
         <textarea
-          onChange={(e) => setBlogTitle(e.currentTarget.value)}
+          onChange={async (e) => {
+            setBlogTitle(e.currentTarget.value);
+            if (authLoading) {
+              return;
+            }
+            if (!isAuthenticated && !token) {
+              return;
+            }
+            const data = await saveDraft(token!, blogTitle, blogDescription);
+
+            if (data) {
+              if (data.success) {
+                setBlogId(data.blogId);
+              } else {
+                console.error("Failed to save draft:", data.error);
+                toast.error(`Failed to save draft`);
+              }
+            }
+          }}
           value={blogTitle}
           placeholder="Add A Title..."
-         className="py-2 w-full outline-0 ring-0 focus-visible:ring-0 placeholder:text-neutral-400 text-black text-4xl font-bold"
+          className="py-2 w-full outline-0 ring-0 focus-visible:ring-0 placeholder:text-neutral-400 text-black text-4xl font-bold"
         />
         <div className="w-full h-full flex-1   relative">
           <EditorContent
@@ -1009,4 +1050,4 @@ const Write = () => {
   );
 };
 
-export default Write;
+export default withAuth(Write);

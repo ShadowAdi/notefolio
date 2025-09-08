@@ -1,5 +1,5 @@
 "use client";
-import {
+import React, {
   createContext,
   Dispatch,
   ReactNode,
@@ -17,7 +17,9 @@ export const WriteBlogContext = createContext<{
   blogTags: string[];
   setBlogTags: Dispatch<React.SetStateAction<string[]>>;
   isPublished:boolean;
-  setIsPublished:Dispatch<React.SetStateAction<boolean>>
+  setIsPublished:Dispatch<React.SetStateAction<boolean>>;
+  blogId:string;
+  setBlogId:Dispatch<React.SetStateAction<string>>
 }>({
   blogTitle: "",
   setBlogTitle: () => {},
@@ -28,7 +30,9 @@ export const WriteBlogContext = createContext<{
   blogTags: [],
   setBlogTags: () => {},
   isPublished:false,
-  setIsPublished:()=>{}
+  setIsPublished:()=>{},
+  blogId:"",
+  setBlogId:()=>{}
 });
 
 export const WriteContextProvider = ({ children }: { children: ReactNode }) => {
@@ -37,6 +41,8 @@ export const WriteContextProvider = ({ children }: { children: ReactNode }) => {
   const [blogCover, setBlogCover] = useState("");
   const [blogTags, setBlogTags] = useState<string[]>([]);
   const [isPublished, setIsPublished] = useState(false)
+    const [blogId, setBlogId] = useState("")
+
 
   return (
     <WriteBlogContext.Provider
@@ -50,7 +56,9 @@ export const WriteContextProvider = ({ children }: { children: ReactNode }) => {
         blogTags,
         setBlogTags,
         isPublished,
-        setIsPublished
+        setIsPublished,
+        blogId,
+        setBlogId
       }}
     >
       {children}
