@@ -1,5 +1,11 @@
 "use client";
-import React, { use, useCallback, useContext, useState } from "react";
+import React, {
+  use,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { BubbleMenu, FloatingMenu } from "@tiptap/react/menus";
@@ -33,10 +39,10 @@ import { FaYoutube } from "react-icons/fa";
 import { BulletList, ListItem, OrderedList } from "@tiptap/extension-list";
 import Image from "@tiptap/extension-image";
 import { WriteBlogContext } from "@/context/WriteBlogContext";
-import { saveDraft } from "@/actions/Blog/DraftBlog";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
 import withAuth from "@/protected/withAuth";
+import axios from "axios";
 
 const Write = () => {
   const {
@@ -58,9 +64,25 @@ const Write = () => {
   const [imageUrl, setImageUrl] = useState("");
   const [imageWidth, setImageWidth] = useState(320);
   const [imageHeight, setImageHeight] = useState(180);
-  const [saveStatus, setSaveStatus] = useState<
-    "idle" | "saving" | "saved" | "error"
-  >("idle");
+
+  const createDraft = async () => {
+    if (authLoading) {
+      return;
+    }
+    if (!token || !isAuthenticated) {
+      return;
+    }
+    const draftBlogId = await axios.post(`/api/draft`, null, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  };
+
+  useEffect(() => {
+    createDraft();
+  }, []);
+
   const editor = useEditor({
     content: blogDescription,
     extensions: [
@@ -182,17 +204,6 @@ const Write = () => {
     immediatelyRender: false,
     async onUpdate({ editor }) {
       setBlogDescription(editor.getHTML());
-      if (!token || authLoading) return;
-      setSaveStatus("saving");
-      const data = await saveDraft(token, blogTitle, editor.getHTML());
-      if (data?.success) {
-        setBlogId(data.blogId);
-        setSaveStatus("saved");
-        toast.success("Draft saved successfully");
-      } else {
-        setSaveStatus("error");
-        toast.error(`Failed to save draft: ${data?.error}`);
-      }
     },
     editorProps: {
       attributes: {
@@ -288,16 +299,6 @@ const Write = () => {
             }
             if (!isAuthenticated && !token) {
               return;
-            }
-            const data = await saveDraft(token!, blogTitle, blogDescription);
-
-            if (data) {
-              if (data.success) {
-                setBlogId(data.blogId);
-              } else {
-                console.error("Failed to save draft:", data.error);
-                toast.error(`Failed to save draft`);
-              }
             }
           }}
           value={blogTitle}
