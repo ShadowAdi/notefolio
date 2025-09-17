@@ -62,7 +62,7 @@ export default function GlobalError({
         <p className="text-2xl">{error.message}</p>
       </div>
       <Link href={`/home`}>
-      <Button className="bg-slate-100 hover:bg-slate-50 mt-3 text-black hover:shadow-sm text-base flex items-center justify-center">
+      <Button className="bg-slate-100 hover:bg-slate-50 mt-3 text-black hover:shadow-sm text-base flex items-center justify-center cursor-pointer">
           <ArrowLeft/>
         <span>
           Back To Home</span>
