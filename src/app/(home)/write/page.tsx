@@ -65,23 +65,23 @@ const Write = () => {
   const [imageWidth, setImageWidth] = useState(320);
   const [imageHeight, setImageHeight] = useState(180);
 
-  const createDraft = async () => {
-    if (authLoading) {
-      return;
-    }
-    if (!token || !isAuthenticated) {
-      return;
-    }
-    const draftBlogId = await axios.post(`/api/draft`, null, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-  };
+  // const createDraft = async () => {
+  //   if (authLoading) {
+  //     return;
+  //   }
+  //   if (!token || !isAuthenticated) {
+  //     return;
+  //   }
+  //   const draftBlogId = await axios.post(`/api/draft`, null, {
+  //     headers: {
+  //       Authorization: `Bearer ${token}`,
+  //     },
+  //   });
+  // };
 
-  useEffect(() => {
-    createDraft();
-  }, []);
+  // useEffect(() => {
+  //   createDraft();
+  // }, []);
 
   const editor = useEditor({
     content: blogDescription,

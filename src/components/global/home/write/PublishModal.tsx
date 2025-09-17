@@ -80,7 +80,7 @@ const PublishModal = () => {
       status: values.isPublished,
     };
     try {
-      const response = await axios.patch(`/api/blog/published/${blogId}`, payload, {
+      const response = await axios.post(`/api/blog/`, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -104,9 +104,9 @@ const PublishModal = () => {
       form.setValue("tags", []);
       setBlogCover("");
       setBlogTags([]);
-      form.setValue("isPublished",false)
-      setBlogId("")
-      setIsPublished(false)
+      form.setValue("isPublished", false);
+      setBlogId("");
+      setIsPublished(false);
     } finally {
       setLoading(false);
     }

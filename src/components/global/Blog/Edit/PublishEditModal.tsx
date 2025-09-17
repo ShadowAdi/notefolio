@@ -24,6 +24,7 @@ import { WriteBlogContext } from "@/context/WriteBlogContext";
 import { publishBlogSchema } from "@/zodSchema/publishBlogSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
+import { on } from "events";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -39,8 +40,8 @@ const PublishEditModal = () => {
     blogDescription,
     blogTitle,
   } = useContext(WriteBlogContext);
-  const pathname=usePathname()
-  const blogId=pathname.split("/")[2]
+  const pathname = usePathname();
+  const blogId = pathname.split("/")[2];
   const form = useForm<z.infer<typeof publishBlogSchema>>({
     resolver: zodResolver(publishBlogSchema),
     defaultValues: {
@@ -64,9 +65,8 @@ const PublishEditModal = () => {
       router.push(`/auth/signin`);
     }
     if (!blogId) {
-      toast(`Blog Id Is Not Provided`)
+      toast(`Blog Id Is Not Provided`);
     }
-    setLoading(true);
     const payload = {
       blogTitle,
       blogDescription,
@@ -75,6 +75,8 @@ const PublishEditModal = () => {
       authorId: user?.id,
     };
     try {
+      setLoading(true);
+
       const response = await axios.patch(`/api/blog/${blogId}`, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -90,7 +92,7 @@ const PublishEditModal = () => {
       } else {
         form.reset();
         toast.success(`Blog  Saved and Published Successfully`);
-        router.back();
+        router.push(`/blog/${blogId}`);
       }
     } catch (error) {
       console.error(`Failed to edit Blog: ${error}`);
@@ -118,7 +120,7 @@ const PublishEditModal = () => {
 
           <Form {...form}>
             <form
-              onSubmit={form.handleSubmit(onSubmit)}
+              // onSubmit={form.handleSubmit(onSubmit)}
               className="space-y-6 w-full"
             >
               <FormField
@@ -211,7 +213,13 @@ const PublishEditModal = () => {
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full !cursor-pointer">
+              <Button
+                type="submit"
+                onClick={async () => {
+                  await onSubmit(form.getValues());
+                }}
+                className="w-full !cursor-pointer"
+              >
                 {!loading && !userLoading ? "Save and Publish" : "Loading..."}
               </Button>
             </form>
