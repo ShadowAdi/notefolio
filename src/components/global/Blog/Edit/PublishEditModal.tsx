@@ -216,6 +216,9 @@ const PublishEditModal = () => {
               <Button
                 type="submit"
                 onClick={async () => {
+                  form.setValue("blogCover", blogCover);
+                  form.setValue("tags", blogTags);
+
                   await onSubmit(form.getValues());
                 }}
                 className="w-full !cursor-pointer"

@@ -62,16 +62,18 @@ const BlogCard = ({ blog }: { blog: SingleBlogInterface }) => {
               }}
             />
             <div className="flex flex-row flex-wrap items-center gap-2">
-              {blog?.tags?.slice(0, 3).map((tag, i) => (
-                <Badge
-                  key={i}
-                  className={`px-3 py-1 rounded-full text-white text-[8px] font-medium ${
-                    tagColors[i % tagColors.length]
-                  } transition-colors duration-200`}
-                >
-                  {tag}
-                </Badge>
-              ))}
+              {blog.tags &&
+                blog.tags?.length > 0 &&
+                blog?.tags?.slice(0, 3).map((tag, i) => (
+                  <Badge
+                    key={i}
+                    className={`px-3 py-1 rounded-full text-white text-[8px] font-medium ${
+                      tagColors[i % tagColors.length]
+                    } transition-colors duration-200`}
+                  >
+                    {tag}
+                  </Badge>
+                ))}
             </div>
           </CardContent>
           <CardFooter className="px-2 pt-1 pb-2  flex  flex-wrap items-center gap-2 mt-auto">
